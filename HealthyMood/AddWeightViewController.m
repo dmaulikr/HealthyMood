@@ -20,6 +20,14 @@
     
     [super viewDidLoad];
     
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([[defaults objectForKey:@"unit"] isEqual:@"lb"]) {
+        self.unitLabel.text = @"lb";
+    } else if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
+        self.unitLabel.text = @"kg";
+    } else if([[defaults objectForKey:@"unit"] isEqual:@"st"]) {
+        self.unitLabel.text = @"st";
+    }
     // Configure the navigation bar
 }
 
@@ -29,11 +37,14 @@
 }
 
 - (IBAction)save:(id)sender {
-    NSString *name = self.textField.text;
+    NSString *weightText = self.textField.text;
     
+    NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
+    f.numberStyle = NSNumberFormatterDecimalStyle;
+    NSNumber *weightNumber = [f numberFromString:weightText];
 
     
-    if (name && name.length) {
+    if (weightText && weightText.length) {
         //Create Entity
         NSEntityDescription *entity = [NSEntityDescription entityForName:@"Weight" inManagedObjectContext:self.managedObjectContext];
         
@@ -41,7 +52,7 @@
         NSManagedObject *record = [[NSManagedObject alloc] initWithEntity:entity insertIntoManagedObjectContext:self.managedObjectContext];
         
         //Populate Recrod
-        [record setValue:name forKey:@"weight"];
+        [record setValue:weightNumber forKey:@"weight"];
         [record setValue:[NSDate date] forKey:@"weightDate"];
 
         

@@ -38,8 +38,18 @@
         [viewController setManagedObjectContext:self.managedObjectContext];
     }
     
+
+    
     // Configure Window
     [self.window setRootViewController:rootNavigationController];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([[defaults objectForKey:@"unit" ] isEqual:nil])
+    {
+    [defaults setObject:@"lb" forKey:@"unit"];
+    }
+
+
     
     return YES;
 

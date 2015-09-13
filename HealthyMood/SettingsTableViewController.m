@@ -26,39 +26,6 @@
     self.kgCell.textLabel.text = @"kg";
     self.lbCell.textLabel.text = @"lb";
     self.stCell.textLabel.text = @"st";
-    
-    _selectedIndexPath = [NSIndexPath indexPathForRow:1 inSection:0];
-    
-    //Initialize Fetch Request
-    // Initialize Fetch Request
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Weight"];
-    
-    [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"unit" ascending:NO]]];
-    
-    AppDelegate* appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    NSManagedObjectContext* context = appDelegate.managedObjectContext;
-
-
-    self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:context sectionNameKeyPath:nil cacheName:nil];
-
-    // Configure Fetched Results Controller
-
-    
-    // Perform Fetch
-    NSError *error = nil;
-    [self.fetchedResultsController performFetch:&error];
-    
-    if (error) {
-        NSLog(@"Unable to perform fetch.");
-        NSLog(@"%@, %@", error, error.localizedDescription);
-    }
-
-
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -69,37 +36,38 @@
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-#warning Potentially incomplete method implementation.
+
     // Return the number of sections.
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-#warning Incomplete method implementation.
+
     // Return the number of rows in the section.
     return 3;
 }
+
 - (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath
 {
-    self.selectedIndexPath = indexPath;
     
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-                NSString *unit = cell.textLabel.text;
-    
 
+    self.kgCell.accessoryType = UITableViewCellAccessoryNone;
+    self.lbCell.accessoryType = UITableViewCellAccessoryNone;
+    self.stCell.accessoryType = UITableViewCellAccessoryNone;
+    
     if (cell.accessoryType == UITableViewCellAccessoryNone)
     {
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
-            NSLog(@"text, %@", unit);
-        
-    } else
+    }
+    else
     {
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
-
-
+ 
+ 
     
-
+   
 }
 
 
@@ -111,78 +79,20 @@
 
 
 - (IBAction)save:(id)sender {
-/*    if cell has accessory mark checkmark, set the unit attribute to the text of the cell
- */
-    UITableViewCell *kg = self.kgCell;
-    NSString *kgText = kg.textLabel.text;
-
-    UITableViewCell *lb = self.lbCell;
-    NSString *lbText = lb.textLabel.text;
-   
-    UITableViewCell *st = self.stCell;
-    NSString *stText = st.textLabel.text;
-
-    //Create Entity
-    AppDelegate* appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    NSManagedObjectContext* context = appDelegate.managedObjectContext;
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Weight" inManagedObjectContext:context];
     
-    NSManagedObject *record = [[NSManagedObject alloc]initWithEntity:entity insertIntoManagedObjectContext:context];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
-    if (kg.accessoryType == UITableViewCellAccessoryCheckmark) {
-        
-        NSLog(@"hi kg");
-        [record setValue:kgText forKey:@"unit"];
-        NSLog(@"%@", record);
-    }
-    
-    else if (lb.accessoryType == UITableViewCellAccessoryCheckmark) {
-        NSLog(@"hi lb");
-        [record setValue:lbText forKey:@"unit"];
-        NSLog(@"%@", record);
-        
-    } else if (st.accessoryType == UITableViewCellAccessoryCheckmark) {
-        NSLog(@"hi st");
-        [record setValue:stText forKey:@"unit"];
-        NSLog(@"%@", record);
-        
+    if (self.kgCell.accessoryType == UITableViewCellAccessoryCheckmark) {
+        [defaults setObject:@"kg" forKey:@"unit"];
+    } else if (self.lbCell.accessoryType == UITableViewCellAccessoryCheckmark) {
+        [defaults setObject:@"lb" forKey:@"unit"];
+    } else if (self.stCell.accessoryType == UITableViewCellAccessoryCheckmark) {
+        [defaults setObject:@"st" forKey:@"unit"];
     }
 
-    //Save Record
-    NSError *error = nil;
+    [self dismissViewControllerAnimated:YES completion:nil];
     
-    if ([context save:&error]) {
-        //Dismiss View Controller
-        [self dismissViewControllerAnimated:YES completion:nil];
-        NSLog (@"%@", self);
-    } else {
-        if (error) {
-            NSLog(@"Unable to save record");
-            NSLog(@"%@, %@", error, error.localizedDescription);
-        }
-        
-        //Show Alert View
-        [[[UIAlertView alloc] initWithTitle:@"Warning" message:@"Your to-do could not be saved." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-    }
-
-
 }
-
-
-
-
-
-/*
-- (void) tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
-    
-
-
-
-    NSLog (@"hi");
-
-  
-}
- */
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -202,34 +112,37 @@
     UITableViewCell *lb = self.lbCell;
     UITableViewCell *st = self.stCell;
     
-    if ([[self.fetchedResultsController fetchedObjects] count] > 0 && [[self.fetchedResultsController fetchedObjects] count]  < 3) {
-        NSManagedObject *record = [self.fetchedResultsController objectAtIndexPath:indexPath];
-        
-        
-        
-        if ([[record valueForKey:@"unit"] isEqual: @"lb"])
-        {
-            lb.accessoryType = UITableViewCellAccessoryCheckmark;
-            kg.accessoryType = UITableViewCellAccessoryNone;
-            st.accessoryType = UITableViewCellAccessoryNone;
-        }
-        else if ([[record valueForKey:@"unit"] isEqual: @"kg"])
-        {
-            kg.accessoryType = UITableViewCellAccessoryCheckmark;
-            lb.accessoryType = UITableViewCellAccessoryNone;
-            st.accessoryType = UITableViewCellAccessoryNone;
-        }
-        else
-        {
-            st.accessoryType = UITableViewCellAccessoryCheckmark;
-            lb.accessoryType = UITableViewCellAccessoryNone;
-            kg.accessoryType = UITableViewCellAccessoryNone;
-        }
-        
-    } else {
-        lb.accessoryType = UITableViewCellAccessoryCheckmark;
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    if ([[defaults objectForKey:@"unit"]  isEqual: @"kg"]) {
+        kg.accessoryType = UITableViewCellAccessoryCheckmark;
+        lb.accessoryType = UITableViewCellAccessoryNone;
+        st.accessoryType = UITableViewCellAccessoryNone;
     }
+    else if ([[defaults objectForKey:@"unit"]  isEqual: @"st"]) {
+        st.accessoryType = UITableViewCellAccessoryCheckmark;
+        kg.accessoryType = UITableViewCellAccessoryNone;
+        lb.accessoryType = UITableViewCellAccessoryNone;
+    }
+    else if ([[defaults objectForKey:@"unit"]  isEqual: @"lb"])  {
+        lb.accessoryType = UITableViewCellAccessoryCheckmark;
+        kg.accessoryType = UITableViewCellAccessoryNone;
+        st.accessoryType = UITableViewCellAccessoryNone;
+    }
+   
+    
 }
+
+/*
+- (void) tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
+
+
+
+    
+    
+}
+ 
+ */
 
 
 /*

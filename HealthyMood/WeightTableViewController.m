@@ -11,6 +11,7 @@
 #import "WeightTableViewCell.h"
 #import "Weight.h"
 #import "AddWeightViewController.h"
+#import "SettingsTableViewController.h"
 
 
 #import "Weight.h"
@@ -65,6 +66,7 @@
         // Configure View Controller
         [vc setManagedObjectContext:self.managedObjectContext];
     }
+
  
 
 
