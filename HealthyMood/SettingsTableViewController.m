@@ -26,6 +26,8 @@
     self.kgCell.textLabel.text = @"kg";
     self.lbCell.textLabel.text = @"lb";
     self.stCell.textLabel.text = @"st";
+    
+    self.lbCell.accessoryType = UITableViewCellAccessoryCheckmark;
 }
 
 - (void)didReceiveMemoryWarning {

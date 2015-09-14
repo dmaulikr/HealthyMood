@@ -2,7 +2,7 @@
 //  Weight.m
 //  HealthyMood
 //
-//  Created by Nadine Khattak on 9/9/15.
+//  Created by Nadine Khattak on 9/13/15.
 //  Copyright (c) 2015 Ensach. All rights reserved.
 //
 
@@ -13,6 +13,5 @@
 
 @dynamic weight;
 @dynamic weightDate;
-@dynamic unit;
 
 @end

@@ -130,6 +130,38 @@
     // Fetch Record
     NSManagedObject *record = [self.fetchedResultsController objectAtIndexPath:indexPath];
     
+    //store:
+    // if user chooses kg, change the record to be stored as pounds
+    // set value of attribute to be kg entered times around 2
+    
+    //display:
+    //display the data as record value stored times kg conversion, around 0.2
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSNumber *weightEntered = [record valueForKey:@"weight"];
+    NSNumber *weightLbConv;
+    
+    double weightEnteredDouble = [weightEntered doubleValue];
+    double weightLbConvDouble = [weightLbConv doubleValue];
+    
+    if ([[defaults objectForKey:@"unit"]  isEqual: @"kg"])  {
+        weightEnteredDouble = weightLbConvDouble * 2.20462;
+    }
+    
+    /*
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    NSNumber *weightLbEntered = [record valueForKey:@"weight"];
+    NSNumber *weightKgConv;
+    
+    double weightKgConvDouble = [weightKgConv doubleValue];
+    double weightLbConvDouble = [weightLbEntered doubleValue];
+    
+    if ([[defaults objectForKey:@"unit"]  isEqual: @"kg"]) {
+        weightKgConvDouble = weightLbConvDouble * 0.453592;
+    }
+    */
+    
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
     NSString *dateStr = [[record valueForKey:@"weightDate"] description];
@@ -143,7 +175,12 @@
     [dateTimeFormatter setDateFormat:@"HH:mm a"];
 
     // Update Cell
-    [cell.nameLabel setText:[record valueForKey:@"weight"]];
+    NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
+    f.numberStyle = NSNumberFormatterDecimalStyle;
+    f.generatesDecimalNumbers = YES;
+    f.maximumFractionDigits = 2;
+    
+    [cell.nameLabel setText:[f stringFromNumber:[record valueForKey:@"weight"]]];
     cell.dateLabel.text = [dateFormatter stringFromDate:date];
     cell.timeLabel.text = [dateTimeFormatter stringFromDate:dateTime];
 

@@ -37,10 +37,14 @@
 }
 
 - (IBAction)save:(id)sender {
+   
     NSString *weightText = self.textField.text;
     
     NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
     f.numberStyle = NSNumberFormatterDecimalStyle;
+    f.generatesDecimalNumbers = YES;
+    f.maximumFractionDigits = 2;
+
     NSNumber *weightNumber = [f numberFromString:weightText];
 
     
@@ -51,7 +55,9 @@
         //Initialize Record
         NSManagedObject *record = [[NSManagedObject alloc] initWithEntity:entity insertIntoManagedObjectContext:self.managedObjectContext];
         
-        //Populate Recrod
+        //Populate Record
+        
+        
         [record setValue:weightNumber forKey:@"weight"];
         [record setValue:[NSDate date] forKey:@"weightDate"];
 
@@ -62,6 +68,7 @@
         if ([self.managedObjectContext save:&error]) {
             //Dismiss View Controller
             [self dismissViewControllerAnimated:YES completion:nil];
+           
         } else {
             if (error) {
                 NSLog(@"Unable to save record");

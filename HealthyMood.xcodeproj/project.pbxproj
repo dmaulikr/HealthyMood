@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E936FA541BA09CB5002D31AE /* Weight.m in Sources */ = {isa = PBXBuildFile; fileRef = E936FA531BA09CB5002D31AE /* Weight.m */; };
+		E93A03191BA5FC59004E505E /* Weight.m in Sources */ = {isa = PBXBuildFile; fileRef = E93A03181BA5FC59004E505E /* Weight.m */; };
 		E971AD991B9CBE350092F9A8 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E971AD971B9CBE350092F9A8 /* Model.xcdatamodeld */; };
 		E971ADA11B9D24170092F9A8 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E971ADA01B9D24170092F9A8 /* CoreData.framework */; };
 		E971ADA31B9D241F0092F9A8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E971ADA21B9D241F0092F9A8 /* Foundation.framework */; };
@@ -36,8 +36,10 @@
 
 /* Begin PBXFileReference section */
 		E936FA511BA09C8C002D31AE /* Model 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 3.xcdatamodel"; sourceTree = "<group>"; };
-		E936FA521BA09CB5002D31AE /* Weight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Weight.h; sourceTree = "<group>"; };
-		E936FA531BA09CB5002D31AE /* Weight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Weight.m; sourceTree = "<group>"; };
+		E93A030F1BA5F5D3004E505E /* Model 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 4.xcdatamodel"; sourceTree = "<group>"; };
+		E93A03161BA5FC46004E505E /* Model 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 5.xcdatamodel"; sourceTree = "<group>"; };
+		E93A03171BA5FC59004E505E /* Weight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Weight.h; sourceTree = "<group>"; };
+		E93A03181BA5FC59004E505E /* Weight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Weight.m; sourceTree = "<group>"; };
 		E971AD981B9CBE350092F9A8 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		E971ADA01B9D24170092F9A8 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		E971ADA21B9D241F0092F9A8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -109,8 +111,8 @@
 		E97D79001B9BC0D300F6DC79 /* HealthyMood */ = {
 			isa = PBXGroup;
 			children = (
-				E936FA521BA09CB5002D31AE /* Weight.h */,
-				E936FA531BA09CB5002D31AE /* Weight.m */,
+				E93A03171BA5FC59004E505E /* Weight.h */,
+				E93A03181BA5FC59004E505E /* Weight.m */,
 				E97D79051B9BC0D300F6DC79 /* AppDelegate.h */,
 				E97D79061B9BC0D300F6DC79 /* AppDelegate.m */,
 				E97D790E1B9BC0D300F6DC79 /* Main.storyboard */,
@@ -260,11 +262,11 @@
 				E9BC86801BA1EEC5002177B0 /* SettingsTableViewController.m in Sources */,
 				E97D792F1B9BC19000F6DC79 /* WeightTableViewController.m in Sources */,
 				E97D79071B9BC0D300F6DC79 /* AppDelegate.m in Sources */,
+				E93A03191BA5FC59004E505E /* Weight.m in Sources */,
 				E97D79351B9C241900F6DC79 /* WeightTableViewCell.m in Sources */,
 				E971AD991B9CBE350092F9A8 /* Model.xcdatamodeld in Sources */,
 				E97D79321B9BC22700F6DC79 /* AddWeightViewController.m in Sources */,
 				E97D79041B9BC0D300F6DC79 /* main.m in Sources */,
-				E936FA541BA09CB5002D31AE /* Weight.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -484,11 +486,13 @@
 		E971AD971B9CBE350092F9A8 /* Model.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				E93A03161BA5FC46004E505E /* Model 5.xcdatamodel */,
+				E93A030F1BA5F5D3004E505E /* Model 4.xcdatamodel */,
 				E936FA511BA09C8C002D31AE /* Model 3.xcdatamodel */,
 				E971ADA91B9EF0530092F9A8 /* Model 2.xcdatamodel */,
 				E971AD981B9CBE350092F9A8 /* Model.xcdatamodel */,
 			);
-			currentVersion = E936FA511BA09C8C002D31AE /* Model 3.xcdatamodel */;
+			currentVersion = E93A03161BA5FC46004E505E /* Model 5.xcdatamodel */;
 			path = Model.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
