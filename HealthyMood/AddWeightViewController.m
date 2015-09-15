@@ -57,8 +57,23 @@
         
         //Populate Record
         
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         
-        [record setValue:weightNumber forKey:@"weight"];
+        double weightEnteredDouble;
+        double weightLbConvDouble =[weightNumber doubleValue];
+
+        
+        if ([[defaults objectForKey:@"unit"]  isEqual: @"kg"])  {
+            weightEnteredDouble = weightLbConvDouble * 2.20;
+            NSNumber *weightEnteredBlah = [NSNumber numberWithDouble:weightEnteredDouble];
+            [record setValue:weightEnteredBlah forKey:@"weight"];
+        } else {
+            [record setValue:weightNumber forKey:@"weight"];
+        }
+
+        
+        
+
         [record setValue:[NSDate date] forKey:@"weightDate"];
 
         

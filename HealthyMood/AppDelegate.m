@@ -38,6 +38,7 @@
         [viewController setManagedObjectContext:self.managedObjectContext];
     }
     
+    
 
     
     // Configure Window
@@ -49,6 +50,9 @@
     [defaults setObject:@"lb" forKey:@"unit"];
     }
 
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    
 
     
     return YES;

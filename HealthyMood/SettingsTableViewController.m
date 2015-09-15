@@ -66,8 +66,9 @@
     {
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
- 
- 
+    
+
+
     
    
 }
@@ -93,6 +94,8 @@
     }
 
     [self dismissViewControllerAnimated:YES completion:nil];
+    
+    [defaults synchronize];
     
 }
 
@@ -134,6 +137,8 @@
    
     
 }
+
+
 
 /*
 - (void) tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
