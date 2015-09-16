@@ -12,13 +12,6 @@
 
 @interface WeightTableViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate>
 
-
-
-
 @property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
-
-
-
-
 
 @end

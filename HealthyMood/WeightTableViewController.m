@@ -18,10 +18,7 @@
 
 @interface WeightTableViewController ()
 
-
-
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
-
 @property (strong, nonatomic) NSIndexPath *selection;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *settingsButton;
 @property BOOL completed;
@@ -57,8 +54,6 @@
     
     [[NSNotificationCenter defaultCenter]
      addObserver:self selector:@selector(handlePreferenceChange:) name:NSUserDefaultsDidChangeNotification object:nil];
-    
-   
 }
 
 - (void)handlePreferenceChange:(NSNotification *)note
@@ -66,10 +61,6 @@
     NSLog(@"received user defaults did change notification");
 
     [self.tableView reloadData];
-    
-    
-
-
 }
 
 
@@ -81,13 +72,7 @@
 
         // Configure View Controller
         [vc setManagedObjectContext:self.managedObjectContext];
-        
-
     }
-
- 
-
-
 }
 
 #pragma mark Fetched Results Controller Delegate Methods
@@ -166,18 +151,12 @@
     } else {
         [cell.nameLabel setText:[f stringFromNumber:[record valueForKey:@"weight"]]];
     }
-    
-    
-    
     //store:
     // if user chooses kg, change the record to be stored as pounds
     // set value of attribute to be kg entered times around 2s
     
     //display:
     //display the data as record value stored times kg conversion, around 0.2
-    
-    
-
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
@@ -191,9 +170,7 @@
     NSDate *dateTime = [dateTimeFormatter dateFromString:dateTimeStr];
     [dateTimeFormatter setDateFormat:@"HH:mm a"];
 
-    // Update Cell
-    
- //   [cell.nameLabel setText:[f stringFromNumber:[record valueForKey:@"weight"]]];
+    //[cell.nameLabel setText:[f stringFromNumber:[record valueForKey:@"weight"]]];
     cell.dateLabel.text = [dateFormatter stringFromDate:date];
     cell.timeLabel.text = [dateTimeFormatter stringFromDate:dateTime];
 
@@ -225,9 +202,6 @@
     
     // Store Selection
     [self setSelection:indexPath];
-    
-
-
 }
 
 @end

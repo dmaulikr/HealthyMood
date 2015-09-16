@@ -16,9 +16,8 @@
 @interface AppDelegate ()
 
 @property (nonatomic, strong) NSManagedObjectModel *managedObjectModel;
-// @property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+//@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, strong) NSPersistentStoreCoordinator *persistentStoreCoordinator;
-
 
 @end
 
@@ -38,9 +37,6 @@
         [viewController setManagedObjectContext:self.managedObjectContext];
     }
     
-    
-
-    
     // Configure Window
     [self.window setRootViewController:rootNavigationController];
     
@@ -52,11 +48,7 @@
 
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-    
-
-    
     return YES;
-
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
@@ -66,17 +58,6 @@
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     // Save Managed Object Context
     [self saveManagedObjectContext];
-    
-    /*
-     NSError *error = nil;
-     
-     if (![self.managedObjectContext save:&error]) {
-     if (error) {
-     NSLog(@"Unable to save changes.");
-     NSLog(@"%@, %@", error, error.localizedDescription);
-     }
-     }
-     */
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
@@ -87,8 +68,6 @@
     
 }
 
-// saves changes in the application's managed object context before the application terminates.
-//
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Save Managed Object Context
     [self saveManagedObjectContext];
@@ -104,8 +83,6 @@
      }
      */
 }
-
-
 
 #pragma mark - Core Data stack
 

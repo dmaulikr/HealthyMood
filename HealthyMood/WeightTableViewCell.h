@@ -13,9 +13,7 @@
 
 @property (nonatomic, strong) Weight *weight;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
-
 @property (weak, nonatomic) IBOutlet UILabel *dateLabel;
-
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 
 @end

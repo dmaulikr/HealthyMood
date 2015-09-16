@@ -15,8 +15,6 @@
 @interface SettingsTableViewController ()
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 
-
-
 @end
 
 @implementation SettingsTableViewController
@@ -66,11 +64,6 @@
     {
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
-    
-
-
-    
-   
 }
 
 
@@ -134,18 +127,13 @@
         kg.accessoryType = UITableViewCellAccessoryNone;
         st.accessoryType = UITableViewCellAccessoryNone;
     }
-   
-    
 }
 
 
 
 /*
 - (void) tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
-
-
-
-    
+ 
     
 }
  

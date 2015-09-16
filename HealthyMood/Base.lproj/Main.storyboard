@@ -80,7 +80,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
                         <sections>
-                            <tableViewSection id="tX4-Yg-q2c">
+                            <tableViewSection headerTitle="Units" id="tX4-Yg-q2c" userLabel="Units">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="uzG-hB-Z9T">
                                         <autoresizingMask key="autoresizingMask"/>

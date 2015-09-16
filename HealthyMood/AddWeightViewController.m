@@ -20,7 +20,7 @@
     
     [super viewDidLoad];
     
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if([[defaults objectForKey:@"unit"] isEqual:@"lb"]) {
         self.unitLabel.text = @"lb";
     } else if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
@@ -62,7 +62,6 @@
         double weightEnteredDouble;
         double weightLbConvDouble =[weightNumber doubleValue];
 
-        
         if ([[defaults objectForKey:@"unit"]  isEqual: @"kg"])  {
             weightEnteredDouble = weightLbConvDouble * 2.20;
             NSNumber *weightEnteredBlah = [NSNumber numberWithDouble:weightEnteredDouble];
@@ -71,12 +70,8 @@
             [record setValue:weightNumber forKey:@"weight"];
         }
 
-        
-        
-
         [record setValue:[NSDate date] forKey:@"weightDate"];
 
-        
         //Save Record
         NSError *error = nil;
         
