@@ -2,7 +2,7 @@
 //  Weight.h
 //  HealthyMood
 //
-//  Created by Nadine Khattak on 9/13/15.
+//  Created by Nadine Khattak on 9/16/15.
 //  Copyright (c) 2015 Ensach. All rights reserved.
 //
 
@@ -14,5 +14,6 @@
 
 @property (nonatomic, retain) NSNumber * weight;
 @property (nonatomic, retain) NSDate * weightDate;
+@property (nonatomic, retain) NSString * sectionIdentifier;
 
 @end
