@@ -12,6 +12,7 @@
 #import "Weight.h"
 #import "AddWeightViewController.h"
 #import "SettingsTableViewController.h"
+#import "AppDelegate.h"
 
 
 
@@ -30,6 +31,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    AppDelegate *delegate = [[UIApplication sharedApplication] delegate];
+    self.managedObjectContext = delegate.managedObjectContext;
     
     // Initialize Fetch Request
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Weight"];

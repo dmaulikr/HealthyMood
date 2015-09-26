@@ -25,10 +25,11 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
+   /*
     UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle: nil];
     
     // Instantiate Root Navigation Controller
-    UINavigationController *rootNavigationController = (UINavigationController *)[mainStoryboard instantiateViewControllerWithIdentifier:@"rootNavigationController"];
+   UINavigationController *rootNavigationController = (UINavigationController *)[mainStoryboard instantiateViewControllerWithIdentifier:@"rootNavigationController"];
     
     // Configure View Controller
     WeightTableViewController *viewController = (WeightTableViewController *)[rootNavigationController topViewController];
@@ -39,7 +40,19 @@
     
     // Configure Window
     [self.window setRootViewController:rootNavigationController];
+    */
     
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSManagedObjectContext *context = [self managedObjectContext];
+    
+    NSError *error;
+    
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Weight"
+                                              inManagedObjectContext:context];
+    [fetchRequest setEntity:entity];
+
+    
+
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if ([[defaults objectForKey:@"unit" ] isEqual:nil])
     {
