@@ -17,6 +17,7 @@
 
 
 
+
 @interface WeightTableViewController ()
 
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
@@ -34,10 +35,12 @@
     
     AppDelegate *delegate = [[UIApplication sharedApplication] delegate];
     self.managedObjectContext = delegate.managedObjectContext;
+
     
     // Initialize Fetch Request
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Weight"];
-    
+    // For debugging
+    //[fetchRequest setReturnsObjectsAsFaults:NO];
     // Add Sort Descriptors
     [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"weightDate" ascending:NO]]];
     
@@ -45,20 +48,16 @@
     self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:@"sectionIdentifier" cacheName:nil];
     
     // Configure Fetched Results Controller
-    
+    NSLog(@"Before fetch fetchRequests %@", self.fetchedResultsController.fetchedObjects);
     [self.fetchedResultsController setDelegate:self];
     
-
-
     
-    
-
     // Perform Fetch
     NSError *error = nil;
     [self.fetchedResultsController performFetch:&error];
+    NSLog(@"After fetch fetchRequests %@", self.fetchedResultsController.fetchedObjects);
     
-
-
+    
     
     if (error) {
         NSLog(@"Unable to perform fetch.");
@@ -67,15 +66,15 @@
     
     [[NSNotificationCenter defaultCenter]
      addObserver:self selector:@selector(handlePreferenceChange:) name:NSUserDefaultsDidChangeNotification object:nil];
-     
-     
+    
+    
     
 }
 
 - (void)handlePreferenceChange:(NSNotification *)note
 {
     NSLog(@"received user defaults did change notification");
-
+    
     [self.tableView reloadData];
 }
 
@@ -85,7 +84,7 @@
         // Obtain Reference to View Controller
         UINavigationController *nc = (UINavigationController *)[segue destinationViewController];
         AddWeightViewController *vc = (AddWeightViewController *)[nc topViewController];
-
+        
         // Configure View Controller
         [vc setManagedObjectContext:self.managedObjectContext];
     }
@@ -159,10 +158,10 @@
     f.numberStyle = NSNumberFormatterDecimalStyle;
     f.generatesDecimalNumbers = YES;
     f.maximumFractionDigits = 2;
-
+    
     double weightRecordDouble = [weightRecord doubleValue];
     double weightRecordKgDisplay = weightRecordDouble * 0.453592;
-
+    
     if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
         
         [cell.nameLabel setText:[NSString stringWithFormat:@"%.01f", weightRecordKgDisplay]];
@@ -175,24 +174,24 @@
     
     //display:
     //display the data as record value stored times kg conversion, around 0.2
-  
+    
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
     NSString *dateStr = [[record valueForKey:@"weightDate"] description];
     NSDate *date = [dateFormatter dateFromString:dateStr];
     [dateFormatter setDateFormat:@"dd"];
-
+    
     NSDateFormatter *dateTimeFormatter = [[NSDateFormatter alloc] init];
     [dateTimeFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
     NSString *dateTimeStr = [[record valueForKey:@"weightDate"] description];
     NSDate *dateTime = [dateTimeFormatter dateFromString:dateTimeStr];
     [dateTimeFormatter setDateFormat:@"HH:mm a"];
-
+    
     //[cell.nameLabel setText:[f stringFromNumber:[record valueForKey:@"weight"]]];
     cell.dateLabel.text = [dateFormatter stringFromDate:date];
     cell.timeLabel.text = [dateTimeFormatter stringFromDate:dateTime];
     
-
+    
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -215,11 +214,11 @@
     }
     
     NSInteger numericSection = [[theSection name] integerValue];
-        NSLog (@"theSection names, %@", [theSection name]);
+    NSLog (@"theSection names, %@", [theSection name]);
     NSInteger year = numericSection / 1000;
-        NSLog (@"year, %i", year);
+    NSLog (@"year, %i", year);
     NSInteger month = numericSection - (year * 1000);
-        NSLog (@"month, %i", month);
+    NSLog (@"month, %i", month);
     
     NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
     dateComponents.year = year;

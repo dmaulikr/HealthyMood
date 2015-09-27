@@ -54,25 +54,14 @@
                             <outlet property="delegate" destination="ePy-d5-1ER" id="3L3-O7-UB2"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Weight List" id="fXd-41-74G">
-                        <barButtonItem key="leftBarButtonItem" title="Settings" id="rG4-eJ-BNQ">
-                            <connections>
-                                <segue destination="8k6-i6-mFj" kind="presentation" identifier="showSettings" id="h0G-26-Npx"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="IkH-Fh-Ghu">
-                            <connections>
-                                <segue destination="RMk-wE-XTb" kind="presentation" identifier="addWeight" id="a5E-gD-LVM"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Weight List" id="fXd-41-74G"/>
                     <connections>
                         <outlet property="tableView" destination="Ocq-GF-31E" id="74P-bX-dcs"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lUj-18-moG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1653" y="-339"/>
+            <point key="canvasLocation" x="699" y="59"/>
         </scene>
         <!--Settings Table View Controller-->
         <scene sceneID="fgB-Vi-iHA">
@@ -117,16 +106,8 @@
                             <outlet property="delegate" destination="1mh-gV-NcC" id="WTF-yD-Paw"/>
                         </connections>
                     </tableView>
-                    <toolbarItems>
-                        <barButtonItem title="Item" id="DBf-0a-PG4"/>
-                    </toolbarItems>
-                    <navigationItem key="navigationItem" id="WX4-HB-hGW">
-                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="brx-Uu-3ij">
-                            <connections>
-                                <action selector="save:" destination="1mh-gV-NcC" id="q6x-e2-EuG"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="WX4-HB-hGW"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="kgCell" destination="uzG-hB-Z9T" id="qac-Hw-Rxy"/>
@@ -137,7 +118,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="43X-hN-GZQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1536" y="595"/>
+            <point key="canvasLocation" x="146" y="888"/>
         </scene>
         <!--Add Weight Item-->
         <scene sceneID="tne-QT-ifu">
@@ -172,11 +153,6 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Add Weight Item" id="GOE-Gx-Twy">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="qOb-EO-rxV">
-                            <connections>
-                                <action selector="cancel:" destination="BYZ-38-t0r" id="Bky-dL-CgQ"/>
-                            </connections>
-                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="save" id="lvQ-Dr-6b2">
                             <connections>
                                 <action selector="save:" destination="BYZ-38-t0r" id="rHB-ih-rMF"/>
@@ -190,7 +166,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3004" y="-155"/>
+            <point key="canvasLocation" x="1164" y="-681"/>
         </scene>
         <!--Selection Table View Controller-->
         <scene sceneID="E3D-RL-Gny">
@@ -211,7 +187,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="RMk-wE-XTb" kind="presentation" id="Tjg-eh-B40"/>
+                                            <segue destination="BYZ-38-t0r" kind="show" identifier="addWeight" id="dzL-1L-Wwa"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="MHq-xD-A45">
@@ -222,7 +198,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="MjS-pT-wbJ" kind="presentation" id="6yA-mr-Jrk"/>
+                                            <segue destination="ePy-d5-1ER" kind="show" id="0te-5m-FQf"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="8G8-bM-zge">
@@ -233,7 +209,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="eWs-9g-cqq" kind="show" id="xRb-Td-2MX"/>
+                                            <segue destination="eWs-9g-cqq" kind="show" id="sCp-6O-W2l"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="7sv-Vf-Xcd">
@@ -244,7 +220,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="8k6-i6-mFj" kind="presentation" id="91T-UH-VjS"/>
+                                            <segue destination="1mh-gV-NcC" kind="show" id="ihQ-t2-tdL"/>
                                         </connections>
                                     </tableViewCell>
                                 </cells>
@@ -265,61 +241,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8hk-c3-hbD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="18" y="-184"/>
-        </scene>
-        <!--Weight Table Nav-->
-        <scene sceneID="mvU-Uc-WAF">
-            <objects>
-                <navigationController storyboardIdentifier="rootNavigationController" title="Weight Table Nav" automaticallyAdjustsScrollViewInsets="NO" id="MjS-pT-wbJ" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="iC1-Fw-0uk">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="ePy-d5-1ER" kind="relationship" relationship="rootViewController" id="czQ-uF-YNg"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="n3q-tq-fpR" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="785" y="-183"/>
-        </scene>
-        <!--Weight Entry Nav-->
-        <scene sceneID="Xbt-ez-GTo">
-            <objects>
-                <navigationController title="Weight Entry Nav" automaticallyAdjustsScrollViewInsets="NO" id="RMk-wE-XTb" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="hYJ-7P-jGo">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="ZPo-qV-U63"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="QK8-1h-Jbg" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2289" y="-167"/>
-        </scene>
-        <!--Settings Nav-->
-        <scene sceneID="0Pe-yY-gam">
-            <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Fsj-ul-gJb" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <navigationController title="Settings Nav" automaticallyAdjustsScrollViewInsets="NO" id="8k6-i6-mFj" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="RET-Gc-ZkX">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="1mh-gV-NcC" kind="relationship" relationship="rootViewController" id="Q4c-cF-w7z"/>
-                    </connections>
-                </navigationController>
-            </objects>
-            <point key="canvasLocation" x="579" y="601"/>
+            <point key="canvasLocation" x="-558" y="-252"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="ENp-rZ-XmW">
@@ -337,7 +259,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9g8-J4-JpS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-794" y="-184"/>
+            <point key="canvasLocation" x="-1318" y="-252"/>
         </scene>
         <!--Weight Graph View Controller-->
         <scene sceneID="HAk-1t-jyE">
@@ -355,11 +277,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="70Y-Su-q1d" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-546" y="660"/>
+            <point key="canvasLocation" x="-628" y="650"/>
         </scene>
     </scenes>
-    <inferredMetricsTieBreakers>
-        <segue reference="Tjg-eh-B40"/>
-        <segue reference="h0G-26-Npx"/>
-    </inferredMetricsTieBreakers>
 </document>

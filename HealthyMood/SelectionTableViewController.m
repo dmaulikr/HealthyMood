@@ -7,8 +7,16 @@
 //
 
 #import "SelectionTableViewController.h"
+#import "AddWeightViewController.h"
+#import <CoreData/CoreData.h>
+#import "Weight.h"
+#import "AppDelegate.h"
+
 
 @interface SelectionTableViewController ()
+
+@property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
+
 
 @end
 
@@ -16,16 +24,21 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+
     self.entrySelCell.textLabel.text = @"Enter Weight";
     self.ViewDataSelCell.textLabel.text = @"View Data";
     self.viewGraphSelCell.textLabel.text = @"View Graphs";
     self.viewSettingsSelCell.textLabel.text = @"Choose Unit";
-
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
     
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
+    // Initialize Fetch Request
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Weight"];
+    
+    // Add Sort Descriptors
+    [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"weightDate" ascending:NO]]];
+    
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -98,5 +111,16 @@
     // Pass the selected object to the new view controller.
 }
 */
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+   
+       if ([segue.identifier isEqualToString:@"addWeight"]) {
+            AddWeightViewController *addWeightVC = [segue destinationViewController];
+            NSManagedObjectContext *context = self.managedObjectContext;
+            
+            [addWeightVC setManagedObjectContext:context];
+        }
+}
+
 
 @end

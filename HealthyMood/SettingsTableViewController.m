@@ -51,6 +51,9 @@
 {
     
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    
+    
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
     self.kgCell.accessoryType = UITableViewCellAccessoryNone;
     self.lbCell.accessoryType = UITableViewCellAccessoryNone;
@@ -64,6 +67,16 @@
     {
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
+    
+    if (self.kgCell.accessoryType == UITableViewCellAccessoryCheckmark) {
+        [defaults setObject:@"kg" forKey:@"unit"];
+    } else if (self.lbCell.accessoryType == UITableViewCellAccessoryCheckmark) {
+        [defaults setObject:@"lb" forKey:@"unit"];
+    } else if (self.stCell.accessoryType == UITableViewCellAccessoryCheckmark) {
+        [defaults setObject:@"st" forKey:@"unit"];
+    }
+    
+
 }
 
 
