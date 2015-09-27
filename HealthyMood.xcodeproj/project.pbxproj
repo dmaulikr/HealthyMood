@@ -68,6 +68,7 @@
 		E994D3A11BA9E3C900B9AC23 /* Model 6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 6.xcdatamodel"; sourceTree = "<group>"; };
 		E994D3A21BA9E41800B9AC23 /* Weight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Weight.h; sourceTree = "<group>"; };
 		E994D3A31BA9E41800B9AC23 /* Weight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Weight.m; sourceTree = "<group>"; };
+		E99D7AF81BB803F400CD5480 /* Model 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 7.xcdatamodel"; sourceTree = "<group>"; };
 		E9BC867E1BA1EEC5002177B0 /* SettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsTableViewController.h; sourceTree = "<group>"; };
 		E9BC867F1BA1EEC5002177B0 /* SettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsTableViewController.m; sourceTree = "<group>"; };
 		E9F7FBE71BB6BAC3006992FD /* SelectionTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionTableViewController.h; sourceTree = "<group>"; };
@@ -504,6 +505,7 @@
 		E971AD971B9CBE350092F9A8 /* Model.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				E99D7AF81BB803F400CD5480 /* Model 7.xcdatamodel */,
 				E994D3A11BA9E3C900B9AC23 /* Model 6.xcdatamodel */,
 				E93A03161BA5FC46004E505E /* Model 5.xcdatamodel */,
 				E93A030F1BA5F5D3004E505E /* Model 4.xcdatamodel */,
@@ -511,7 +513,7 @@
 				E971ADA91B9EF0530092F9A8 /* Model 2.xcdatamodel */,
 				E971AD981B9CBE350092F9A8 /* Model.xcdatamodel */,
 			);
-			currentVersion = E994D3A11BA9E3C900B9AC23 /* Model 6.xcdatamodel */;
+			currentVersion = E99D7AF81BB803F400CD5480 /* Model 7.xcdatamodel */;
 			path = Model.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
