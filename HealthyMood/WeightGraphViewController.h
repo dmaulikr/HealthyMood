@@ -7,7 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import "CorePlot-CocoaTouch.h"
 
-@interface WeightGraphViewController : UIViewController
+@interface WeightGraphViewController : UIViewController <CPTPlotDataSource>
+
+
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic) float stringObject;
+
 
 @end
