@@ -243,10 +243,9 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         NSManagedObject *record = [self.fetchedResultsController objectAtIndexPath:indexPath];
+        [self.managedObjectContext deleteObject:record];
+        [self.managedObjectContext save:nil];
         
-        if (record) {
-            [self.fetchedResultsController.managedObjectContext deleteObject:record];
-        }
     }
 }
 
