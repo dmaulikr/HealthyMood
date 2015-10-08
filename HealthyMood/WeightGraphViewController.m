@@ -20,6 +20,7 @@
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, readwrite, strong) CPTGraph *aGraph;
 @property (nonatomic, readwrite, strong) CPTXYGraph *graph;
+@property (nonatomic, readwrite, strong) NSDate *refDate;
 
 @end
 
@@ -34,51 +35,53 @@
 
     NSError *error = nil;
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Weight"];
-    // For debugging
-    //[fetchRequest setReturnsObjectsAsFaults:NO];
-    // Add Sort Descriptors
     [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"weightDate" ascending:YES]]];
-
     self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:@"sectionIdentifier" cacheName:nil];
-    
-    // Configure Fetched Results Controller
+ 
     NSLog(@"Before fetch fetchRequests %@", self.fetchedResultsController.fetchedObjects);
     // Perform Fetch
     [self.fetchedResultsController performFetch:&error];
     NSLog(@"After fetch fetchRequests %@", self.fetchedResultsController.fetchedObjects);
 
     
-    NSDate *refDate = [NSDate dateWithTimeIntervalSinceReferenceDate:[NSDate date].timeIntervalSinceReferenceDate - (3 * 24 * 60 * 60)];
     NSTimeInterval oneDay = 24 * 60 * 60;
-    
-    // Invert graph view to compensate for iOS coordinates
-    
-    
-    // allocate the graph within the current view bounds
+    int numDays = 3;
+    self.refDate = [NSDate dateWithTimeIntervalSinceReferenceDate:[NSDate date].timeIntervalSinceReferenceDate - (3 * 24 * 60 * 60)];
+    NSDateComponents *components = [[NSDateComponents alloc] init] ;
+
     self.graph = [[CPTXYGraph alloc] initWithFrame: self.view.bounds];
     
     // assign theme to graph
-    CPTTheme *theme = [CPTTheme themeNamed:kCPTDarkGradientTheme];
-    [self.graph applyTheme:theme];
+    //CPTTheme *theme = [CPTTheme themeNamed:kCPTDarkGradientTheme];
+    //[self.graph applyTheme:theme];
     
     // Setting the graph as our hosting layer
     CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:self.view.bounds];
     
     [self.view addSubview:hostingView];
     
+   
+//    CPTGraph *graph = [[CPTXYGraph alloc] initWithFrame:self.hostingView.bounds];
+    
     hostingView.hostedGraph = self.graph;
     
-    self.graph.paddingLeft = 20.0;
-    self.graph.paddingTop = 20.0;
-    self.graph.paddingRight = 20.0;
-    self.graph.paddingBottom = 150.0;
+    self.graph.paddingLeft = 25.0;
+    self.graph.paddingTop = 40.0;
+    self.graph.paddingRight = 25.0;
+    self.graph.paddingBottom = 125.0;
+    
+    self.graph.plotAreaFrame.paddingBottom = 30.0;
+    self.graph.plotAreaFrame.paddingLeft = 35.0;
+    self.graph.plotAreaFrame.paddingTop = 60.0;
+    
+
     
     // setup a plot space for the plot to live in
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)self.graph.defaultPlotSpace;
     NSTimeInterval xLow = 0.0f;
     // sets the range of x values
     plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
-                                                    length:CPTDecimalFromFloat(oneDay * 5)];
+                                                    length:CPTDecimalFromFloat(oneDay * 7)];
     // sets the range of y values
     plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(0)
                                                     length:CPTDecimalFromFloat([self getMaxWeight])];
@@ -90,33 +93,43 @@
     
     // X-axis parameters setting
     CPTXYAxisSet *axisSet = (id)self.graph.axisSet;
-    axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay);
+    CPTXYAxis *x = axisSet.xAxis;
+    axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 2);
     axisSet.xAxis.minorTicksPerInterval = 0;
-    axisSet.xAxis.orthogonalCoordinateDecimal = CPTDecimalFromString(@"1"); //added for date, adjust x line
+    axisSet.xAxis.orthogonalCoordinateDecimal = CPTDecimalFromString(@"0"); //added for date, adjust x line
     axisSet.xAxis.majorTickLineStyle = lineStyle;
     axisSet.xAxis.minorTickLineStyle = lineStyle;
     axisSet.xAxis.axisLineStyle = lineStyle;
     axisSet.xAxis.minorTickLength = 5.0f;
     axisSet.xAxis.majorTickLength = 9.0f;
-    axisSet.xAxis.labelOffset = 3.0f;
+   // axisSet.xAxis.labelOffset = 100.0f;
+
+
+
+
+
     
     // added for date
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateStyle = kCFDateFormatterShortStyle;
+    dateFormatter.dateStyle = NSDateFormatterShortStyle;
     CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter] ;
-    timeFormatter.referenceDate = refDate;
+    timeFormatter.referenceDate = self.refDate;
     axisSet.xAxis.labelFormatter = timeFormatter;
     
     // Y-axis parameters setting
-    axisSet.yAxis.majorIntervalLength = CPTDecimalFromString(@"1");
+    CPTXYAxis *y = axisSet.yAxis;
+    axisSet.yAxis.majorIntervalLength = CPTDecimalFromFloat(2);
     axisSet.yAxis.minorTicksPerInterval = 2;
-    axisSet.yAxis.orthogonalCoordinateDecimal = CPTDecimalFromFloat(oneDay); // added for date, adjusts y line
+    axisSet.yAxis.orthogonalCoordinateDecimal = CPTDecimalFromString(@"0"); // added for date, adjusts y line
     axisSet.yAxis.majorTickLineStyle = lineStyle;
     axisSet.yAxis.minorTickLineStyle = lineStyle;
     axisSet.yAxis.axisLineStyle = lineStyle;
     axisSet.yAxis.minorTickLength = 5.0f;
     axisSet.yAxis.majorTickLength = 7.0f;
-    axisSet.yAxis.labelOffset = 3.0f;
+   // y.tickDirection = CPTSignPositive;
+    
+    
+
     
     
     // This actually performs the plotting
@@ -373,8 +386,11 @@
             return maxWeight;
         }
       
+        [self.graph reloadData];
         
         return maxWeight;
+        
+        
         
     }
 
@@ -393,34 +409,40 @@
 // Therefore this class implements the CPTPlotDataSource protocol
 -(NSNumber *)numberForPlot:(CPTPlot *)plot field:(NSUInteger)fieldEnum recordIndex:(NSUInteger)index
 {
-    
-    int x = 24 * 60 * 60 * index;
-    
-    
-
+ 
     NSNumber * result = [[NSNumber alloc] init];
     // This method returns x and y values.  Check which is being requested here.
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
     if (fieldEnum == CPTScatterPlotFieldX)
     {
         
-        /*NSDate * dateResult = ((Weight*)[self.fetchedResultsController.fetchedObjects objectAtIndex:index]).weightDate;
+        NSDate * dateResult = ((Weight*)[self.fetchedResultsController.fetchedObjects objectAtIndex:index]).weightDate;
         
+        NSTimeInterval interval = [dateResult timeIntervalSince1970];
         
-        NSTimeInterval secondsSince1970 = ([dateResult timeIntervalSinceReferenceDate]) ;
-        
-        
-        result = [NSNumber numberWithDouble:secondsSince1970]; */
-        
-         return [NSNumber numberWithInt: x];
-        NSLog(@"x %@", result);
+        NSDate *date = [NSDate dateWithTimeIntervalSince1970:interval]; // convert to NSDate
+        double intervalInSeconds = [date timeIntervalSinceDate:self.refDate]; // get difference
+        return [NSNumber numberWithDouble:intervalInSeconds]; // return difference
     }
+
     else
     {
         // Return y value, for this example we'll be plotting y = x * x
         if ([self.fetchedResultsController.fetchedObjects count] > index) {
-            NSNumber *result = ((Weight*)[self.fetchedResultsController.fetchedObjects objectAtIndex:index]).weight;
-            NSLog(@"y %@", result);
-            return  result;
+            if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
+                NSNumber *initResult = ((Weight*)[self.fetchedResultsController.fetchedObjects objectAtIndex:index]).weight;
+                float floatResult = [initResult floatValue] * 0.453592;
+                result = @(floatResult);
+                NSLog(@"x %@", result);
+                return result;
+            }
+            else {
+                NSNumber *result = ((Weight*)[self.fetchedResultsController.fetchedObjects objectAtIndex:index]).weight;
+                NSLog(@"y %@", result);
+                return  result;
+            }
+            
 
         } else {
             return nil;
