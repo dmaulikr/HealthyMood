@@ -45,9 +45,9 @@
 
     
     NSTimeInterval oneDay = 24 * 60 * 60;
-    int numDays = 3;
+//    int numDays = 3;
     self.refDate = [NSDate dateWithTimeIntervalSinceReferenceDate:[NSDate date].timeIntervalSinceReferenceDate - (3 * 24 * 60 * 60)];
-    NSDateComponents *components = [[NSDateComponents alloc] init] ;
+//    NSDateComponents *components = [[NSDateComponents alloc] init] ;
 
     self.graph = [[CPTXYGraph alloc] initWithFrame: self.view.bounds];
     
@@ -60,21 +60,20 @@
     
     [self.view addSubview:hostingView];
     
-   
-//    CPTGraph *graph = [[CPTXYGraph alloc] initWithFrame:self.hostingView.bounds];
-    
     hostingView.hostedGraph = self.graph;
     
     self.graph.paddingLeft = 25.0;
-    self.graph.paddingTop = 40.0;
+    self.graph.paddingTop = 55.0;
     self.graph.paddingRight = 25.0;
-    self.graph.paddingBottom = 125.0;
+    self.graph.paddingBottom = 25.0;
     
-    self.graph.plotAreaFrame.paddingBottom = 30.0;
-    self.graph.plotAreaFrame.paddingLeft = 35.0;
-    self.graph.plotAreaFrame.paddingTop = 60.0;
+    self.graph.plotAreaFrame.paddingBottom = 40.0;
+    self.graph.plotAreaFrame.paddingLeft = 30.0;
+    self.graph.plotAreaFrame.paddingTop = 40.0;
     
-
+    CPTColor *backgroundColor = [CPTColor colorWithComponentRed:255.0f/255.0f green:255.0f/255.0f blue:240.0f/255.0f alpha:1.0f];
+    self.graph.fill = [CPTFill fillWithColor:backgroundColor];
+    
     
     // setup a plot space for the plot to live in
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)self.graph.defaultPlotSpace;
@@ -84,12 +83,18 @@
                                                     length:CPTDecimalFromFloat(oneDay * 7)];
     // sets the range of y values
     plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(0)
-                                                    length:CPTDecimalFromFloat([self getMaxWeight])];
+                                                    length:CPTDecimalFromFloat([self getMaxWeight]+.5)];
     
     // plotting style is set to line plots
     CPTMutableLineStyle *lineStyle = [CPTMutableLineStyle lineStyle];
-    lineStyle.lineColor = [CPTColor blackColor];
-    lineStyle.lineWidth = 2.0f;
+    lineStyle.lineColor = [CPTColor blueColor];
+    lineStyle.lineWidth = 1.0f;
+    lineStyle.lineCap   = kCGLineCapRound;
+    
+
+    
+    CPTMutableTextStyle *textStyle = [CPTMutableTextStyle textStyle];
+    [textStyle setFontSize:8.0f];
     
     // X-axis parameters setting
     CPTXYAxisSet *axisSet = (id)self.graph.axisSet;
@@ -101,222 +106,133 @@
     axisSet.xAxis.minorTickLineStyle = lineStyle;
     axisSet.xAxis.axisLineStyle = lineStyle;
     axisSet.xAxis.minorTickLength = 5.0f;
-    axisSet.xAxis.majorTickLength = 9.0f;
+    axisSet.xAxis.majorTickLength = 2.0f;
+    [x setLabelTextStyle:textStyle];
+    
+
    // axisSet.xAxis.labelOffset = 100.0f;
-
-
-
-
-
     
     // added for date
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateStyle = NSDateFormatterShortStyle;
+    [dateFormatter setDateFormat:@"MM/dd"];
     CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter] ;
     timeFormatter.referenceDate = self.refDate;
     axisSet.xAxis.labelFormatter = timeFormatter;
     
     // Y-axis parameters setting
     CPTXYAxis *y = axisSet.yAxis;
-    axisSet.yAxis.majorIntervalLength = CPTDecimalFromFloat(2);
-    axisSet.yAxis.minorTicksPerInterval = 2;
+    axisSet.yAxis.majorIntervalLength = CPTDecimalFromFloat(10);
+    axisSet.yAxis.minorTicksPerInterval = 0;
     axisSet.yAxis.orthogonalCoordinateDecimal = CPTDecimalFromString(@"0"); // added for date, adjusts y line
     axisSet.yAxis.majorTickLineStyle = lineStyle;
-    axisSet.yAxis.minorTickLineStyle = lineStyle;
+   // axisSet.yAxis.minorTickLineStyle = lineStyle;
     axisSet.yAxis.axisLineStyle = lineStyle;
-    axisSet.yAxis.minorTickLength = 5.0f;
-    axisSet.yAxis.majorTickLength = 7.0f;
-   // y.tickDirection = CPTSignPositive;
+    //axisSet.yAxis.minorTickLength = 5.0f;
+    axisSet.yAxis.majorTickLength = 2.0f;
     
+     [y setLabelTextStyle:textStyle];
     
-
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setMaximumFractionDigits:0];
     
+    y.labelFormatter = formatter;
     
     // This actually performs the plotting
     CPTScatterPlot *xSquaredPlot = [[CPTScatterPlot alloc] init] ;
     
     CPTMutableLineStyle *dataLineStyle = [CPTMutableLineStyle lineStyle];
     //xSquaredPlot.identifier = @"X Squared Plot";
-    xSquaredPlot.identifier = @"Date Plot";
+    
+    
+
     
     dataLineStyle.lineWidth = 1.0f;
-    dataLineStyle.lineColor = [CPTColor redColor];
+    dataLineStyle.lineColor = [CPTColor greenColor];
     xSquaredPlot.dataLineStyle = dataLineStyle;
     xSquaredPlot.dataSource = self;
     
+    
+    CPTColor *areaColor = [CPTColor blueColor];
+    CPTGradient *areaGradient = [CPTGradient gradientWithBeginningColor:areaColor endingColor:[CPTColor clearColor]];
+    [areaGradient setAngle:-90.0f];
+    CPTFill *areaGradientFill = [CPTFill fillWithGradient:areaGradient];
+    [xSquaredPlot setAreaFill:areaGradientFill];
+    [xSquaredPlot setAreaBaseValue:CPTDecimalFromInt(0)];
+    
+    areaColor = [CPTColor colorWithComponentRed:255.0f/255.0f green:228.0f/255.0f blue:225.0f/255.0f alpha:1.0f];
+    areaGradient = [CPTGradient gradientWithBeginningColor:areaColor endingColor:[CPTColor clearColor]];
+    [areaGradient setAngle:-90.0f];
+    areaGradientFill = [CPTFill fillWithGradient:areaGradient];
+    [xSquaredPlot setAreaFill:areaGradientFill];
+    [xSquaredPlot setAreaBaseValue:CPTDecimalFromInt(0)];
+
+    
+    
+    /*
     CPTPlotSymbol *greenCirclePlotSymbol = [CPTPlotSymbol ellipsePlotSymbol];
-    greenCirclePlotSymbol.fill = [CPTFill fillWithColor:[CPTColor greenColor]];
+    greenCirclePlotSymbol.fill = [CPTFill fillWithColor:[CPTColor yellowColor]];
     greenCirclePlotSymbol.size = CGSizeMake(2.0, 2.0);
     xSquaredPlot.plotSymbol = greenCirclePlotSymbol;
+     
+     */
     
     // add plot to graph
      [self.graph addPlot:xSquaredPlot];
+    
+    
 
+}
 
+- (CPTPlotSymbol *)symbolForScatterPlot:(CPTScatterPlot *)aPlot recordIndex:(NSUInteger)index
+{
+    CPTPlotSymbol *plotSymbol = [CPTPlotSymbol ellipsePlotSymbol];
+    [plotSymbol setSize:CGSizeMake(4, 4)];
+    [plotSymbol setFill:[CPTFill fillWithColor:[CPTColor yellowColor]]];
+    [plotSymbol setLineStyle:nil];
+    [aPlot setPlotSymbol:plotSymbol];
     
-/*
-    NSDate *refDate = [NSDate dateWithTimeIntervalSinceReferenceDate:31556926 * 10];
-    NSTimeInterval oneDay = 24 * 60 * 60;
+    return plotSymbol;
+}
 
-    //Create graph
-    CPTXYGraph *newGraph = [[CPTXYGraph alloc] init];
-    
-    // We need a hostview, you can create one in IB (and create an outlet) or just do this:
-    CPTGraphHostingView* hostView = [[CPTGraphHostingView alloc] initWithFrame:self.view.frame];
-    [self.view addSubview: hostView];
-    
-    // Create a CPTGraph object and add to hostView
-    CPTGraph* graph = [[CPTXYGraph alloc] initWithFrame:hostView.bounds];
-    CPTTheme *theme = [CPTTheme themeNamed:kCPTDarkGradientTheme];
-    [graph applyTheme:theme];
+-(void)viewDidLayoutSubviews {
 
-    
-    hostView.hostedGraph = graph;
-    
-    // Get the (default) plotspace from the graph so we can set its x/y ranges
-    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *) graph.defaultPlotSpace;
-     NSTimeInterval xLow = 0.0f;
-    // Note that these CPTPlotRange are defined by START and LENGTH (not START and END) !!
-    [plotSpace setYRange: [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat( 0 ) length:CPTDecimalFromFloat( [self getMaxWeight] )]];
-    [plotSpace setXRange: [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat( 20 ) length:CPTDecimalFromFloat( 25 )]];
-    
-    
-    //Axes
-    CPTXYAxisSet *axisSet = (CPTXYAxisSet *)newGraph.axisSet;
-    CPTXYAxis *x = axisSet.xAxis;
-    x.majorIntervalLength = CPTDecimalFromDouble(oneDay);
-    NSLog(@"majorintervallength %d", x.majorIntervalLength);
-    x.orthogonalCoordinateDecimal =    CPTDecimalFromDouble(2.0);
-
-    x.minorTicksPerInterval = 0;
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateStyle = kCFDateFormatterShortStyle;
-    CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
-    timeFormatter.referenceDate = refDate;
-    x.labelFormatter = timeFormatter;
-
-    
-    // Create the plot (we do not define actual x/y values yet, these will be supplied by the datasource...)
-    CPTScatterPlot* plot = [[CPTScatterPlot alloc] initWithFrame:CGRectZero];
-    plot.identifier = @"Date Plot";
-    
-    CPTMutableLineStyle *lineStyle = [plot.dataLineStyle mutableCopy];
-    lineStyle.lineWidth              = 3.0;
-    lineStyle.lineColor              = [CPTColor greenColor];
-    plot.dataLineStyle = lineStyle;
-    
-    graph.plotAreaFrame.paddingBottom=40;
-
-    // Let's keep it simple and let this class act as datasource (therefore we implemtn <CPTPlotDataSource>)
-    plot.dataSource = self;
-    
-    // Finally, add the created plot to the default plot space of the CPTGraph object we created before
-    [graph addPlot:plot toPlotSpace:graph.defaultPlotSpace];
-
-    
-    // Initialize Fetch Request
-    
-    
-    // Initialize Fetched Results Controller
- 
-
-    
-    NSDate *refDate = [NSDate dateWithTimeIntervalSinceReferenceDate:[NSDate date].timeIntervalSinceReferenceDate - (3 * 24 * 60 * 60)];
-    NSTimeInterval oneDay = 24 * 60 * 60;
-    
-    // Invert graph view to compensate for iOS coordinates
-  
-    
-    // allocate the graph within the current view bounds
-    self.graph = [[CPTXYGraph alloc] initWithFrame: self.view.bounds];
-    
-    // assign theme to graph
-    CPTTheme *theme = [CPTTheme themeNamed:kCPTDarkGradientTheme];
-    [self.graph applyTheme:theme];
-    
-    // Setting the graph as our hosting layer
     CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:self.view.bounds];
     
     [self.view addSubview:hostingView];
     
     hostingView.hostedGraph = self.graph;
-    
-    self.graph.paddingLeft = 20.0;
-    self.graph.paddingTop = 20.0;
-    self.graph.paddingRight = 20.0;
-    self.graph.paddingBottom = 150.0;
-    
-    // setup a plot space for the plot to live in
-    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)self.graph.defaultPlotSpace;
-    NSTimeInterval xLow = 0.0f;
-    // sets the range of x values
-    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
-                                                    length:CPTDecimalFromFloat(oneDay * 5)];
-    // sets the range of y values
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(0)
-                                                    length:CPTDecimalFromFloat([self getMaxWeight])];
-    
-    // plotting style is set to line plots
-    CPTMutableLineStyle *lineStyle = [CPTMutableLineStyle lineStyle];
-    lineStyle.lineColor = [CPTColor blackColor];
-    lineStyle.lineWidth = 2.0f;
-    
-    // X-axis parameters setting
-    CPTXYAxisSet *axisSet = (id)self.graph.axisSet;
-    axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay);
-    axisSet.xAxis.minorTicksPerInterval = 0;
-    axisSet.xAxis.orthogonalCoordinateDecimal = CPTDecimalFromString(@"1"); //added for date, adjust x line
-    axisSet.xAxis.majorTickLineStyle = lineStyle;
-    axisSet.xAxis.minorTickLineStyle = lineStyle;
-    axisSet.xAxis.axisLineStyle = lineStyle;
-    axisSet.xAxis.minorTickLength = 5.0f;
-    axisSet.xAxis.majorTickLength = 9.0f;
-    axisSet.xAxis.labelOffset = 3.0f;
-    
-    // added for date
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateStyle = kCFDateFormatterShortStyle;
-    CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter] ;
-    timeFormatter.referenceDate = refDate;
-    axisSet.xAxis.labelFormatter = timeFormatter;
-    
-    // Y-axis parameters setting
-    axisSet.yAxis.majorIntervalLength = CPTDecimalFromString(@"1");
-    axisSet.yAxis.minorTicksPerInterval = 2;
-    axisSet.yAxis.orthogonalCoordinateDecimal = CPTDecimalFromFloat(oneDay); // added for date, adjusts y line
-    axisSet.yAxis.majorTickLineStyle = lineStyle;
-    axisSet.yAxis.minorTickLineStyle = lineStyle;
-    axisSet.yAxis.axisLineStyle = lineStyle;
-    axisSet.yAxis.minorTickLength = 5.0f;
-    axisSet.yAxis.majorTickLength = 7.0f;
-    axisSet.yAxis.labelOffset = 3.0f;
-    
-    
-    // This actually performs the plotting
-    CPTScatterPlot *xSquaredPlot = [[CPTScatterPlot alloc] init] ;
-    
-    CPTMutableLineStyle *dataLineStyle = [CPTMutableLineStyle lineStyle];
-    //xSquaredPlot.identifier = @"X Squared Plot";
-    xSquaredPlot.identifier = @"Date Plot";
-    
-    dataLineStyle.lineWidth = 1.0f;
-    dataLineStyle.lineColor = [CPTColor redColor];
-    xSquaredPlot.dataLineStyle = dataLineStyle;
-    xSquaredPlot.dataSource = self;
-    
-    CPTPlotSymbol *greenCirclePlotSymbol = [CPTPlotSymbol ellipsePlotSymbol];
-    greenCirclePlotSymbol.fill = [CPTFill fillWithColor:[CPTColor greenColor]];
-    greenCirclePlotSymbol.size = CGSizeMake(2.0, 2.0);
-    xSquaredPlot.plotSymbol = greenCirclePlotSymbol;
-    
-    // add plot to graph
-   // [self.graph addPlot:xSquaredPlot];
- 
- */
-    
+
+
+
 }
 
+-(void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    
+        CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:self.view.bounds];
+    
+    
+    [self.view addSubview:hostingView];
+    
+    hostingView.hostedGraph = self.graph;
+    
+    
+    self.graph.paddingLeft = 25.0;
+    self.graph.paddingTop = 55.0;
+    self.graph.paddingRight = 25.0;
+    self.graph.paddingBottom = 25.0;
+    
+    self.graph.plotAreaFrame.paddingBottom = 40.0;
+    self.graph.plotAreaFrame.paddingLeft = 30.0;
+    self.graph.plotAreaFrame.paddingTop = 40.0;
 
+
+    
+    for (CPTPlot *p in self.graph.allPlots)
+    {
+        [p reloadData];
+    }
+}
 
 
 - (float)getTotalWeightEntries
@@ -450,35 +366,7 @@
 
     }
     return result;
-    
-    /*// We need to provide an X or Y (this method will be called for each) value for every index
-    int x = index;
-    
-    NSLog (@"x %i", x);
-   // [self.fetchedResultsController setDelegate:self];
-    
-    
-    // This method is actually called twice per point in the plot, one for the X and one for the Y value
-    if(fieldEnum == CPTScatterPlotFieldX)
-    {
-        // Return x value, which will, depending on index, be between -4 to 4
-        
-        
 
-        return [NSNumber numberWithInt: x];
-    } else {
-        // Return y value, for this example we'll be plotting y = x * x
-        if ([self.fetchedResultsController.fetchedObjects count] > x) {
-            NSNumber *a = ((Weight*)[self.fetchedResultsController.fetchedObjects objectAtIndex:x]).weight;
-            return  a;
-        } else {
-            return nil;
-        }
-    }
-    
-    return @(-1);
-     
-     */
 }
 
 
