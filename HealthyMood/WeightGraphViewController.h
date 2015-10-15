@@ -10,11 +10,20 @@
 #import <Foundation/Foundation.h>
 #import "CorePlot-CocoaTouch.h"
 
-@interface WeightGraphViewController : UIViewController <CPTPlotDataSource>
+@interface WeightGraphViewController : UIViewController <CPTPlotDataSource> {
+    UISegmentedControl *segmentControl;
+}
 
 
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic) float stringObject;
 
+@property (nonatomic, retain) IBOutlet UISegmentedControl *segmentedControl;
+
+
+
+
+
+-(IBAction)segmentedControlIndexChanged;
 
 @end
