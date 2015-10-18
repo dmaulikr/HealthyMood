@@ -35,7 +35,11 @@
 {
     [super viewDidLoad];
     
-    self.view.backgroundColor = [UIColor redColor];
+    self.view.backgroundColor = [UIColor colorWithRed:243.0/255.0 green:250.0/255.0 blue:182/255.0 alpha:1.0f];
+    
+    [[UISegmentedControl appearance] setTintColor:[UIColor colorWithRed:0.0/255.0 green:90.0/255.0 blue:49.0/255.0 alpha:1.0]];
+    
+   
     
     AppDelegate *delegate = [[UIApplication sharedApplication] delegate];
     self.managedObjectContext = delegate.managedObjectContext;
@@ -78,9 +82,9 @@
     
 
     
-    CPTColor *backgroundColor = [CPTColor colorWithComponentRed:255.0f/255.0f green:255.0f/255.0f blue:240.0f/255.0f alpha:1.0f];
+//    CPTColor *backgroundColor = [CPTColor colorWithComponentRed:255.0f/255.0f green:255.0f/255.0f blue:240.0f/255.0f alpha:1.0f];
 
-    CPTColor *backgroundColorFrame = [CPTColor colorWithComponentRed:200.0f/255.0f green:255.0f/255.0f blue:240.0f/255.0f alpha:1.0f];
+    CPTColor *backgroundColorFrame = [CPTColor colorWithComponentRed:168.0f/255.0f green:205.0f/255.0f blue:27.0f/255.0f alpha:0.7f];
 
     
         self.graph.plotAreaFrame.cornerRadius = 6.0;
@@ -103,12 +107,14 @@
     
     // plotting style is set to line plots
     CPTMutableLineStyle *lineStyle = [CPTMutableLineStyle lineStyle];
-    lineStyle.lineColor = [CPTColor blueColor];
+    lineStyle.lineColor = [CPTColor colorWithComponentRed:0.0f/255.0f green:90.0f/255.0f blue:49.0f/255.0f alpha:1.0f];
+;
     lineStyle.lineWidth = 1.0f;
     lineStyle.lineCap   = kCGLineCapRound;
     
     CPTMutableTextStyle *textStyle = [CPTMutableTextStyle textStyle];
     [textStyle setFontSize:6.0f];
+    [textStyle setColor:[CPTColor colorWithComponentRed: 0.0f/255.0f green:90.0f/255.0f blue:49.0f/255.0f alpha:1.0f]];
     
     
     // X-axis parameters setting
@@ -143,16 +149,6 @@
     y.title = [self titleForYAxis];
     y.titleOffset = 20.0;
     
-    /*
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if([[defaults objectForKey:@"unit"] isEqual:@"lb"]) {
-        y.title = @"Weight (kg)";
-    } else {
-        y.title = @"Weight (lb)";
-    }
-     */
-    
-
 
     axisSet.yAxis.majorIntervalLength = CPTDecimalFromFloat(5);
     axisSet.yAxis.minorTicksPerInterval = 0;
@@ -174,25 +170,19 @@
     //xSquaredPlot.identifier = @"X Squared Plot";
     
     dataLineStyle.lineWidth = 1.0f;
-    dataLineStyle.lineColor = [CPTColor greenColor];
+    dataLineStyle.lineColor = [CPTColor colorWithComponentRed:(0.0/255.0) green:90.0/255.0 blue:49.0/255.0 alpha:1.0];
+    
     xSquaredPlot.dataLineStyle = dataLineStyle;
     xSquaredPlot.dataSource = self;
     
-    CPTColor *areaColor = [CPTColor blueColor];
-    CPTGradient *areaGradient = [CPTGradient gradientWithBeginningColor:areaColor endingColor:[CPTColor clearColor]];
-    [areaGradient setAngle:-90.0f];
+    CPTColor *areaColor = [CPTColor colorWithComponentRed:(255.0/255.0) green:255.0/255.0 blue:255.0/255.0 alpha:0.05];
+    CPTGradient *areaGradient = [CPTGradient gradientWithBeginningColor:areaColor endingColor:[CPTColor whiteColor  ]];
+    [areaGradient setAngle:-45.0f];
     CPTFill *areaGradientFill = [CPTFill fillWithGradient:areaGradient];
     [xSquaredPlot setAreaFill:areaGradientFill];
     [xSquaredPlot setAreaBaseValue:CPTDecimalFromInt(0)];
     
-    areaColor = [CPTColor colorWithComponentRed:255.0f/255.0f green:228.0f/255.0f blue:225.0f/255.0f alpha:1.0f];
-    areaGradient = [CPTGradient gradientWithBeginningColor:areaColor endingColor:[CPTColor clearColor]];
-    [areaGradient setAngle:-90.0f];
-    areaGradientFill = [CPTFill fillWithGradient:areaGradient];
-    [xSquaredPlot setAreaFill:areaGradientFill];
-    [xSquaredPlot setAreaBaseValue:CPTDecimalFromInt(0)];
-  
-    // add plot to graph
+       //  add plot to graph
      [self.graph addPlot:xSquaredPlot];
 }
 
@@ -220,8 +210,6 @@
     CPTXYAxisSet *axisSet = (id)self.graph.axisSet;
 
     
-
-    
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"MM/dd"];
     CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
@@ -236,7 +224,7 @@
     switch (self.segmentedControl.selectedSegmentIndex) {
         case 0:
             plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
-                                                            length:CPTDecimalFromFloat(oneDay * 6)];
+                                                            length:CPTDecimalFromFloat((oneDay * 6 + (oneDay/4)) * 1.02)];
             [dateFormatter setDateFormat:@"MM/dd"];
             
             axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 3 );
@@ -252,7 +240,7 @@
             break;
         case 1:
             plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
-                                                            length:CPTDecimalFromFloat(oneDay * numberOfDaysInMonth)];
+                                                            length:CPTDecimalFromFloat((oneDay * numberOfDaysInMonth) * 1.02)];
             [dateFormatter setDateFormat:@"MM/dd"];
 
             axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 7);
@@ -265,7 +253,7 @@
             break;
         case 2:
             plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
-                                                            length:CPTDecimalFromFloat(oneDay * 335.5)];
+                                                            length:CPTDecimalFromFloat((oneDay * 335.5) * 1.02)];
             [dateFormatter setDateFormat:@"MMM"];
             axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 30);
             
@@ -279,10 +267,15 @@
             break;
             
         default:
-            plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(0)
-                                                            length:CPTDecimalFromFloat(oneDay)];
+            plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
+                                                            length:CPTDecimalFromFloat((oneDay * 6 + (oneDay/4)) * 1.02)];
             [dateFormatter setDateFormat:@"MM/dd"];
-            axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 2);
+            
+            axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 3 );
+            timeFormatter.referenceDate = self.refDateWeek;
+            axisSet.xAxis.labelFormatter = timeFormatter;
+            
+
     }
     
 }
@@ -290,8 +283,8 @@
 - (CPTPlotSymbol *)symbolForScatterPlot:(CPTScatterPlot *)aPlot recordIndex:(NSUInteger)index
 {
     CPTPlotSymbol *plotSymbol = [CPTPlotSymbol ellipsePlotSymbol];
-    [plotSymbol setSize:CGSizeMake(4, 4)];
-    [plotSymbol setFill:[CPTFill fillWithColor:[CPTColor yellowColor]]];
+    [plotSymbol setSize:CGSizeMake(2, 2)];
+    [plotSymbol setFill:[CPTFill fillWithColor:[CPTColor colorWithComponentRed: 255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.5f]]];
     [plotSymbol setLineStyle:nil];
     [aPlot setPlotSymbol:plotSymbol];
     
@@ -300,48 +293,57 @@
 
 -(void)viewDidLayoutSubviews {
 
-    CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.segmentedControl.frame.size.height + self.segmentedControl.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height-85 )];
+     //CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, 95, self.view.frame.size.width, self.view.frame.size.height) ];
+   
+    float y = self.segmentedControl.frame.origin.y;
+    
+    NSLog (@"%f", y);
+    
+   
+    
+    CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.segmentedControl.frame.size.height + 70, self.view.frame.size.width, self.view.frame.size.height - (self.segmentedControl.frame.size.height + 70) )];
     
     [self.view addSubview:hostingView];
     
     hostingView.hostedGraph = self.graph;
     
-    self.graph.paddingLeft = 25.0;
-    self.graph.paddingTop = 10.0;
-    self.graph.paddingRight = 15.0;
-    self.graph.paddingBottom = 35.0;
+    self.graph.paddingLeft = 20.0;
+    self.graph.paddingTop = 5.0;
+    self.graph.paddingRight = 20.0;
+    self.graph.paddingBottom = 25.0;
     
     self.graph.plotAreaFrame.paddingBottom = 50.0;
     self.graph.plotAreaFrame.paddingLeft = 30.0;
-    self.graph.plotAreaFrame.paddingTop = 10.0;
-        self.graph.plotAreaFrame.paddingRight = 0.0;
-    
+    self.graph.plotAreaFrame.paddingTop = 5.0;
+    self.graph.plotAreaFrame.paddingRight = 5.0;
+
+ 
+
 
 }
 
+
 -(void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
-    CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.segmentedControl.frame.size.height + self.segmentedControl.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height-85 )];
     
-    [self.view addSubview:hostingView];
-    
-    hostingView.hostedGraph = self.graph;
-    
-    self.graph.paddingLeft = 25.0;
-    self.graph.paddingTop = 10.0;
-    self.graph.paddingRight = 15.0;
-    self.graph.paddingBottom = 35.0;
+    self.graph.paddingLeft = 20.0;
+    self.graph.paddingTop = 0.0;
+    self.graph.paddingRight = 20.0;
+    self.graph.paddingBottom = 25.0;
     
     self.graph.plotAreaFrame.paddingBottom = 50.0;
     self.graph.plotAreaFrame.paddingLeft = 30.0;
-    self.graph.plotAreaFrame.paddingTop = 10.0;
-    self.graph.plotAreaFrame.paddingRight = 0.0;
+    self.graph.plotAreaFrame.paddingTop = 0.0;
+    self.graph.plotAreaFrame.paddingRight = 5.0;
 
     
     for (CPTPlot *p in self.graph.allPlots)
     {
         [p reloadData];
     }
+    
+
+
 }
 
 
