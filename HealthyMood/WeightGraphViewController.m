@@ -99,10 +99,10 @@
 
     // sets the range of x values
     plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(0)
-                                                    length:CPTDecimalFromFloat((oneDay * 6 + (oneDay/4)) * 1.02)];
+                                                    length:CPTDecimalFromFloat((oneDay * 6))];
     // sets the range of y values
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat([self getMinWeight] / 1.02f)
-                                                    length:CPTDecimalFromFloat((([self getMaxWeight] *1.04)- [self getMinWeight]))];
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat([self getMinWeight])
+                                                    length:CPTDecimalFromFloat((([self getMaxWeight])- [self getMinWeight]))];
     
     
     // plotting style is set to line plots
@@ -120,14 +120,14 @@
     // X-axis parameters setting
     CPTXYAxisSet *axisSet = (id)self.graph.axisSet;
     CPTXYAxis *x = axisSet.xAxis;
-    axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 3);
+    axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay);
     axisSet.xAxis.minorTicksPerInterval = 0;
-    axisSet.xAxis.orthogonalCoordinateDecimal = CPTDecimalFromFloat([self getMinWeight] / 1.02); //added for date, adjust x line
+    axisSet.xAxis.orthogonalCoordinateDecimal = CPTDecimalFromFloat([self getMinWeight] ); //added for date, adjust x line
     axisSet.xAxis.majorTickLineStyle = lineStyle;
     axisSet.xAxis.minorTickLineStyle = lineStyle;
     axisSet.xAxis.axisLineStyle = lineStyle;
     axisSet.xAxis.minorTickLength = 5.0f;
-    axisSet.xAxis.majorTickLength = 2.0f;
+    axisSet.xAxis.majorTickLength = 1.0f;
     [x setLabelTextStyle:textStyle];
     x.labelRotation = M_PI/3;
     x.tickLabelDirection = CPTSignNegative;
@@ -152,7 +152,7 @@
 
     axisSet.yAxis.majorIntervalLength = CPTDecimalFromFloat(5);
     axisSet.yAxis.minorTicksPerInterval = 0;
-    axisSet.yAxis.orthogonalCoordinateDecimal = CPTDecimalFromFloat([self getMinWeight] * 1.02); // added for date, adjusts y line
+    axisSet.yAxis.orthogonalCoordinateDecimal = CPTDecimalFromFloat([self getMinWeight] ); // added for date, adjusts y line
     axisSet.yAxis.majorTickLineStyle = lineStyle;
     axisSet.yAxis.axisLineStyle = lineStyle;
     axisSet.yAxis.majorTickLength = 2.0f;
@@ -215,8 +215,33 @@
     CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
     
     NSCalendar *calendar = [NSCalendar currentCalendar];
-    NSRange range = [calendar rangeOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitMonth forDate:[NSDate date]];
-    NSUInteger numberOfDaysInMonth = range.length;
+    NSRange rangeMonth = [calendar rangeOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitMonth forDate:[NSDate date]];
+    NSUInteger numberOfDaysInMonth = rangeMonth.length;
+
+    NSDate *someDate = [NSDate date];
+    
+    NSDate *beginningofYear;
+    NSTimeInterval lengthofYear;
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    
+    [gregorian rangeOfUnit:NSCalendarUnitYear
+                    startDate:&beginningofYear
+                  interval:&lengthofYear
+                   forDate:someDate];
+    
+    NSDate *nextYear = [beginningofYear dateByAddingTimeInterval:lengthofYear];
+    NSInteger startDay = [gregorian ordinalityOfUnit:NSCalendarUnitDay
+                                              inUnit:NSCalendarUnitEra
+                                             forDate:beginningofYear];
+    NSInteger endDay = [gregorian ordinalityOfUnit:NSCalendarUnitDay
+                                            inUnit:NSCalendarUnitEra
+                                           forDate:nextYear];
+    NSInteger daysInYear = endDay - startDay;
+    
+    NSLog(@"days in month %i", numberOfDaysInMonth);
+    NSLog(@"days in year %i", daysInYear);
+
+
     
 
     
@@ -224,10 +249,10 @@
     switch (self.segmentedControl.selectedSegmentIndex) {
         case 0:
             plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
-                                                            length:CPTDecimalFromFloat((oneDay * 6 + (oneDay/4)) * 1.02)];
+                                                            length:CPTDecimalFromFloat((oneDay * 6 ))];
             [dateFormatter setDateFormat:@"MM/dd"];
             
-            axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 3 );
+            axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay );
             timeFormatter.referenceDate = self.refDateWeek;
             axisSet.xAxis.labelFormatter = timeFormatter;
             
@@ -239,11 +264,11 @@
             
             break;
         case 1:
-            plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
-                                                            length:CPTDecimalFromFloat((oneDay * numberOfDaysInMonth) * 1.02)];
+            plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(1)
+                                                            length:CPTDecimalFromFloat((oneDay * numberOfDaysInMonth) )];
             [dateFormatter setDateFormat:@"MM/dd"];
 
-            axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 7);
+            axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay);
             timeFormatter.referenceDate = self.refDateMonth;
             axisSet.xAxis.labelFormatter = timeFormatter;
            // x.title = @"Day of Month";
@@ -253,9 +278,9 @@
             break;
         case 2:
             plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
-                                                            length:CPTDecimalFromFloat((oneDay * 335.5) * 1.02)];
+                                                            length:CPTDecimalFromFloat((oneDay * (daysInYear-numberOfDaysInMonth)) )];
             [dateFormatter setDateFormat:@"MMM"];
-            axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 30);
+            axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * numberOfDaysInMonth);
             
             timeFormatter.referenceDate = self.refDateYear;
             axisSet.xAxis.labelFormatter = timeFormatter;
@@ -268,7 +293,7 @@
             
         default:
             plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
-                                                            length:CPTDecimalFromFloat((oneDay * 6 + (oneDay/4)) * 1.02)];
+                                                            length:CPTDecimalFromFloat((oneDay * 6 ))];
             [dateFormatter setDateFormat:@"MM/dd"];
             
             axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 3 );
@@ -578,24 +603,28 @@
         
         NSDate * dateResult = ((Weight*)[self.fetchedResultsController.fetchedObjects objectAtIndex:index]).weightDate;
         
-        NSTimeInterval interval = [dateResult timeIntervalSince1970];
+   //     NSTimeInterval interval = [dateResult timeIntervalSince1970];
         
-        NSDate *date = [NSDate dateWithTimeIntervalSince1970:interval]; // convert to NSDate
+ //       NSDate *date = [NSDate dateWithTimeIntervalSince1970:interval]; // convert to NSDate
         
         if (self.segmentedControl.selectedSegmentIndex == 0)
         {
-            double intervalInSeconds = [date timeIntervalSinceDate:self.refDate]; // get difference
+            double intervalInSecondsFirst = [dateResult timeIntervalSinceDate:self.refDate]; // get difference
+            double intervalInSeconds = intervalInSecondsFirst - (24 * 60 * 60); // get difference
+                                                                         
             return [NSNumber numberWithDouble:intervalInSeconds]; // return difference
             
         }
         else if (self.segmentedControl.selectedSegmentIndex ==1)
         {
-            double intervalInSeconds = [date timeIntervalSinceDate:self.refDateMonth]; // get difference
+            double intervalInSecondsFirst = [dateResult timeIntervalSinceDate:self.refDateMonth]; // get difference
+            double intervalInSeconds = intervalInSecondsFirst - (24 * 60 * 60); // get difference
+            
             return [NSNumber numberWithDouble:intervalInSeconds]; // return difference
             
         }
         else {
-            double intervalInSeconds = [date timeIntervalSinceDate:self.refDate]; // get difference
+            double intervalInSeconds = [dateResult timeIntervalSinceDate:self.refDate]; // get difference
             return [NSNumber numberWithDouble:intervalInSeconds]; // return difference
 
         }
