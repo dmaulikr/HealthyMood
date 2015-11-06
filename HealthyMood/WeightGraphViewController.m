@@ -25,17 +25,280 @@
 @property (nonatomic, readwrite, strong) NSDate *refDateYear;
 @property (nonatomic, readwrite, strong) NSDate *refDateWeek;
 
+@property (nonatomic, readwrite, strong) IBOutlet CPTGraphHostingView *hostView;
+@property (nonatomic, readwrite, strong) NSArray *plotData;
+
 @end
 
 @implementation WeightGraphViewController
 @synthesize segmentedControl;
 
+@synthesize hostView;
+@synthesize plotData;
+
 
 - (void)viewDidLoad
 {
+   
     [super viewDidLoad];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRotateFromInterfaceOrientation:) name:UIDeviceOrientationDidChangeNotification object:nil];
+    AppDelegate *delegate = [[UIApplication sharedApplication] delegate];
+    self.managedObjectContext = delegate.managedObjectContext;
+    
+    NSError *error = nil;
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Weight"];
+    [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"weightDate" ascending:YES]]];
+    self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:@"sectionIdentifier" cacheName:nil];
+    
+    NSLog(@"Before fetch fetchRequests %@", self.fetchedResultsController.fetchedObjects);
+    // Perform Fetch
+    [self.fetchedResultsController performFetch:&error];
+    NSLog(@"After fetch fetchRequests %@", self.fetchedResultsController.fetchedObjects);
+    
+    // If you make sure your dates are calculated at noon, you shouldn't have to
+    // worry about daylight savings. If you use midnight, you will have to adjust
+    // for daylight savings time.
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"MM/dd"];
+    
+   // NSDate *today = [[NSDate alloc] initWithTimeIntervalSinceNow: 0];
+    
+    NSDate *now = [NSDate date];
+ NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    
+    NSDate *today = [calendar dateBySettingHour:10 minute:0 second:0 ofDate:[NSDate date] options:0];
+    NSDate *refDate            = today;
+    NSTimeInterval oneDay      = 24 * 60 * 60;
+    
+    // Create graph from theme
+    CPTXYGraph *newGraph = [[CPTXYGraph alloc] initWithFrame:CGRectZero];
+    CPTTheme *theme      = [CPTTheme themeNamed:kCPTDarkGradientTheme];
+    [newGraph applyTheme:theme];
+    self.graph = newGraph;
+    
+    self.hostView.hostedGraph = newGraph;
+    
+    // Setup scatter plot space
+    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
+    NSTimeInterval xLow       = oneDay * -5;
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 5.0)];
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(20.0) length:CPTDecimalFromDouble(150.0)];
+    
+    // Axes
+    CPTXYAxisSet *axisSet = (CPTXYAxisSet *)newGraph.axisSet;
+    CPTXYAxis *x          = axisSet.xAxis;
+    
+            x.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
+    x.majorIntervalLength         = CPTDecimalFromDouble(oneDay);
+
+    x.orthogonalCoordinateDecimal = CPTDecimalFromDouble(100.0);
+    x.minorTicksPerInterval       = 0;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateStyle = kCFDateFormatterShortStyle;
+    CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
+    timeFormatter.referenceDate = refDate;
+    x.labelFormatter            = timeFormatter;
+
+    
+    CPTXYAxis *y = axisSet.yAxis;
+    y.majorIntervalLength         = CPTDecimalFromDouble(10);
+    y.minorTicksPerInterval       = 5;
+    y.orthogonalCoordinateDecimal = CPTDecimalFromDouble(oneDay * -3);
+   //     y.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
+    
+    // Create a plot that uses the data source method
+    CPTScatterPlot *dataSourceLinePlot = [[CPTScatterPlot alloc] init];
+    dataSourceLinePlot.identifier = @"Date Plot";
+    
+    CPTMutableLineStyle *lineStyle = [dataSourceLinePlot.dataLineStyle mutableCopy];
+    lineStyle.lineWidth              = 3.0;
+    lineStyle.lineColor              = [CPTColor greenColor];
+    dataSourceLinePlot.dataLineStyle = lineStyle;
+    
+    dataSourceLinePlot.dataSource = self;
+    [newGraph addPlot:dataSourceLinePlot];
+    
+    // Add some data
+    NSMutableArray *newData = [NSMutableArray array];
+    
+    NSInteger countRecords = [self.fetchedResultsController.fetchedObjects count]; // Our sample graph contains 9 'points'
+    
+    
+    
+    NSLog (@"countRecords %ld", (long)countRecords);
+    
+
+    for ( NSUInteger i = 0; i < countRecords; i++ ) {
+        
+        
+        NSTimeInterval xVal1 = oneDay * i;
+        
+        
+        
+        NSDate *tempDate =((Weight*)[self.fetchedResultsController.fetchedObjects objectAtIndex:i]).weightDate;
+        
+        
+
+       NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:tempDate];
+        
+        [components setHour: 10];
+        
+        NSDate *newDate = [[NSCalendar currentCalendar] dateFromComponents:components];
+        
+        NSTimeInterval xVal = [newDate timeIntervalSinceDate:refDate];
+        NSLog (@"refDate , %@", refDate);
+        NSLog (@"tempDate , %@", tempDate);
+        NSLog (@"xVal old, %f", xVal1);
+        NSLog (@"xVal new, %f", xVal);
+        
+        // double yVal = 1.2 * arc4random() / (double)UINT32_MAX + 1.2;
+        NSNumber *weightRec = ((Weight*)[self.fetchedResultsController.fetchedObjects objectAtIndex:i]).weight;
+        double yVal = [weightRec doubleValue];
+        
+        
+        
+        [newData addObject:
+         @{ @(CPTScatterPlotFieldX): @(xVal),
+            @(CPTScatterPlotFieldY): @(yVal) }
+         ];
+    }
+    self.plotData = newData;
+}
+
+
+    
+    /* begin old code
+    [super viewDidLoad];
+    
+    AppDelegate *delegate = [[UIApplication sharedApplication] delegate];
+    self.managedObjectContext = delegate.managedObjectContext;
+    
+    NSError *error = nil;
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Weight"];
+    [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"weightDate" ascending:YES]]];
+    self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:@"sectionIdentifier" cacheName:nil];
+    
+    NSLog(@"Before fetch fetchRequests %@", self.fetchedResultsController.fetchedObjects);
+    // Perform Fetch
+    [self.fetchedResultsController performFetch:&error];
+    NSLog(@"After fetch fetchRequests %@", self.fetchedResultsController.fetchedObjects);
+    
+    // If you make sure your dates are calculated at noon, you shouldn't have to
+    // worry about daylight savings. If you use midnight, you will have to adjust
+    // for daylight savings time.
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    NSDate *refDate            =     [NSDate dateWithTimeIntervalSinceReferenceDate:[NSDate date].timeIntervalSinceReferenceDate - (4 * 24 * 60 * 60) ];
+    [formatter setDateFormat:@"MM/dd"];
+    NSTimeInterval oneDay      = 24 * 60 * 60;
+    
+    // Create graph from theme
+    CPTXYGraph *newGraph = [[CPTXYGraph alloc] initWithFrame:CGRectZero];
+    CPTTheme *theme      = [CPTTheme themeNamed:kCPTDarkGradientTheme];
+    [newGraph applyTheme:theme];
+    self.graph = newGraph;
+    
+    self.hostView.hostedGraph = newGraph;
+    
+    // Setup scatter plot space
+    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
+    NSTimeInterval xLow       = 0.0;
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 5.0)];
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(1.0) length:CPTDecimalFromDouble(50.0)];
+    
+    // Axes
+    CPTXYAxisSet *axisSet = (CPTXYAxisSet *)newGraph.axisSet;
+    CPTXYAxis *x          = axisSet.xAxis;
+    x.majorIntervalLength         = CPTDecimalFromDouble(oneDay);
+    x.orthogonalCoordinateDecimal = CPTDecimalFromDouble(2.0);
+    x.minorTicksPerInterval       = 0;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateStyle = kCFDateFormatterShortStyle;
+    CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
+    timeFormatter.referenceDate = refDate;
+    x.labelFormatter            = timeFormatter;
+    
+    CPTXYAxis *y = axisSet.yAxis;
+    y.majorIntervalLength         = CPTDecimalFromDouble(10);
+    y.minorTicksPerInterval       = 5;
+    y.orthogonalCoordinateDecimal = CPTDecimalFromDouble(oneDay);
+    
+    // Create a plot that uses the data source method
+    CPTScatterPlot *dataSourceLinePlot = [[CPTScatterPlot alloc] init];
+    dataSourceLinePlot.identifier = @"Date Plot";
+    
+    CPTMutableLineStyle *lineStyle = [dataSourceLinePlot.dataLineStyle mutableCopy];
+    lineStyle.lineWidth              = 3.0;
+    lineStyle.lineColor              = [CPTColor greenColor];
+    dataSourceLinePlot.dataLineStyle = lineStyle;
+    
+    dataSourceLinePlot.dataSource = self;
+    [newGraph addPlot:dataSourceLinePlot];
+    
+    // Add some data
+    
+    NSInteger countRecords = [self.fetchedResultsController.fetchedObjects count]; // Our sample graph contains 9 'points'
+    
+
+    
+    NSLog (@"countRecords %ld", (long)countRecords);
+    
+    NSMutableArray *newData = [NSMutableArray array];
+    for ( NSUInteger i = 0; i < countRecords; i++ ) {
+    
+        NSTimeInterval xVal = oneDay * i;
+        
+       // double yVal = 1.2 * arc4random() / (double)UINT32_MAX + 1.2;
+        
+        NSNumber *weightRec = ((Weight*)[self.fetchedResultsController.fetchedObjects objectAtIndex:i]).weight;
+        
+        double yVal = [weightRec doubleValue]
+        
+        [newData addObject:
+         @{ @(CPTScatterPlotFieldX): @(xVal),
+            @(CPTScatterPlotFieldY): @(yVal) }
+         ];
+    }
+    self.plotData = newData;
+        
+        
+        
+        /* start old code
+         
+         //  NSTimeInterval xVal = oneDay * i;
+        
+        NSDate *tempDate =((Weight*)[self.fetchedResultsController.fetchedObjects objectAtIndex:i]).weightDate;
+        
+        
+        NSString *dateFromString = [formatter stringFromDate:tempDate];
+     //   NSTimeInterval xVal = [tempDate timeIntervalSinceDate:self.refDate];
+        
+        id xKey = dateFromString;
+         NSLog(@"datefrom string %@", dateFromString);
+        
+        NSNumber *weightRec = ((Weight*)[self.fetchedResultsController.fetchedObjects objectAtIndex:i]).weight;
+        
+        NSNumber* yKey = [NSNumber numberWithDouble:[weightRec doubleValue]];
+ 
+        
+        //double yVal = 1.2 * arc4random() / (double)UINT32_MAX + 1.2;
+        
+        NSNumber* xVal = [NSNumber numberWithInt:CPTScatterPlotFieldX];
+        NSNumber* yVal = [NSNumber numberWithInt:CPTScatterPlotFieldY];
+        
+        NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                             xKey, xVal,
+                             yKey, yVal,
+                             nil];
+        
+        [newData addObject:dict];
+    }
+    self.plotData = newData;
+         
+      end old code   */
+    
+
+
+    /*[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRotateFromInterfaceOrientation:) name:UIDeviceOrientationDidChangeNotification object:nil];
     
     self.view.backgroundColor = [UIColor colorWithRed:243.0/255.0 green:250.0/255.0 blue:182/255.0 alpha:1.0f];
     
@@ -197,9 +460,14 @@
     [yRange expandRangeByFactor: CPTDecimalFromCGFloat(1.1f)];
 
     
+    
+    
+    
        //  add plot to graph
      [self.graph addPlot:xSquaredPlot];
-}
+     
+     */
+
 
 
 - (NSString *)titleForYAxis {
@@ -390,7 +658,7 @@
         self.graph.paddingRight = 20.0;
         self.graph.paddingBottom = 25.0;
         
-        self.graph.plotAreaFrame.paddingBottom = 5.0;
+        self.graph.plotAreaFrame.paddingBottom = 50.0;
         self.graph.plotAreaFrame.paddingLeft = 30.0;
         self.graph.plotAreaFrame.paddingTop = 5.0;
         self.graph.plotAreaFrame.paddingRight = 5.0;
@@ -625,14 +893,18 @@
 // This method is here because this class also functions as datasource for our graph
 // Therefore this class implements the CPTPlotDataSource protocol
 -(NSUInteger)numberOfRecordsForPlot:(CPTPlot *)plotnumberOfRecords {
-    return [self.fetchedResultsController.fetchedObjects count]; // Our sample graph contains 9 'points'
+    
+        return self.plotData.count;
+    
+    //return [self.fetchedResultsController.fetchedObjects count]; // Our sample graph contains 9 'points'
 }
 
 // This method is here because this class also functions as datasource for our graph
 // Therefore this class implements the CPTPlotDataSource protocol
 -(NSNumber *)numberForPlot:(CPTPlot *)plot field:(NSUInteger)fieldEnum recordIndex:(NSUInteger)index
 {
- 
+    return self.plotData[index][@(fieldEnum)];
+    /*
     NSNumber * result = [[NSNumber alloc] init];
     // This method returns x and y values.  Check which is being requested here.
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -644,11 +916,12 @@
         
         NSTimeInterval interval = [dateResult timeIntervalSince1970];
         
-        NSDate *date = [NSDate dateWithTimeIntervalSinceNow:interval]; // convert to NSDate
+        NSDate *date = [NSDate dateWithTimeIntervalSince1970:interval]; // convert to NSDate
+        
         
         if (self.segmentedControl.selectedSegmentIndex == 0)
         {
-            double intervalInSecondsFirst = [dateResult timeIntervalSinceDate:self.refDate]; // get difference
+            double intervalInSecondsFirst = ([date timeIntervalSinceDate:self.refDate]); // get difference
             
             NSLog (@"intervalinsecondsfirst %f", intervalInSecondsFirst);
            
@@ -698,6 +971,8 @@
 
     }
     return result;
+  
+  */
 
 }
 
