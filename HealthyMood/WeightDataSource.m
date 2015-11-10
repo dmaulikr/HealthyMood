@@ -81,11 +81,11 @@
     
     switch (fieldEnum) {
         case CPTScatterPlotFieldX:
-            NSLog(@"GraphName: %@: x value for %d is %d", [plot identifier], index, x);
+            NSLog(@"GraphName: %@: x value for %lu is %lu", [plot identifier], (unsigned long)index, (unsigned long)x);
             return [NSNumber numberWithFloat:x];
             break;
         case CPTScatterPlotFieldY:
-            NSLog(@"GraphName: %@: y value for %d is %y", [plot identifier], index, y);
+            NSLog(@"GraphName: %@: y value for %lu is %y", [plot identifier], (unsigned long)index, y);
             return [NSNumber numberWithFloat:y];
             break;
         default:

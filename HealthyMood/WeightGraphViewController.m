@@ -58,6 +58,8 @@
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"MM/dd"];
     
+
+    
    // NSDate *today = [[NSDate alloc] initWithTimeIntervalSinceNow: 0];
 
     NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
@@ -66,7 +68,7 @@
  //   NSDate *refDate            = today;
     NSTimeInterval oneDay      = 24 * 60 * 60;
     
-    self.refDate            =     [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (3 * 24 * 60 * 60) ];
+    self.refDate            =     [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (6 * 24 * 60 * 60) ];
     
     self.view.backgroundColor = [UIColor colorWithRed:245.0/255.0 green:0.0/255.0 blue:87.0/255.0 alpha:1.0f];
     CPTXYGraph *newGraph = [[CPTXYGraph alloc] initWithFrame:CGRectZero];
@@ -82,7 +84,7 @@
     // Setup scatter plot space
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
     NSTimeInterval xLow       = 0.0;
-    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0)];
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
     plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat([self getMinWeight]-10.0)
                                                     length:CPTDecimalFromFloat((([self getMaxWeight])- [self getMinWeight]) + 20.0)];
     
@@ -102,13 +104,26 @@
     x.orthogonalCoordinateDecimal = CPTDecimalFromDouble([self getMinWeight] - 10.0);
     x.minorTicksPerInterval       = 0;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateStyle = kCFDateFormatterShortStyle;
+
+    [dateFormatter setDateFormat:@"MM/dd"];
+    
+
     CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
     timeFormatter.referenceDate = self.refDate;
     x.labelFormatter            = timeFormatter;
+    
+    
     [x setLabelTextStyle:textStyle];
     
     CPTXYAxis *y = axisSet.yAxis;
+    
+    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+    [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [numberFormatter setMaximumFractionDigits:0];
+
+    
+    y.labelFormatter = numberFormatter;
+    
     y.majorIntervalLength         = CPTDecimalFromDouble(10);
     y.minorTicksPerInterval       = 0;
     y.orthogonalCoordinateDecimal = CPTDecimalFromDouble([self getMinWeight] - 10.0);
@@ -121,13 +136,20 @@
     dataSourceLinePlot.identifier = @"Date Plot";
     
     CPTMutableLineStyle *lineStyle = [dataSourceLinePlot.dataLineStyle mutableCopy];
-    lineStyle.lineWidth              = 3.0;
+    lineStyle.lineWidth              = 1.0;
     lineStyle.lineColor              = [CPTColor whiteColor];
     dataSourceLinePlot.dataLineStyle = lineStyle;
     
     CPTMutableLineStyle *axisLineStyle = [CPTMutableLineStyle lineStyle];
-    axisLineStyle.lineWidth = 5.0;
+    axisLineStyle.lineWidth = 0.5;
     axisLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:0.5];
+    
+    CPTMutableLineStyle *tickLineStyle = [CPTMutableLineStyle lineStyle];
+    tickLineStyle.lineWidth = 0.2;
+    tickLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:1.0];
+    
+    y.majorTickLineStyle = tickLineStyle;
+    x.majorTickLineStyle = tickLineStyle;
     
     y.axisLineStyle = axisLineStyle;
     x.axisLineStyle = axisLineStyle;
@@ -140,9 +162,6 @@
     
     NSLog (@"countRecords %ld", (long)countRecords);
     
-    
-    
-
     /*
 
     for ( NSUInteger i = 0; i < countRecords; i++ ) {
@@ -176,9 +195,6 @@
     self.plotData = newData; */
 
 }
-
-
-    
 
 
 - (NSString *)titleForYAxis {
@@ -221,7 +237,7 @@
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     
     
-    NSDateComponents *comps = [gregorian components:NSWeekdayCalendarUnit fromDate:[NSDate date]];
+    NSDateComponents *comps = [gregorian components:NSCalendarUnitWeekday fromDate:[NSDate date]];
     
     NSInteger dayOfWeek = [comps weekday];
     
@@ -242,22 +258,22 @@
     NSInteger daysInYear = endDay - startDay;
     
     NSUInteger dayOfYear =
-    [gregorian ordinalityOfUnit:NSDayCalendarUnit
-                         inUnit:NSYearCalendarUnit forDate:[NSDate date]];
+    [gregorian ordinalityOfUnit:NSCalendarUnitDay
+                         inUnit:NSCalendarUnitYear forDate:[NSDate date]];
     NSLog(@"gregorian %@", gregorian);
     
-    NSLog(@"days in month %i", numberOfDaysInMonth);
-    NSLog(@"days in year %i", daysInYear);
+    NSLog(@"days in month %lu", (unsigned long)numberOfDaysInMonth);
+    NSLog(@"days in year %li", (long)daysInYear);
     
 
     NSLog(@"number of days in month %lu",(unsigned long)numberOfDaysInMonth);
     
     switch (self.segmentedControl.selectedSegmentIndex) {
         case 0:
-            self.refDate = [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (((dayOfWeek - 3)) * 24 * 60 * 60) ];
+            self.refDate = [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (6 * 24 * 60 * 60) ];
 
             
-            plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0)];
+            plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
          //   plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble([self getMinWeight]) length:CPTDecimalFromDouble([self getMaxWeight] + 20.0)];
             [dateFormatter setDateFormat:@"MM/d"];
 
@@ -272,13 +288,13 @@
             
             break;
         case 1:
-            self.refDate = [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (oneDay * (numberOfDaysInMonth/2))];
+            self.refDate = [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (oneDay * (numberOfDaysInMonth-1))];
             
             plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
-                                                            length:CPTDecimalFromFloat(oneDay * (numberOfDaysInMonth - 1) )];
+                                                            length:CPTDecimalFromFloat(oneDay * (numberOfDaysInMonth - 1) + (oneDay * .99) )];
 
-            [dateFormatter setDateFormat:@"MM/d"];
-            axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 6);
+            [dateFormatter setDateFormat:@"MMM d"];
+            axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 7);
             timeFormatter.referenceDate = self.refDate;
             axisSet.xAxis.labelFormatter = timeFormatter;
             // x.title = @"Day of Month";
@@ -288,10 +304,10 @@
             break;
         case 2:
             
-            self.refDate = [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (((dayOfYear - 1)) * 24 * 60 * 60) ];
+            self.refDate = [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (((daysInYear - numberOfDaysInMonth)) * 24 * 60 * 60) ];
             plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
-                                                            length:CPTDecimalFromFloat((oneDay * (daysInYear-30)) )];
-            [dateFormatter setDateFormat:@"MM"];
+                                                            length:CPTDecimalFromFloat((oneDay * (daysInYear-30) + (oneDay * 12)) )];
+            [dateFormatter setDateFormat:@"MMM"];
             axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * numberOfDaysInMonth);
             
             timeFormatter.referenceDate = self.refDate;
@@ -312,27 +328,20 @@
             
             
             axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 3 );
-      //      timeFormatter.referenceDate = self.refDate;
-       //     axisSet.xAxis.labelFormatter = timeFormatter;
-            
-            
+            //timeFormatter.referenceDate = self.refDate;
+            //axisSet.xAxis.labelFormatter = timeFormatter;
             //   x.title = @"Week";
-            
             
             [self.graph reloadData];
             
             break;
-
-            
-
     }
-    
 }
 
 - (CPTPlotSymbol *)symbolForScatterPlot:(CPTScatterPlot *)aPlot recordIndex:(NSUInteger)index
 {
     CPTPlotSymbol *plotSymbol = [CPTPlotSymbol ellipsePlotSymbol];
-    [plotSymbol setSize:CGSizeMake(10, 10)];
+    [plotSymbol setSize:CGSizeMake(6, 6)];
     [plotSymbol setFill:[CPTFill fillWithColor:[CPTColor colorWithComponentRed: 255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.5f]]];
     [plotSymbol setLineStyle:nil];
     [aPlot setPlotSymbol:plotSymbol];
@@ -347,24 +356,41 @@
     float y = self.segmentedControl.frame.origin.y;
     
     NSLog (@"%f", y);
-    
-   
-    
+
     CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.segmentedControl.frame.size.height + 70, self.view.frame.size.width, self.view.frame.size.height - (self.segmentedControl.frame.size.height + 70) )];
     
     [self.view addSubview:hostingView];
     
     hostingView.hostedGraph = self.graph;
     
-    self.graph.paddingLeft = 5.0;
-    self.graph.paddingTop = 5.0;
-    self.graph.paddingRight = 20.0;
-    self.graph.paddingBottom = 25.0;
+    if (([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft) ||
+        ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)) {
+        self.graph.paddingLeft = 40.0;
+        self.graph.paddingTop = 0.0;
+        self.graph.paddingRight = 40.0;
+        self.graph.paddingBottom = 25.0;
+        
+        self.graph.plotAreaFrame.paddingBottom = 50.0;
+        self.graph.plotAreaFrame.paddingLeft = 30.0;
+        self.graph.plotAreaFrame.paddingTop = 5.0;
+        self.graph.plotAreaFrame.paddingRight = 5.0;
+
+        
+    }
     
-    self.graph.plotAreaFrame.paddingBottom = 50.0;
-    self.graph.plotAreaFrame.paddingLeft = 50.0;
-    self.graph.plotAreaFrame.paddingTop = 5.0;
-    self.graph.plotAreaFrame.paddingRight = 5.0;
+    else {
+        self.graph.paddingLeft = 35.0;
+        self.graph.paddingTop = 35.0;
+        self.graph.paddingRight = 35.0;
+        self.graph.paddingBottom = 25.0;
+        
+        self.graph.plotAreaFrame.paddingBottom = 50.0;
+        self.graph.plotAreaFrame.paddingLeft = 30.0;
+        self.graph.plotAreaFrame.paddingTop = 5.0;
+        self.graph.plotAreaFrame.paddingRight = 30.0;
+        
+    }
+    
 
     for (CPTPlot *p in self.graph.allPlots)
     {
@@ -373,18 +399,16 @@
     
     [self.graph reloadData];
 
-
 }
 
 
 -(void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
-    
-     if ( UIInterfaceOrientationIsPortrait(fromInterfaceOrientation) )
+    if ( UIInterfaceOrientationIsPortrait(fromInterfaceOrientation) )
     {
-        self.graph.paddingLeft = 20.0;
+        self.graph.paddingLeft = 40.0;
         self.graph.paddingTop = 0.0;
-        self.graph.paddingRight = 20.0;
+        self.graph.paddingRight = 40.0;
         self.graph.paddingBottom = 25.0;
         
         self.graph.plotAreaFrame.paddingBottom = 50.0;
@@ -393,19 +417,13 @@
         self.graph.plotAreaFrame.paddingRight = 5.0;
     }
 
-
-    
     for (CPTPlot *p in self.graph.allPlots)
     {
         [p reloadData];
     }
     
     [self.graph reloadData];
-
-
 }
- 
-
 
 
 - (float)getTotalWeightEntries
@@ -483,9 +501,6 @@
         [self.graph reloadData];
         
         return maxWeight;
-        
-        
-        
     }
 
 - (float)getMinWeight
@@ -549,8 +564,6 @@
     NSLog(@"minWeight %f", minWeight);
     return minWeight;
     
-    
-    
 }
 
 - (float)getAverageWeight
@@ -608,8 +621,6 @@
     NSLog(@"avg weight, %f", avgWeight);
     
     return avgWeight;
-    
-    
     
 }
 
@@ -706,8 +717,6 @@
 
     }
     return result;
-  
-  
 
 }
 

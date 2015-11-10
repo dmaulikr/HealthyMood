@@ -216,9 +216,9 @@
     NSInteger numericSection = [[theSection name] integerValue];
     NSLog (@"theSection names, %@", [theSection name]);
     NSInteger year = numericSection / 1000;
-    NSLog (@"year, %i", year);
+    NSLog (@"year, %li", (long)year);
     NSInteger month = numericSection - (year * 1000);
-    NSLog (@"month, %i", month);
+    NSLog (@"month, %li", (long)month);
     
     NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
     dateComponents.year = year;
