@@ -7,7 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E92E4FD11BB5B74F0063D774 /* ChooseViewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E92E4FD01BB5B74F0063D774 /* ChooseViewViewController.m */; settings = {ASSET_TAGS = (); }; };
+		E92E4FD11BB5B74F0063D774 /* ChooseViewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E92E4FD01BB5B74F0063D774 /* ChooseViewViewController.m */; };
+		E941B0C81BF192A500FA91F5 /* WeighEntryTypeTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E941B0C71BF192A500FA91F5 /* WeighEntryTypeTableViewController.m */; };
+		E941B0CD1BF19A1200FA91F5 /* LoginWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E941B0CC1BF19A1200FA91F5 /* LoginWebViewController.m */; };
+		E941B0D01BF19D9600FA91F5 /* WithingsWeightTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E941B0CF1BF19D9600FA91F5 /* WithingsWeightTableViewController.m */; };
+		E941B0E41BF1A64000FA91F5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E941B0E31BF1A64000FA91F5 /* Security.framework */; };
+		E941B0EC1BF1B5C900FA91F5 /* Base64Transcoder.c in Sources */ = {isa = PBXBuildFile; fileRef = E941B0EA1BF1B5C900FA91F5 /* Base64Transcoder.c */; };
+		E941B0F11BF1B5D300FA91F5 /* hmac.c in Sources */ = {isa = PBXBuildFile; fileRef = E941B0EF1BF1B5D300FA91F5 /* hmac.c */; };
+		E941B0F41BF1B5DD00FA91F5 /* sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = E941B0F21BF1B5DD00FA91F5 /* sha1.c */; };
+		E941B0FC1BF1B73C00FA91F5 /* OAuth1Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = E941B0FB1BF1B73C00FA91F5 /* OAuth1Controller.m */; };
+		E941B0FF1BF1B7A400FA91F5 /* NSString+URLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = E941B0FE1BF1B7A400FA91F5 /* NSString+URLEncoding.m */; };
 		E971AD991B9CBE350092F9A8 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E971AD971B9CBE350092F9A8 /* Model.xcdatamodeld */; };
 		E971ADA11B9D24170092F9A8 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E971ADA01B9D24170092F9A8 /* CoreData.framework */; };
 		E971ADA31B9D241F0092F9A8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E971ADA21B9D241F0092F9A8 /* Foundation.framework */; };
@@ -24,10 +33,13 @@
 		E994D3A41BA9E41800B9AC23 /* Weight.m in Sources */ = {isa = PBXBuildFile; fileRef = E994D3A31BA9E41800B9AC23 /* Weight.m */; };
 		E99D7B0A1BB8DAD300CD5480 /* libCorePlot-CocoaTouch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E99D7B071BB8DA7300CD5480 /* libCorePlot-CocoaTouch.a */; };
 		E99D7B0C1BB8DADA00CD5480 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E99D7B0B1BB8DADA00CD5480 /* Accelerate.framework */; };
-		E99D7B101BBA2F4100CD5480 /* WeightDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = E99D7B0F1BBA2F4100CD5480 /* WeightDataSource.m */; settings = {ASSET_TAGS = (); }; };
+		E99D7B101BBA2F4100CD5480 /* WeightDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = E99D7B0F1BBA2F4100CD5480 /* WeightDataSource.m */; };
 		E9BC86801BA1EEC5002177B0 /* SettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BC867F1BA1EEC5002177B0 /* SettingsTableViewController.m */; };
-		E9F7FBE91BB6BAC3006992FD /* SelectionTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F7FBE81BB6BAC3006992FD /* SelectionTableViewController.m */; settings = {ASSET_TAGS = (); }; };
-		E9F7FBEC1BB6D4D7006992FD /* WeightGraphViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F7FBEB1BB6D4D7006992FD /* WeightGraphViewController.m */; settings = {ASSET_TAGS = (); }; };
+		E9D0A2431BF4387800B9A6A1 /* WithingsWeightTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D0A2421BF4387800B9A6A1 /* WithingsWeightTableViewCell.m */; };
+		E9D0A2481BF582E400B9A6A1 /* WithingsSelectionTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D0A2471BF582E400B9A6A1 /* WithingsSelectionTableViewController.m */; };
+		E9D0A24B1BF5896700B9A6A1 /* WithingsWeightGraphViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D0A24A1BF5896700B9A6A1 /* WithingsWeightGraphViewController.m */; };
+		E9F7FBE91BB6BAC3006992FD /* SelectionTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F7FBE81BB6BAC3006992FD /* SelectionTableViewController.m */; };
+		E9F7FBEC1BB6D4D7006992FD /* WeightGraphViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F7FBEB1BB6D4D7006992FD /* WeightGraphViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +72,24 @@
 		E936FA511BA09C8C002D31AE /* Model 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 3.xcdatamodel"; sourceTree = "<group>"; };
 		E93A030F1BA5F5D3004E505E /* Model 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 4.xcdatamodel"; sourceTree = "<group>"; };
 		E93A03161BA5FC46004E505E /* Model 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 5.xcdatamodel"; sourceTree = "<group>"; };
+		E941B0C61BF192A500FA91F5 /* WeighEntryTypeTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeighEntryTypeTableViewController.h; sourceTree = "<group>"; };
+		E941B0C71BF192A500FA91F5 /* WeighEntryTypeTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeighEntryTypeTableViewController.m; sourceTree = "<group>"; };
+		E941B0CB1BF19A1200FA91F5 /* LoginWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginWebViewController.h; sourceTree = "<group>"; };
+		E941B0CC1BF19A1200FA91F5 /* LoginWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginWebViewController.m; sourceTree = "<group>"; };
+		E941B0CE1BF19D9600FA91F5 /* WithingsWeightTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WithingsWeightTableViewController.h; sourceTree = "<group>"; };
+		E941B0CF1BF19D9600FA91F5 /* WithingsWeightTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WithingsWeightTableViewController.m; sourceTree = "<group>"; };
+		E941B0E31BF1A64000FA91F5 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		E941B0EA1BF1B5C900FA91F5 /* Base64Transcoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Base64Transcoder.c; sourceTree = "<group>"; };
+		E941B0EB1BF1B5C900FA91F5 /* Base64Transcoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64Transcoder.h; sourceTree = "<group>"; };
+		E941B0EF1BF1B5D300FA91F5 /* hmac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hmac.c; sourceTree = "<group>"; };
+		E941B0F01BF1B5D300FA91F5 /* hmac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hmac.h; sourceTree = "<group>"; };
+		E941B0F21BF1B5DD00FA91F5 /* sha1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha1.c; sourceTree = "<group>"; };
+		E941B0F31BF1B5DD00FA91F5 /* sha1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha1.h; sourceTree = "<group>"; };
+		E941B0FA1BF1B73C00FA91F5 /* OAuth1Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OAuth1Controller.h; path = ../OAuth1Controller.h; sourceTree = "<group>"; };
+		E941B0FB1BF1B73C00FA91F5 /* OAuth1Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OAuth1Controller.m; path = ../OAuth1Controller.m; sourceTree = "<group>"; };
+		E941B0FD1BF1B7A400FA91F5 /* NSString+URLEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+URLEncoding.h"; sourceTree = "<group>"; };
+		E941B0FE1BF1B7A400FA91F5 /* NSString+URLEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+URLEncoding.m"; sourceTree = "<group>"; };
+		E941B1001BF1B92500FA91F5 /* Simple-OAuth1-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Simple-OAuth1-Prefix.pch"; sourceTree = "<group>"; };
 		E971AD981B9CBE350092F9A8 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		E971ADA01B9D24170092F9A8 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		E971ADA21B9D241F0092F9A8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -92,6 +122,12 @@
 		E99D7B0F1BBA2F4100CD5480 /* WeightDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeightDataSource.m; sourceTree = "<group>"; };
 		E9BC867E1BA1EEC5002177B0 /* SettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsTableViewController.h; sourceTree = "<group>"; };
 		E9BC867F1BA1EEC5002177B0 /* SettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsTableViewController.m; sourceTree = "<group>"; };
+		E9D0A2411BF4387800B9A6A1 /* WithingsWeightTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WithingsWeightTableViewCell.h; sourceTree = "<group>"; };
+		E9D0A2421BF4387800B9A6A1 /* WithingsWeightTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WithingsWeightTableViewCell.m; sourceTree = "<group>"; };
+		E9D0A2461BF582E400B9A6A1 /* WithingsSelectionTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WithingsSelectionTableViewController.h; sourceTree = "<group>"; };
+		E9D0A2471BF582E400B9A6A1 /* WithingsSelectionTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WithingsSelectionTableViewController.m; sourceTree = "<group>"; };
+		E9D0A2491BF5896700B9A6A1 /* WithingsWeightGraphViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WithingsWeightGraphViewController.h; sourceTree = "<group>"; };
+		E9D0A24A1BF5896700B9A6A1 /* WithingsWeightGraphViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WithingsWeightGraphViewController.m; sourceTree = "<group>"; };
 		E9F7FBE71BB6BAC3006992FD /* SelectionTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionTableViewController.h; sourceTree = "<group>"; };
 		E9F7FBE81BB6BAC3006992FD /* SelectionTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectionTableViewController.m; sourceTree = "<group>"; };
 		E9F7FBEA1BB6D4D7006992FD /* WeightGraphViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeightGraphViewController.h; sourceTree = "<group>"; };
@@ -103,6 +139,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E941B0E41BF1A64000FA91F5 /* Security.framework in Frameworks */,
 				E99D7B0C1BB8DADA00CD5480 /* Accelerate.framework in Frameworks */,
 				E99D7B0A1BB8DAD300CD5480 /* libCorePlot-CocoaTouch.a in Frameworks */,
 				E971ADA51B9D24280092F9A8 /* UIKit.framework in Frameworks */,
@@ -121,9 +158,35 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E941B0F81BF1B62800FA91F5 /* oAuth */ = {
+			isa = PBXGroup;
+			children = (
+				E941B0FA1BF1B73C00FA91F5 /* OAuth1Controller.h */,
+				E941B0FB1BF1B73C00FA91F5 /* OAuth1Controller.m */,
+				E941B0FD1BF1B7A400FA91F5 /* NSString+URLEncoding.h */,
+				E941B0FE1BF1B7A400FA91F5 /* NSString+URLEncoding.m */,
+				E941B0F91BF1B63700FA91F5 /* Crypto */,
+			);
+			name = oAuth;
+			sourceTree = "<group>";
+		};
+		E941B0F91BF1B63700FA91F5 /* Crypto */ = {
+			isa = PBXGroup;
+			children = (
+				E941B0EA1BF1B5C900FA91F5 /* Base64Transcoder.c */,
+				E941B0EB1BF1B5C900FA91F5 /* Base64Transcoder.h */,
+				E941B0EF1BF1B5D300FA91F5 /* hmac.c */,
+				E941B0F01BF1B5D300FA91F5 /* hmac.h */,
+				E941B0F21BF1B5DD00FA91F5 /* sha1.c */,
+				E941B0F31BF1B5DD00FA91F5 /* sha1.h */,
+			);
+			name = Crypto;
+			sourceTree = "<group>";
+		};
 		E97D78F51B9BC0D300F6DC79 = {
 			isa = PBXGroup;
 			children = (
+				E941B0E31BF1A64000FA91F5 /* Security.framework */,
 				E99D7B0B1BB8DADA00CD5480 /* Accelerate.framework */,
 				E99D7B001BB8DA7300CD5480 /* CorePlot-CocoaTouch.xcodeproj */,
 				E971ADA41B9D24280092F9A8 /* UIKit.framework */,
@@ -154,6 +217,17 @@
 				E97D79051B9BC0D300F6DC79 /* AppDelegate.h */,
 				E97D79061B9BC0D300F6DC79 /* AppDelegate.m */,
 				E97D790E1B9BC0D300F6DC79 /* Main.storyboard */,
+				E9D0A2461BF582E400B9A6A1 /* WithingsSelectionTableViewController.h */,
+				E9D0A2471BF582E400B9A6A1 /* WithingsSelectionTableViewController.m */,
+				E9D0A2491BF5896700B9A6A1 /* WithingsWeightGraphViewController.h */,
+				E9D0A24A1BF5896700B9A6A1 /* WithingsWeightGraphViewController.m */,
+				E941B1001BF1B92500FA91F5 /* Simple-OAuth1-Prefix.pch */,
+				E941B0CE1BF19D9600FA91F5 /* WithingsWeightTableViewController.h */,
+				E941B0CF1BF19D9600FA91F5 /* WithingsWeightTableViewController.m */,
+				E941B0C61BF192A500FA91F5 /* WeighEntryTypeTableViewController.h */,
+				E941B0C71BF192A500FA91F5 /* WeighEntryTypeTableViewController.m */,
+				E941B0CB1BF19A1200FA91F5 /* LoginWebViewController.h */,
+				E941B0CC1BF19A1200FA91F5 /* LoginWebViewController.m */,
 				E9F7FBEA1BB6D4D7006992FD /* WeightGraphViewController.h */,
 				E9F7FBEB1BB6D4D7006992FD /* WeightGraphViewController.m */,
 				E99D7B0E1BBA2F4100CD5480 /* WeightDataSource.h */,
@@ -164,10 +238,13 @@
 				E9BC867F1BA1EEC5002177B0 /* SettingsTableViewController.m */,
 				E97D792D1B9BC19000F6DC79 /* WeightTableViewController.h */,
 				E97D792E1B9BC19000F6DC79 /* WeightTableViewController.m */,
+				E941B0F81BF1B62800FA91F5 /* oAuth */,
 				E97D79301B9BC22700F6DC79 /* AddWeightViewController.h */,
 				E97D79311B9BC22700F6DC79 /* AddWeightViewController.m */,
 				E97D79331B9C241900F6DC79 /* WeightTableViewCell.h */,
 				E97D79341B9C241900F6DC79 /* WeightTableViewCell.m */,
+				E9D0A2411BF4387800B9A6A1 /* WithingsWeightTableViewCell.h */,
+				E9D0A2421BF4387800B9A6A1 /* WithingsWeightTableViewCell.m */,
 				E97D79111B9BC0D300F6DC79 /* Images.xcassets */,
 				E97D79131B9BC0D300F6DC79 /* LaunchScreen.xib */,
 				E971AD971B9CBE350092F9A8 /* Model.xcdatamodeld */,
@@ -331,15 +408,26 @@
 				E9BC86801BA1EEC5002177B0 /* SettingsTableViewController.m in Sources */,
 				E97D792F1B9BC19000F6DC79 /* WeightTableViewController.m in Sources */,
 				E9F7FBEC1BB6D4D7006992FD /* WeightGraphViewController.m in Sources */,
+				E9D0A24B1BF5896700B9A6A1 /* WithingsWeightGraphViewController.m in Sources */,
 				E97D79071B9BC0D300F6DC79 /* AppDelegate.m in Sources */,
 				E99D7B101BBA2F4100CD5480 /* WeightDataSource.m in Sources */,
+				E941B0FC1BF1B73C00FA91F5 /* OAuth1Controller.m in Sources */,
 				E994D3A41BA9E41800B9AC23 /* Weight.m in Sources */,
+				E9D0A2431BF4387800B9A6A1 /* WithingsWeightTableViewCell.m in Sources */,
+				E941B0C81BF192A500FA91F5 /* WeighEntryTypeTableViewController.m in Sources */,
 				E97D79351B9C241900F6DC79 /* WeightTableViewCell.m in Sources */,
 				E971AD991B9CBE350092F9A8 /* Model.xcdatamodeld in Sources */,
+				E941B0FF1BF1B7A400FA91F5 /* NSString+URLEncoding.m in Sources */,
+				E941B0CD1BF19A1200FA91F5 /* LoginWebViewController.m in Sources */,
 				E9F7FBE91BB6BAC3006992FD /* SelectionTableViewController.m in Sources */,
 				E92E4FD11BB5B74F0063D774 /* ChooseViewViewController.m in Sources */,
+				E941B0F41BF1B5DD00FA91F5 /* sha1.c in Sources */,
+				E941B0D01BF19D9600FA91F5 /* WithingsWeightTableViewController.m in Sources */,
+				E941B0EC1BF1B5C900FA91F5 /* Base64Transcoder.c in Sources */,
 				E97D79321B9BC22700F6DC79 /* AddWeightViewController.m in Sources */,
+				E941B0F11BF1B5D300FA91F5 /* hmac.c in Sources */,
 				E97D79041B9BC0D300F6DC79 /* main.m in Sources */,
+				E9D0A2481BF582E400B9A6A1 /* WithingsSelectionTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

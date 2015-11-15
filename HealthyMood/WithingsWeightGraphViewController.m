@@ -1,23 +1,28 @@
 //
-//  WeightGraphViewController.m
+//  WithingsWeightGraphViewController.m
 //  HealthyMood
 //
-//  Created by Nadine Khattak on 9/26/15.
+//  Created by Nadine Khattak on 11/12/15.
 //  Copyright © 2015 Ensach. All rights reserved.
 //
 
-#import "WeightGraphViewController.h"
-#import "AppDelegate.h"
+#import "WithingsWeightGraphViewController.h"
+#import "OAuth1Controller.h"
 #import "CorePlot-CocoaTouch.h"
 #import <UIKit/UIKit.h>
-#import <CoreData/CoreData.h>
-#import "Weight.h"
 
 
+@interface WithingsWeightGraphViewController ()
 
-@interface WeightGraphViewController ()
+@property (nonatomic, strong) OAuth1Controller *oauth1Controller;
+@property (nonatomic, strong) NSString *oauthToken;
+@property (nonatomic, strong) NSString *oauthTokenSecret;
+@property (nonatomic, strong) NSString *weightMeas;
+@property (nonatomic, strong) NSDate *weightDate;
+@property (nonatomic, strong) NSMutableArray *vals;
+@property (nonatomic, strong) NSMutableArray *dateVals;
 
-@property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
+
 @property (nonatomic, readwrite, strong) CPTGraph *aGraph;
 @property (nonatomic, readwrite, strong) CPTXYGraph *graph;
 @property (nonatomic, readwrite, strong) NSDate *refDate;
@@ -28,44 +33,164 @@
 @property (nonatomic, readwrite, strong) IBOutlet CPTGraphHostingView *hostView;
 @property (nonatomic, readwrite, strong) NSArray *plotData;
 
+
+
 @end
 
-@implementation WeightGraphViewController
-@synthesize segmentedControl;
 
+
+@implementation WithingsWeightGraphViewController
+
+
+@synthesize withingsSegment;
 @synthesize hostView;
 @synthesize plotData;
 
-
-- (void)viewDidLoad
-{
-   
+- (void)viewDidLoad {
     [super viewDidLoad];
+
     
-    AppDelegate *delegate = [[UIApplication sharedApplication] delegate];
-    self.managedObjectContext = delegate.managedObjectContext;
+    // Do any additional setup after loading the view.
     
-    NSError *error = nil;
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Weight"];
-    [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"weightDate" ascending:YES]]];
-    self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:@"sectionIdentifier" cacheName:nil];
     
-    NSLog(@"Before fetch fetchRequests %@", self.fetchedResultsController.fetchedObjects);
-    // Perform Fetch
-    [self.fetchedResultsController performFetch:&error];
-    NSLog(@"After fetch fetchRequests %@", self.fetchedResultsController.fetchedObjects);
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    NSString *oauthToken = [ defaults objectForKey:@"oauthToken"];
+    NSString *oauthTokenSecret = [ defaults objectForKey:@"oauthTokenSecret"];
+    NSString *userid = [defaults objectForKey:@"userid"];
+    
+    NSLog(@"userid, %@", userid);
+    
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    NSError *error;
+    
+    self.vals = [[NSMutableArray alloc] init];
+    self.weightMeas = [[NSString alloc] init];
+    
+    self.dateVals = [[NSMutableArray alloc] init];
+    self.weightDate   = [[NSString alloc] init];
+    
+    [dict setObject:@"getmeas" forKey:@"action"];
+    
+    [dict setObject:@"1" forKey:@"category"];
+    
+    NSURLRequest *request =
+    [OAuth1Controller preparedRequestForPath:@"measure"
+                                  parameters:dict
+                                  HTTPmethod:@"GET"
+                                  oauthToken:oauthToken
+                                 oauthSecret:oauthTokenSecret];
+    
+    
+    
+    NSLog(@"RRRRR %@",request.URL);
+    
+    NSURLResponse *response;
+    
+    NSData *data = [NSURLConnection sendSynchronousRequest:request
+                                         returningResponse:&response
+                                                     error:&error ];
+    
+    
+         if (data.length > 0 && error == nil)
+         {
+             NSDictionary *greeting = [NSJSONSerialization JSONObjectWithData:data
+                                                                      options:0
+                                                                        error:NULL];
+             
+             NSDictionary *body = greeting[@"body"];
+             NSDictionary *measureGroups = body[@"measuregrps"];
+             
+             NSLog(@"greeting %@", greeting);
+             NSLog(@"measuregroups %@", measureGroups);
+             
+             if (!measureGroups)
+             {
+                 NSError *error = [NSError errorWithDomain:@"com.nadine.healthymood"
+                                                      code:-1
+                                                  userInfo:@{NSLocalizedDescriptionKey:@"Unexpected response, no measurement groups"}];
+             }
+             
+             
+             else
+             {
+                 for (NSDictionary *wMeasures in measureGroups) {
+                     
+                     NSDictionary *measures = wMeasures[@"measures"];
+                     NSLog(@"measures, %@", measures);
+                     
+                     for (NSDictionary *measureWeights in measures)
+                     {
+                         if ([measureWeights[@"type"] integerValue] == 1)
+                         {
+                             
+                             NSNumber *measureDateNumber = wMeasures[@"date"];
+                             
+                             NSString *epochTime = [measureDateNumber stringValue];
+                             
+                             NSTimeInterval seconds = [epochTime doubleValue];
+                             
+                             NSDate *epochNSDate = [[NSDate alloc] initWithTimeIntervalSince1970:seconds];
+                             
+                             NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+                             [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+                             
+                             self.weightDate = epochNSDate;
+                             
+                             
+                             
+                             NSUInteger rawMeas = [measureWeights[@"value"] unsignedIntegerValue];
+                             
+                             short unit = [measureWeights[@"unit"] shortValue];
+                             
+                             NSDecimalNumber *measureNum = [NSDecimalNumber decimalNumberWithMantissa: rawMeas
+                                                                                             exponent:unit
+                                                                                           isNegative:NO];
+                             
+                             double measureNumDouble = [measureNum doubleValue];
+                             
+                             double measureNumPounds = measureNumDouble * 2.2046;
+                             
+                             NSNumber *measureNumPoundsNumber = [NSNumber numberWithDouble:measureNumPounds];
+                             
+                             self.weightMeas = [measureNumPoundsNumber stringValue];
+                             
+                             [self.vals addObject:self.weightMeas];
+                             
+                             [self.dateVals addObject:self.weightDate];
+                             
+                             // [self.weightMeas addObject:[measureWeights objectForKey:@"value"]];
+                             NSLog(@"weight asdf, %@, %@", self.weightMeas, self.vals);
+                             
+                             NSLog(@"weight date, %@, %@", self.weightDate, self.dateVals);
+                             
+                         }
+                         
+                     }
+                 }
+             }
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+                 [self.graph reloadData];
+                 
+                 
+             });
+             
+             
+         };
+    
     
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"MM/dd"];
     
-
     
-   // NSDate *today = [[NSDate alloc] initWithTimeIntervalSinceNow: 0];
-
+    
+    // NSDate *today = [[NSDate alloc] initWithTimeIntervalSinceNow: 0];
+    
     NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     
     NSDate *today = [calendar dateBySettingHour:10 minute:0 second:0 ofDate:[NSDate date] options:0];
- //   NSDate *refDate            = today;
+    //   NSDate *refDate            = today;
     NSTimeInterval oneDay      = 24 * 60 * 60;
     
     self.refDate            =     [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (6 * 24 * 60 * 60) ];
@@ -73,21 +198,13 @@
     self.view.backgroundColor = [UIColor colorWithRed:245.0/255.0 green:0.0/255.0 blue:87.0/255.0 alpha:1.0f];
     CPTXYGraph *newGraph = [[CPTXYGraph alloc] initWithFrame:CGRectZero];
     
-      [[UISegmentedControl appearance] setTintColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0]];
+    [[UISegmentedControl appearance] setTintColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0]];
     
     //CPTTheme *theme      = [CPTTheme themeNamed:kCPTDarkGradientTheme];
     //[newGraph applyTheme:theme];
     self.graph = newGraph;
     
     self.hostView.hostedGraph = newGraph;
-    
-    // Setup scatter plot space
-    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
-    NSTimeInterval xLow       = 0.0;
-    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat([self getMinWeight]-10.0)
-                                                    length:CPTDecimalFromFloat((([self getMaxWeight])- [self getMinWeight]) + 20.0)];
-    
     
     
     CPTMutableTextStyle *textStyle = [CPTMutableTextStyle textStyle];
@@ -98,16 +215,16 @@
     CPTXYAxisSet *axisSet = (CPTXYAxisSet *)newGraph.axisSet;
     CPTXYAxis *x          = axisSet.xAxis;
     
-            x.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
+    x.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
     x.majorIntervalLength         = CPTDecimalFromDouble(oneDay);
-
+    
     x.orthogonalCoordinateDecimal = CPTDecimalFromDouble([self getMinWeight] - 10.0);
     x.minorTicksPerInterval       = 0;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-
+    
     [dateFormatter setDateFormat:@"MM/dd"];
     
-
+    
     CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
     timeFormatter.referenceDate = self.refDate;
     x.labelFormatter            = timeFormatter;
@@ -120,17 +237,17 @@
     NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
     [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [numberFormatter setMaximumFractionDigits:0];
-
+    
     
     y.labelFormatter = numberFormatter;
     
     y.majorIntervalLength         = CPTDecimalFromDouble(10);
     y.minorTicksPerInterval       = 0;
     y.orthogonalCoordinateDecimal = CPTDecimalFromDouble([self getMinWeight] - 10.0);
-        y.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
+    y.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
     
-        [y setLabelTextStyle:textStyle];
-
+    [y setLabelTextStyle:textStyle];
+    
     // Create a plot that uses the data source method
     CPTScatterPlot *dataSourceLinePlot = [[CPTScatterPlot alloc] init];
     dataSourceLinePlot.identifier = @"Date Plot";
@@ -153,47 +270,35 @@
     
     y.axisLineStyle = axisLineStyle;
     x.axisLineStyle = axisLineStyle;
-
+    
     
     dataSourceLinePlot.dataSource = self;
     [newGraph addPlot:dataSourceLinePlot];
     
-    NSInteger countRecords = [self.fetchedResultsController.fetchedObjects count]; // Our sample graph contains 9 'points'
+    NSInteger countRecords = [self.vals count]; // Our sample graph contains 9 'points'
     
     NSLog (@"countRecords %ld", (long)countRecords);
     
-    /*
+    
+    // Setup scatter plot space
+    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
+    NSTimeInterval xLow       = 0.0;
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat([self getMinWeight]-10.0)
+                                                    length:CPTDecimalFromFloat(([self getMaxWeight]- [self getMinWeight]) + 20.0)];
+    
+    
 
-    for ( NSUInteger i = 0; i < countRecords; i++ ) {
-        
-        
-        NSTimeInterval xVal1 = oneDay * i;
-        
-        NSDate *tempDate =((Weight*)[self.fetchedResultsController.fetchedObjects objectAtIndex:i]).weightDate;
 
-        NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:tempDate];
-        
-        [components setHour: 10];
-        
-        NSDate *newDate = [[NSCalendar currentCalendar] dateFromComponents:components];
-        
-        NSTimeInterval xVal = [newDate timeIntervalSinceDate:refDate];
-        NSLog (@"refDate , %@", refDate);
-        NSLog (@"tempDate , %@", tempDate);
-        NSLog (@"xVal old, %f", xVal1);
-        NSLog (@"xVal new, %f", xVal);
-        
-        // double yVal = 1.2 * arc4random() / (double)UINT32_MAX + 1.2;
-        NSNumber *weightRec = ((Weight*)[self.fetchedResultsController.fetchedObjects objectAtIndex:i]).weight;
-        double yVal = [weightRec doubleValue];
-     
-        [newData addObject:
-         @{ @(CPTScatterPlotFieldX): @(xVal),
-            @(CPTScatterPlotFieldY): @(yVal) }
-         ];
-    }
-    self.plotData = newData; */
+    
+}
 
+
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
 }
 
 
@@ -203,7 +308,7 @@
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if([[defaults objectForKey:@"unit"] isEqual:@"lb"]) {
-       yAxisTitle = @"Weight (lb)";
+        yAxisTitle = @"Weight (lb)";
     } else {
         yAxisTitle = @"Weight (kg)";
     }
@@ -212,17 +317,17 @@
 }
 
 -(IBAction) segmentedControlIndexChanged {
-
+    
     NSTimeInterval oneDay = 24 * 60 * 60;
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)self.graph.defaultPlotSpace;
     
     NSTimeInterval xLow = 0.0f;
     
     CPTXYAxisSet *axisSet = (id)self.graph.axisSet;
-
+    
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
-
+    
     NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     
     NSDate *today = [calendar dateBySettingHour:10 minute:0 second:0 ofDate:[NSDate date] options:0];
@@ -242,7 +347,7 @@
     NSInteger dayOfWeek = [comps weekday];
     
     NSLog (@"comps weekday, %ld", (long)[comps weekday]);
-           
+    
     [gregorian rangeOfUnit:NSCalendarUnitYear
                  startDate:&beginningofYear
                   interval:&lengthofYear
@@ -265,24 +370,24 @@
     NSLog(@"days in month %lu", (unsigned long)numberOfDaysInMonth);
     NSLog(@"days in year %li", (long)daysInYear);
     
-
+    
     NSLog(@"number of days in month %lu",(unsigned long)numberOfDaysInMonth);
     
-    switch (self.segmentedControl.selectedSegmentIndex) {
+    switch (self.withingsSegment.selectedSegmentIndex) {
         case 0:
             self.refDate = [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (6 * 24 * 60 * 60) ];
-
+            
             
             plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
-         //   plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble([self getMinWeight]) length:CPTDecimalFromDouble([self getMaxWeight] + 20.0)];
+            //   plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble([self getMinWeight]) length:CPTDecimalFromDouble([self getMaxWeight] + 20.0)];
             [dateFormatter setDateFormat:@"MM/d"];
-
+            
             axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay );
             timeFormatter.referenceDate = self.refDate;
             axisSet.xAxis.labelFormatter = timeFormatter;
-        
+            
             //x.title = @"Week";
-
+            
             
             [self.graph reloadData];
             
@@ -292,7 +397,7 @@
             
             plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
                                                             length:CPTDecimalFromFloat(oneDay * (numberOfDaysInMonth - 1) + (oneDay * .99) )];
-
+            
             [dateFormatter setDateFormat:@"MMM d"];
             axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 7);
             timeFormatter.referenceDate = self.refDate;
@@ -314,7 +419,7 @@
             axisSet.xAxis.labelFormatter = timeFormatter;
             
             //x.title = @"Year";
-
+            
             [self.graph reloadData];
             
             break;
@@ -350,14 +455,16 @@
 }
 
 -(void)viewDidLayoutSubviews {
-
-     //CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, 95, self.view.frame.size.width, self.view.frame.size.height) ];
+    
+    //CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, 95, self.view.frame.size.width, self.view.frame.size.height) ];
+    
    
-    float y = self.segmentedControl.frame.origin.y;
+    
+    float y = self.withingsSegment.frame.origin.y;
     
     NSLog (@"%f", y);
-
-    CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.segmentedControl.frame.size.height + 70, self.view.frame.size.width, self.view.frame.size.height - (self.segmentedControl.frame.size.height + 70) )];
+    
+    CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.withingsSegment.frame.size.height + 70, self.view.frame.size.width, self.view.frame.size.height - (self.withingsSegment.frame.size.height + 70) )];
     
     [self.view addSubview:hostingView];
     
@@ -374,7 +481,7 @@
         self.graph.plotAreaFrame.paddingLeft = 30.0;
         self.graph.plotAreaFrame.paddingTop = 5.0;
         self.graph.plotAreaFrame.paddingRight = 5.0;
-
+        
         
     }
     
@@ -391,14 +498,14 @@
         
     }
     
-
+    
     for (CPTPlot *p in self.graph.allPlots)
     {
         [p reloadData];
     }
     
     [self.graph reloadData];
-
+    
 }
 
 
@@ -416,7 +523,7 @@
         self.graph.plotAreaFrame.paddingTop = 5.0;
         self.graph.plotAreaFrame.paddingRight = 5.0;
     }
-
+    
     for (CPTPlot *p in self.graph.allPlots)
     {
         [p reloadData];
@@ -428,135 +535,81 @@
 
 - (float)getTotalWeightEntries
 {
-
-    NSError *error = nil;
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Weight" inManagedObjectContext:self.managedObjectContext];
-    [fetchRequest setEntity:entity];
     
-    return [self.managedObjectContext countForFetchRequest:fetchRequest error:&error];
+    NSError *error = nil;
+    
+    return [self.vals count];
 }
 
 - (float)getMaxWeight
-    {
-        NSFetchRequest *request = [[NSFetchRequest alloc] init];
-        NSEntityDescription *entity = [NSEntityDescription entityForName:@"Weight" inManagedObjectContext:self.managedObjectContext];
-        [request setEntity:entity];
-        
-        // Specify that the request should return dictionaries.
-        [request setResultType:NSDictionaryResultType];
-        
-        // Create an expression for the key path.
-        NSExpression *keyPathExpression = [NSExpression expressionForKeyPath:@"weight"];
-        
-        // Create an expression to represent the maximum value at the key path 'creationDate'
-        NSExpression *maxExpression = [NSExpression expressionForFunction:@"max:" arguments:[NSArray arrayWithObject:keyPathExpression]];
-        
-        // Create an expression description using the maxExpression and returning a date.
-        NSExpressionDescription *expressionDescription = [[NSExpressionDescription alloc] init];
-        
-        // The name is the key that will be used in the dictionary for the return value.
-        [expressionDescription setName:@"maxDate"];
-        [expressionDescription setExpression:maxExpression];
-        [expressionDescription setExpressionResultType:NSFloatAttributeType];
-        
-        // Set the request's properties to fetch just the property represented by the expressions.
-        [request setPropertiesToFetch:[NSArray arrayWithObject:expressionDescription]];
-        
-        // Execute the fetch.
-        NSError *error = nil;
-        NSArray *objects = [self.managedObjectContext executeFetchRequest:request error:&error];
-        
-        NSString *theObject = [[objects objectAtIndex:0] valueForKey:@"maxDate"];
-        
-        float maxWeight = [theObject floatValue];
-        
-        NSLog(@"Maximum date: %@", theObject);
-        NSLog(@"Maximum date float: %f", maxWeight);
-        
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
-            
-            maxWeight = ([theObject floatValue] * 0.453592);
-        } else {
-            maxWeight = [theObject floatValue];
-        }
-
-        if (objects == nil) {
-            maxWeight = 50.0;
-
-        }
-        
-        else if (maxWeight == 0) {
-            maxWeight = 50.0;
-            
-        }
-        
-        
-        else if (objects > 0)
-        {
-            return maxWeight;
-        }
-      
-        [self.graph reloadData];
-        
-        return maxWeight;
-    }
-
-- (float)getMinWeight
 {
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Weight" inManagedObjectContext:self.managedObjectContext];
-    [request setEntity:entity];
+    //NSLog(@"minWeightNumber", minWeightNumber);
+    NSNumber *maxWeightNumber = [self.vals valueForKeyPath:@"@max.intValue"];
+    NSLog(@"maxWeightNumber, %@", maxWeightNumber);
     
-    // Specify that the request should return dictionaries.
-    [request setResultType:NSDictionaryResultType];
+    float maxWeight = [maxWeightNumber doubleValue];
     
-    // Create an expression for the key path.
-    NSExpression *keyPathExpression = [NSExpression expressionForKeyPath:@"weight"];
     
-    // Create an expression to represent the maximum value at the key path 'creationDate'
-    NSExpression *maxExpression = [NSExpression expressionForFunction:@"min:" arguments:[NSArray arrayWithObject:keyPathExpression]];
     
-    // Create an expression description using the maxExpression and returning a date.
-    NSExpressionDescription *expressionDescription = [[NSExpressionDescription alloc] init];
+    //  double minWeight = [self.vals indexOfObject:min];
     
-    // The name is the key that will be used in the dictionary for the return value.
-    [expressionDescription setName:@"minWeight"];
-    [expressionDescription setExpression:maxExpression];
-    [expressionDescription setExpressionResultType:NSFloatAttributeType];
-    
-    // Set the request's properties to fetch just the property represented by the expressions.
-    [request setPropertiesToFetch:[NSArray arrayWithObject:expressionDescription]];
-    
-    // Execute the fetch.
-    NSError *error = nil;
-    NSArray *objects = [self.managedObjectContext executeFetchRequest:request error:&error];
-    
-    NSString *theObject = [[objects objectAtIndex:0] valueForKey:@"minWeight"];
-    
-    float minWeight = [theObject floatValue];
-    
-    NSLog(@"Maximum date: %@", theObject);
-    NSLog(@"Maximum date float: %f", minWeight);
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
         
-        minWeight = ([theObject floatValue] * 0.453592);
+        maxWeight = ([maxWeightNumber floatValue] * 0.453592);
     } else {
-        minWeight = [theObject floatValue];
+        maxWeight = [maxWeightNumber floatValue];
     }
     
-    if (objects == nil) {
-            return 50.0;
+    if (maxWeightNumber == nil) {
+        return 50.0;
     }
     
-    else if (objects == 0)
+    else if (maxWeightNumber == 0)
+    {
+        NSLog (@"no values");
+        maxWeight = 50.0;
+        
+    }
+    
+    [self.graph reloadData];
+    
+    NSLog(@"minWeight %f", maxWeight);
+    return maxWeight;
+}
+
+- (float)getMinWeight
+{
+
+    //NSLog(@"minWeightNumber", minWeightNumber);
+    NSNumber *minWeightNumber = [self.vals valueForKeyPath:@"@min.intValue"];
+        NSLog(@"minWeightNumber, %@", minWeightNumber);
+    
+    float minWeight = [minWeightNumber doubleValue];
+    
+    
+    
+  //  double minWeight = [self.vals indexOfObject:min];
+
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
+        
+        minWeight = ([minWeightNumber floatValue] * 0.453592);
+    } else {
+        minWeight = [minWeightNumber floatValue];
+    }
+    
+    if (minWeightNumber == nil) {
+        return 50.0;
+    }
+    
+    else if (minWeightNumber == 0)
     {
         NSLog (@"no values");
         minWeight = 50.0;
-
+        
     }
     
     [self.graph reloadData];
@@ -566,77 +619,16 @@
     
 }
 
-- (float)getAverageWeight
-{
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Weight" inManagedObjectContext:self.managedObjectContext];
-    [request setEntity:entity];
-    
-    // Specify that the request should return dictionaries.
-    [request setResultType:NSDictionaryResultType];
-    
-    // Create an expression for the key path.
-    NSExpression *keyPathExpression = [NSExpression expressionForKeyPath:@"weight"];
-    
-    // Create an expression to represent the maximum value at the key path 'creationDate'
-    NSExpression *avgExpression = [NSExpression expressionForFunction:@"average:" arguments:[NSArray arrayWithObject:keyPathExpression]];
-    
-    // Create an expression description using the maxExpression and returning a date.
-    NSExpressionDescription *expressionDescription = [[NSExpressionDescription alloc] init];
-    
-    // The name is the key that will be used in the dictionary for the return value.
-    [expressionDescription setName:@"averageWeight"];
-    [expressionDescription setExpression:avgExpression];
-    [expressionDescription setExpressionResultType:NSFloatAttributeType];
-    
-    // Set the request's properties to fetch just the property represented by the expressions.
-    [request setPropertiesToFetch:[NSArray arrayWithObject:expressionDescription]];
-    
-    // Execute the fetch.
-    NSError *error = nil;
-    NSArray *objects = [self.managedObjectContext executeFetchRequest:request error:&error];
-    
-    NSString *theObject = [[objects objectAtIndex:0] valueForKey:@"averageWeight"];
-    
-    float avgWeight = [theObject floatValue];
-    
-    NSLog(@"Maximum weight: %@", theObject);
-    NSLog(@"Maximum date float: %f", avgWeight);
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
-        
-        avgWeight = ([theObject floatValue] * 0.453592);
-    } else {
-        avgWeight = [theObject floatValue];
-    }
-    
-    if (objects == nil) {
-        NSLog (@"no info");
-        
-    }
-    
-    [self.graph reloadData];
-    
-    NSLog(@"avg weight, %f", avgWeight);
-    
-    return avgWeight;
-    
-}
 
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
 // This method is here because this class also functions as datasource for our graph
 // Therefore this class implements the CPTPlotDataSource protocol
 -(NSUInteger)numberOfRecordsForPlot:(CPTPlot *)plotnumberOfRecords {
     
-      //  return self.plotData.count;
+    //  return self.plotData.count;
     
-    return [self.fetchedResultsController.fetchedObjects count]; // Our sample graph contains 9 'points'
+    return [self.vals count]; // Our sample graph contains 9 'points'
 }
 
 // This method is here because this class also functions as datasource for our graph
@@ -645,18 +637,18 @@
 
 -(NSNumber *)numberForPlot:(CPTPlot *)plot field:(NSUInteger)fieldEnum recordIndex:(NSUInteger)index
 {
-   // return self.plotData[index][@(fieldEnum)];
+    // return self.plotData[index][@(fieldEnum)];
     
     NSNumber * result = [[NSNumber alloc] init];
     // This method returns x and y values.  Check which is being requested here.
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-
+    
     if (fieldEnum == CPTScatterPlotFieldX)
     {
         
-        NSDate * dateResult = ((Weight*)[self.fetchedResultsController.fetchedObjects objectAtIndex:index]).weightDate;
+        NSDate * dateResult = [self.dateVals objectAtIndex:index];
         
-        NSLog(@"dateResult, %@", dateResult);
+        NSLog(@"withings dateResult, %@", dateResult);
         
         NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:dateResult];
         
@@ -667,62 +659,80 @@
         double intervalInSecondsFirst  = ([newDate timeIntervalSinceDate:self.refDate]);
         result = [NSNumber numberWithDouble:intervalInSecondsFirst];
         
-        if (self.segmentedControl.selectedSegmentIndex == 0)
+        if (self.withingsSegment.selectedSegmentIndex == 0)
         {
             double intervalInSecondsFirst = ([newDate timeIntervalSinceDate:self.refDate]); // get difference
             
             NSLog (@"intervalinsecondsfirst %f", intervalInSecondsFirst);
-           
-                                                                         
+            
+            
             return [NSNumber numberWithDouble:intervalInSecondsFirst]; // return difference
             
         }
-        else if (self.segmentedControl.selectedSegmentIndex ==1)
+        else if (self.withingsSegment.selectedSegmentIndex ==1)
         {
             double intervalInSecondsFirst = [dateResult timeIntervalSinceDate:self.refDate]; // get difference
-             // get difference
+            // get difference
             
             return [NSNumber numberWithDouble:intervalInSecondsFirst]; // return difference
             
         }
-        else if (self.segmentedControl.selectedSegmentIndex ==2){
+        else if (self.withingsSegment.selectedSegmentIndex ==2){
             double intervalInSeconds = [dateResult timeIntervalSinceDate:self.refDate]; // get difference
             return [NSNumber numberWithDouble:intervalInSeconds]; // return difference
-
+            
         }
         
         
-
+        
     }
-
+    
     else
     {
-        // Return y value, for this example we'll be plotting y = x * x
-        if ([self.fetchedResultsController.fetchedObjects count] > index) {
+        //Return y value, for this example we'll be plotting y = x * x
+//        if ([self.fetchedResultsController.fetchedObjects count] > index) {
             if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
-                NSNumber *initResult = ((Weight*)[self.fetchedResultsController.fetchedObjects objectAtIndex:index]).weight;
+                NSNumber *initResult = [self.vals objectAtIndex:index];
                 float floatResult = [initResult floatValue] * 0.453592;
                 result = @(floatResult);
                 NSLog(@"x %@", result);
                 return result;
             }
             else {
-                NSNumber *result = ((Weight*)[self.fetchedResultsController.fetchedObjects objectAtIndex:index]).weight;
+                NSNumber *result = [self.vals objectAtIndex:index];
                 NSLog(@"y %@", result);
                 return  result;
-            }
-            
+/*            }
 
+            
         } else {
             return nil;
-        }
-
+        }*/
+        
+    }
     }
     return result;
-
+    
 }
 
 
 
 
+
+
+
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+
 @end
+
+
