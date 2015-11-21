@@ -17,6 +17,6 @@
 
 - (float)getTotalWeightEntries;
 - (float)getMaxWeight;
-- (NSArray *)getTimeEnteredAsArray;
+//- (NSArray *)getTimeEnteredAsArray;
 
 @end

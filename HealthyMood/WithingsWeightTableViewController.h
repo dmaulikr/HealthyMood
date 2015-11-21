@@ -9,7 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "WithingsWeightTableViewCell.h"
 
-@interface WithingsWeightTableViewController : UITableViewController {
+
+@interface WithingsWeightTableViewController : UITableViewController  {
     NSString *userId;
     NSString *date;
 }

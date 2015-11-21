@@ -38,6 +38,10 @@
 		E9D0A2431BF4387800B9A6A1 /* WithingsWeightTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D0A2421BF4387800B9A6A1 /* WithingsWeightTableViewCell.m */; };
 		E9D0A2481BF582E400B9A6A1 /* WithingsSelectionTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D0A2471BF582E400B9A6A1 /* WithingsSelectionTableViewController.m */; };
 		E9D0A24B1BF5896700B9A6A1 /* WithingsWeightGraphViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D0A24A1BF5896700B9A6A1 /* WithingsWeightGraphViewController.m */; };
+		E9D0A24E1BFACE0000B9A6A1 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9D0A24D1BFACE0000B9A6A1 /* HealthKit.framework */; };
+		E9D0A2531BFB361F00B9A6A1 /* MeasurementTypeTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D0A2521BFB361F00B9A6A1 /* MeasurementTypeTableViewController.m */; };
+		E9D0A2561BFB3E3E00B9A6A1 /* ExerciseTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D0A2551BFB3E3E00B9A6A1 /* ExerciseTableViewController.m */; };
+		E9D0A25B1BFE8C5D00B9A6A1 /* StepsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D0A25A1BFE8C5D00B9A6A1 /* StepsTableViewController.m */; };
 		E9F7FBE91BB6BAC3006992FD /* SelectionTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F7FBE81BB6BAC3006992FD /* SelectionTableViewController.m */; };
 		E9F7FBEC1BB6D4D7006992FD /* WeightGraphViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F7FBEB1BB6D4D7006992FD /* WeightGraphViewController.m */; };
 /* End PBXBuildFile section */
@@ -128,6 +132,14 @@
 		E9D0A2471BF582E400B9A6A1 /* WithingsSelectionTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WithingsSelectionTableViewController.m; sourceTree = "<group>"; };
 		E9D0A2491BF5896700B9A6A1 /* WithingsWeightGraphViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WithingsWeightGraphViewController.h; sourceTree = "<group>"; };
 		E9D0A24A1BF5896700B9A6A1 /* WithingsWeightGraphViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WithingsWeightGraphViewController.m; sourceTree = "<group>"; };
+		E9D0A24D1BFACE0000B9A6A1 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
+		E9D0A24F1BFACE0000B9A6A1 /* HealthyMood.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = HealthyMood.entitlements; sourceTree = "<group>"; };
+		E9D0A2511BFB361F00B9A6A1 /* MeasurementTypeTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeasurementTypeTableViewController.h; sourceTree = "<group>"; };
+		E9D0A2521BFB361F00B9A6A1 /* MeasurementTypeTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeasurementTypeTableViewController.m; sourceTree = "<group>"; };
+		E9D0A2541BFB3E3E00B9A6A1 /* ExerciseTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExerciseTableViewController.h; sourceTree = "<group>"; };
+		E9D0A2551BFB3E3E00B9A6A1 /* ExerciseTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExerciseTableViewController.m; sourceTree = "<group>"; };
+		E9D0A2591BFE8C5D00B9A6A1 /* StepsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StepsTableViewController.h; sourceTree = "<group>"; };
+		E9D0A25A1BFE8C5D00B9A6A1 /* StepsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StepsTableViewController.m; sourceTree = "<group>"; };
 		E9F7FBE71BB6BAC3006992FD /* SelectionTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionTableViewController.h; sourceTree = "<group>"; };
 		E9F7FBE81BB6BAC3006992FD /* SelectionTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectionTableViewController.m; sourceTree = "<group>"; };
 		E9F7FBEA1BB6D4D7006992FD /* WeightGraphViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeightGraphViewController.h; sourceTree = "<group>"; };
@@ -143,6 +155,7 @@
 				E99D7B0C1BB8DADA00CD5480 /* Accelerate.framework in Frameworks */,
 				E99D7B0A1BB8DAD300CD5480 /* libCorePlot-CocoaTouch.a in Frameworks */,
 				E971ADA51B9D24280092F9A8 /* UIKit.framework in Frameworks */,
+				E9D0A24E1BFACE0000B9A6A1 /* HealthKit.framework in Frameworks */,
 				E971ADA31B9D241F0092F9A8 /* Foundation.framework in Frameworks */,
 				E971ADA11B9D24170092F9A8 /* CoreData.framework in Frameworks */,
 			);
@@ -186,6 +199,7 @@
 		E97D78F51B9BC0D300F6DC79 = {
 			isa = PBXGroup;
 			children = (
+				E9D0A24D1BFACE0000B9A6A1 /* HealthKit.framework */,
 				E941B0E31BF1A64000FA91F5 /* Security.framework */,
 				E99D7B0B1BB8DADA00CD5480 /* Accelerate.framework */,
 				E99D7B001BB8DA7300CD5480 /* CorePlot-CocoaTouch.xcodeproj */,
@@ -210,6 +224,7 @@
 		E97D79001B9BC0D300F6DC79 /* HealthyMood */ = {
 			isa = PBXGroup;
 			children = (
+				E9D0A24F1BFACE0000B9A6A1 /* HealthyMood.entitlements */,
 				E92E4FCF1BB5B74F0063D774 /* ChooseViewViewController.h */,
 				E92E4FD01BB5B74F0063D774 /* ChooseViewViewController.m */,
 				E994D3A21BA9E41800B9AC23 /* Weight.h */,
@@ -217,6 +232,12 @@
 				E97D79051B9BC0D300F6DC79 /* AppDelegate.h */,
 				E97D79061B9BC0D300F6DC79 /* AppDelegate.m */,
 				E97D790E1B9BC0D300F6DC79 /* Main.storyboard */,
+				E9D0A2591BFE8C5D00B9A6A1 /* StepsTableViewController.h */,
+				E9D0A25A1BFE8C5D00B9A6A1 /* StepsTableViewController.m */,
+				E9D0A2541BFB3E3E00B9A6A1 /* ExerciseTableViewController.h */,
+				E9D0A2551BFB3E3E00B9A6A1 /* ExerciseTableViewController.m */,
+				E9D0A2511BFB361F00B9A6A1 /* MeasurementTypeTableViewController.h */,
+				E9D0A2521BFB361F00B9A6A1 /* MeasurementTypeTableViewController.m */,
 				E9D0A2461BF582E400B9A6A1 /* WithingsSelectionTableViewController.h */,
 				E9D0A2471BF582E400B9A6A1 /* WithingsSelectionTableViewController.m */,
 				E9D0A2491BF5896700B9A6A1 /* WithingsWeightGraphViewController.h */,
@@ -338,6 +359,11 @@
 					E97D78FD1B9BC0D300F6DC79 = {
 						CreatedOnToolsVersion = 6.4;
 						DevelopmentTeam = KJE89MX7B4;
+						SystemCapabilities = {
+							com.apple.HealthKit = {
+								enabled = 1;
+							};
+						};
 					};
 					E97D79191B9BC0D300F6DC79 = {
 						CreatedOnToolsVersion = 6.4;
@@ -411,10 +437,13 @@
 				E9D0A24B1BF5896700B9A6A1 /* WithingsWeightGraphViewController.m in Sources */,
 				E97D79071B9BC0D300F6DC79 /* AppDelegate.m in Sources */,
 				E99D7B101BBA2F4100CD5480 /* WeightDataSource.m in Sources */,
+				E9D0A2531BFB361F00B9A6A1 /* MeasurementTypeTableViewController.m in Sources */,
+				E9D0A25B1BFE8C5D00B9A6A1 /* StepsTableViewController.m in Sources */,
 				E941B0FC1BF1B73C00FA91F5 /* OAuth1Controller.m in Sources */,
 				E994D3A41BA9E41800B9AC23 /* Weight.m in Sources */,
 				E9D0A2431BF4387800B9A6A1 /* WithingsWeightTableViewCell.m in Sources */,
 				E941B0C81BF192A500FA91F5 /* WeighEntryTypeTableViewController.m in Sources */,
+				E9D0A2561BFB3E3E00B9A6A1 /* ExerciseTableViewController.m in Sources */,
 				E97D79351B9C241900F6DC79 /* WeightTableViewCell.m in Sources */,
 				E971AD991B9CBE350092F9A8 /* Model.xcdatamodeld in Sources */,
 				E941B0FF1BF1B7A400FA91F5 /* NSString+URLEncoding.m in Sources */,
@@ -561,6 +590,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = HealthyMood/HealthyMood.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				HEADER_SEARCH_PATHS = "../framework/**";
@@ -577,6 +607,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = HealthyMood/HealthyMood.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				HEADER_SEARCH_PATHS = "../framework/**";

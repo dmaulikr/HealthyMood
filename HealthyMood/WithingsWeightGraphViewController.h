@@ -17,6 +17,6 @@
 
 -(IBAction)segmentedControlIndexChanged;
 
--(void)loadData; 
+//-(void)loadData;
 
 @end

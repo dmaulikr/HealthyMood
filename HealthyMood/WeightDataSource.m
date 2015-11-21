@@ -85,7 +85,7 @@
             return [NSNumber numberWithFloat:x];
             break;
         case CPTScatterPlotFieldY:
-            NSLog(@"GraphName: %@: y value for %lu is %y", [plot identifier], (unsigned long)index, y);
+           // NSLog(@"GraphName: %@: y value for %lu is %y", [plot identifier], (unsigned long)index, y);
             return [NSNumber numberWithFloat:y];
             break;
         default:

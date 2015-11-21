@@ -239,7 +239,7 @@
     
     NSDateComponents *comps = [gregorian components:NSCalendarUnitWeekday fromDate:[NSDate date]];
     
-    NSInteger dayOfWeek = [comps weekday];
+    //NSInteger dayOfWeek = [comps weekday];
     
     NSLog (@"comps weekday, %ld", (long)[comps weekday]);
            
@@ -257,7 +257,7 @@
                                            forDate:nextYear];
     NSInteger daysInYear = endDay - startDay;
     
-    NSUInteger dayOfYear =
+    //NSUInteger dayOfYear =
     [gregorian ordinalityOfUnit:NSCalendarUnitDay
                          inUnit:NSCalendarUnitYear forDate:[NSDate date]];
     NSLog(@"gregorian %@", gregorian);

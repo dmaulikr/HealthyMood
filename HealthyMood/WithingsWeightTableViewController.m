@@ -182,8 +182,8 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSMutableArray *vals = [[NSMutableArray alloc] init];
-    NSLog(@"vals count, %lu", (unsigned long)[self.vals count]);
+   // NSMutableArray *vals = [[NSMutableArray alloc] init];
+    //NSLog(@"vals count, %lu", (unsigned long)[self.vals count]);
     return [self.vals count];
 }
 
@@ -192,7 +192,7 @@
     static NSString *simpleTableIdentifier = @"Table Cell";
     WithingsWeightTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
     
-    int row = [indexPath row];
+   // int row = [indexPath row];
     if (cell == nil) {
         cell = [[WithingsWeightTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Table Cell"];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -213,6 +213,7 @@
   //  NSLog(@"cell.detailTextLabel.text, %@", cell.detailTextLabel.text);
 return cell;
 }
+
 
 
 

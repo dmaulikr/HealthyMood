@@ -1,28 +1,30 @@
 //
-//  WithingsSelectionTableViewController.m
+//  MeasurementTypeTableViewController.m
 //  HealthyMood
 //
-//  Created by Nadine Khattak on 11/12/15.
+//  Created by Nadine Khattak on 11/17/15.
 //  Copyright © 2015 Ensach. All rights reserved.
 //
 
-#import "WithingsSelectionTableViewController.h"
+#import "MeasurementTypeTableViewController.h"
 
-@interface WithingsSelectionTableViewController ()
+@interface MeasurementTypeTableViewController ()
 
 @end
 
-@implementation WithingsSelectionTableViewController
+@implementation MeasurementTypeTableViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.withingsViewDataSelCell.textLabel.text = @"View Data";
-    self.withingsViewGraphSelCell.textLabel.text = @"View Graphs";
-    self.withingsViewSettingsSelCell.textLabel.text = @"Choose Unit";
+    self.weight.textLabel.text = @"Weight";
+    self.exercise.textLabel.text = @"Exercise";
+    self.mood.textLabel.text = @"Mood";
     
+    // Uncomment the following line to preserve selection between presentations.
+    // self.clearsSelectionOnViewWillAppear = NO;
     
-    
-
+    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -33,12 +35,12 @@
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-
+#warning Incomplete implementation, return the number of sections
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-
+#warning Incomplete implementation, return the number of rows
     return 3;
 }
 
@@ -95,7 +97,5 @@
     // Pass the selected object to the new view controller.
 }
 */
-
-
 
 @end
