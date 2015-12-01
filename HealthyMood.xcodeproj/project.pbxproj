@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E913D0BB1C001DD700725EDE /* StepsGraphViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E913D0BA1C001DD700725EDE /* StepsGraphViewController.m */; };
+		E913D0BE1C0BF4FB00725EDE /* MultiGraphViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E913D0BD1C0BF4FB00725EDE /* MultiGraphViewController.m */; };
 		E92E4FD11BB5B74F0063D774 /* ChooseViewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E92E4FD01BB5B74F0063D774 /* ChooseViewViewController.m */; };
 		E941B0C81BF192A500FA91F5 /* WeighEntryTypeTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E941B0C71BF192A500FA91F5 /* WeighEntryTypeTableViewController.m */; };
 		E941B0CD1BF19A1200FA91F5 /* LoginWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E941B0CC1BF19A1200FA91F5 /* LoginWebViewController.m */; };
@@ -71,6 +73,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E913D0B91C001DD700725EDE /* StepsGraphViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StepsGraphViewController.h; sourceTree = "<group>"; };
+		E913D0BA1C001DD700725EDE /* StepsGraphViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StepsGraphViewController.m; sourceTree = "<group>"; };
+		E913D0BC1C0BF4FB00725EDE /* MultiGraphViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiGraphViewController.h; sourceTree = "<group>"; };
+		E913D0BD1C0BF4FB00725EDE /* MultiGraphViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiGraphViewController.m; sourceTree = "<group>"; };
 		E92E4FCF1BB5B74F0063D774 /* ChooseViewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChooseViewViewController.h; sourceTree = "<group>"; };
 		E92E4FD01BB5B74F0063D774 /* ChooseViewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChooseViewViewController.m; sourceTree = "<group>"; };
 		E936FA511BA09C8C002D31AE /* Model 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 3.xcdatamodel"; sourceTree = "<group>"; };
@@ -232,6 +238,10 @@
 				E97D79051B9BC0D300F6DC79 /* AppDelegate.h */,
 				E97D79061B9BC0D300F6DC79 /* AppDelegate.m */,
 				E97D790E1B9BC0D300F6DC79 /* Main.storyboard */,
+				E913D0BC1C0BF4FB00725EDE /* MultiGraphViewController.h */,
+				E913D0BD1C0BF4FB00725EDE /* MultiGraphViewController.m */,
+				E913D0B91C001DD700725EDE /* StepsGraphViewController.h */,
+				E913D0BA1C001DD700725EDE /* StepsGraphViewController.m */,
 				E9D0A2591BFE8C5D00B9A6A1 /* StepsTableViewController.h */,
 				E9D0A25A1BFE8C5D00B9A6A1 /* StepsTableViewController.m */,
 				E9D0A2541BFB3E3E00B9A6A1 /* ExerciseTableViewController.h */,
@@ -437,6 +447,7 @@
 				E9D0A24B1BF5896700B9A6A1 /* WithingsWeightGraphViewController.m in Sources */,
 				E97D79071B9BC0D300F6DC79 /* AppDelegate.m in Sources */,
 				E99D7B101BBA2F4100CD5480 /* WeightDataSource.m in Sources */,
+				E913D0BB1C001DD700725EDE /* StepsGraphViewController.m in Sources */,
 				E9D0A2531BFB361F00B9A6A1 /* MeasurementTypeTableViewController.m in Sources */,
 				E9D0A25B1BFE8C5D00B9A6A1 /* StepsTableViewController.m in Sources */,
 				E941B0FC1BF1B73C00FA91F5 /* OAuth1Controller.m in Sources */,
@@ -455,6 +466,7 @@
 				E941B0EC1BF1B5C900FA91F5 /* Base64Transcoder.c in Sources */,
 				E97D79321B9BC22700F6DC79 /* AddWeightViewController.m in Sources */,
 				E941B0F11BF1B5D300FA91F5 /* hmac.c in Sources */,
+				E913D0BE1C0BF4FB00725EDE /* MultiGraphViewController.m in Sources */,
 				E97D79041B9BC0D300F6DC79 /* main.m in Sources */,
 				E9D0A2481BF582E400B9A6A1 /* WithingsSelectionTableViewController.m in Sources */,
 			);

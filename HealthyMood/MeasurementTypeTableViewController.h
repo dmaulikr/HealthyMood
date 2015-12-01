@@ -13,5 +13,6 @@
 @property (weak, nonatomic) IBOutlet UITableViewCell *weight;
 @property (weak, nonatomic) IBOutlet UITableViewCell *exercise;
 @property (weak, nonatomic) IBOutlet UITableViewCell *mood;
+@property (weak, nonatomic) IBOutlet UITableViewCell *multiGraph;
 
 @end

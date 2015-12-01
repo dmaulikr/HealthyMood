@@ -22,7 +22,13 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+            NSUserDefaults *authSettings = [NSUserDefaults standardUserDefaults];
+     if([authSettings boolForKey:@"authSwitchStatus"])
+     {
+         [self.authSwitch isOn];
+     }
+
+
     self.autoWeightEntrySelection.textLabel.text = @"Use Withings Scale Weight";
     self.manualWeightEntrySelection.textLabel.text = @"Enter My Own Weight";
 }
@@ -41,7 +47,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return 2;
+    return 3;
 }
 
 /*
@@ -53,6 +59,7 @@
     return cell;
 }
 */
+
 - (IBAction)buttonTapped {
     LoginWebViewController *loginWebViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"loginWebViewController"];
     
@@ -95,6 +102,33 @@
                      }];
 
 
+}
+
+- (IBAction)logoutTapped
+{
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *oauthTokens;
+    // Clear cookies so no session cookies can be used for the UIWebview
+    NSHTTPCookieStorage *storage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    for (NSHTTPCookie *cookie in [storage cookies]) {
+        if (cookie.isSecure) {
+            [storage deleteCookie:cookie];
+        }
+    }
+    
+    // Clear tokens from instance variables
+    self.oauthToken = nil;
+    self.oauthTokenSecret = nil;
+    
+    // Clear textfields
+    self.accessTokenLabel.text = self.oauthToken;
+    self.accessTokenSecretLabel.text = self.oauthTokenSecret;
+    self.responseTextView.text = nil;
+    
+    [defaults setObject:oauthTokens[@"oauth_token"] forKey:@"oauthToken"];
+    [defaults setObject:oauthTokens[@"oauth_token_secret"] forKey:@"oauthTokenSecret"   ];
+    NSLog(@"logout tapped");
 }
 
 /*

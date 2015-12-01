@@ -70,12 +70,12 @@
     
     
     NSLog(@"RRRRR %@",request.URL);
-    [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
-                           completionHandler:^(NSURLResponse *response,
-                                               NSData *data, NSError *connectionError)
-     {
-         if (data.length > 0 && connectionError == nil)
+    NSURLResponse *response;
+    
+    NSData *data = [NSURLConnection sendSynchronousRequest:request
+                                         returningResponse:&response
+                                                     error:&error ];     {
+         if (data.length > 0 && error == nil)
          {
              NSDictionary *greeting = [NSJSONSerialization JSONObjectWithData:data
                                                                       options:0
@@ -92,6 +92,10 @@
                  NSError *error = [NSError errorWithDomain:@"com.nadine.healthymood"
                                                       code:-1
                                                   userInfo:@{NSLocalizedDescriptionKey:@"Unexpected response, no measurement groups"}];
+                 if (error) {
+                     [self dismissViewControllerAnimated:YES completion:nil];
+                 }
+                 
              }
              
              
@@ -153,15 +157,23 @@
                  }
              }
              dispatch_async(dispatch_get_main_queue(), ^{
-                 [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
-                 [self.tableView reloadData];
+                 if (error  ) {
+                     NSLog(@"conneciton error");
+                 }
+                 else {
+                     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+                     [self.tableView reloadData];
+                     
+                 }
                  
                  
              });
              
              
          }
-     }];
+         
+         
+             };
     
 }
 

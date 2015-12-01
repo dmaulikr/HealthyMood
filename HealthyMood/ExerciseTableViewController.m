@@ -23,16 +23,15 @@
     
     self.viewData.textLabel.text = @"View Data";
     self.viewGraph.textLabel.text = @"View Graph";
+        self.healthStore = [[HKHealthStore alloc] init];
     // Set up an HKHealthStore, asking the user for read/write permissions. The profile view controller is the
     // first view controller that's shown to the user, so we'll ask for all of the desired HealthKit permissions now.
     // In your own app, you should consider requesting permissions the first time a user wants to interact with
     // HealthKit data.
     if ([HKHealthStore isHealthDataAvailable]) {
-   
+
         NSSet *readDataTypes = [self dataTypesToRead];
         
-        [[ExerciseTableViewController sharedManager] requestAuthorization];
-
         [self.healthStore requestAuthorizationToShareTypes:nil readTypes:readDataTypes completion:^(BOOL success, NSError *error) {
             if (!success) {
                 NSLog(@"You didn't allow HealthKit to access these read/write data types. In your app, try to handle this error gracefully when a user decides not to provide access. The error was: %@. If you're using a simulator, try it on a device.", error);
@@ -40,7 +39,12 @@
                 return;
             }
             
-            
+       /*     dispatch_async(dispatch_get_main_queue(), ^{
+                // Update the user interface based on the current user's health information.
+                [self updateUsersAgeLabel];
+                [self updateUsersHeightLabel];
+                [self updateUsersWeightLabel];
+            });*/
         }];
     }
 }
@@ -50,7 +54,7 @@
              HKQuantityType *stepsCount = [HKObjectType quantityTypeForIdentifier:HKQuantityTypeIdentifierStepCount];
     
              return [NSSet setWithObjects:stepsCount, nil];
-         }
+}
          
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -70,42 +74,8 @@
 }
 
 
-+ (ExerciseTableViewController *)sharedManager {
-    static dispatch_once_t pred = 0;
-    static ExerciseTableViewController *instance = nil;
-    dispatch_once(&pred, ^{
-        instance = [[ExerciseTableViewController alloc] init];
-        instance.healthStore = [[HKHealthStore alloc] init];
-    });
-    return instance;
-}
 
-- (void)requestAuthorization {
-    
-    if ([HKHealthStore isHealthDataAvailable] == NO) {
-        // If our device doesn't support HealthKit -> return.
-        return;
-    }
-    
 
-    
-    NSArray *readTypes = @[[HKObjectType quantityTypeForIdentifier:HKQuantityTypeIdentifierStepCount]];
-    
-    
-    [self.healthStore requestAuthorizationToShareTypes:[NSSet setWithArray:nil]
-                                             readTypes:[NSSet setWithArray:readTypes] completion:nil];
-}
-- (IBAction)healthIntegrationSwitch:(UISwitch *)sender {
-    UISwitch *mySwitch = (UISwitch *)sender;
-    if ([mySwitch isOn]) {
-        [[ExerciseTableViewController sharedManager] requestAuthorization];
-        NSLog(@"switch on");
-    } else {
-        // Possibly disable HealthKit functionality in your app.
-                NSLog(@"switch off");
-        
-    }
-}
     
 
 /*

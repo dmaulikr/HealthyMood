@@ -13,8 +13,9 @@
 
 @property (nonatomic, strong) NSMutableArray *samplesArray;
 @property (nonatomic, strong) NSMutableArray *samplesDateArray;
+@property (nonatomic, strong) NSArray *sortedArray;
 @property (nonatomic, retain) HKHealthStore *healthStore;
-@property (nonatomic, strong) NSString *weightDate;
+@property (nonatomic, strong) NSString *stepsDate;
 
 @end
 
@@ -26,31 +27,52 @@
     HKHealthStore *healthStore = [[HKHealthStore alloc] init];
     self.samplesArray = [[NSMutableArray alloc] init];
     self.samplesDateArray = [[NSMutableArray alloc] init];
-
+   
     
     // Read date of birth, biological sex and step count
-    NSSet *readObjectTypes  = [NSSet setWithObjects:
+    /*NSSet *readObjectTypes  = [NSSet setWithObjects:
                                [HKObjectType characteristicTypeForIdentifier:HKCharacteristicTypeIdentifierDateOfBirth],
                                [HKObjectType characteristicTypeForIdentifier:HKCharacteristicTypeIdentifierBiologicalSex],
                                [HKObjectType quantityTypeForIdentifier:HKQuantityTypeIdentifierStepCount],
-                               nil];
+                               nil]; */
     
     NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSLog(@"calendar, %@", calendar);
     NSDateComponents *interval = [[NSDateComponents alloc] init];
-    interval.day = 7;
+        NSLog(@"interval, %@", interval);
+    interval.day = 1;
+    
     
     NSDateComponents *anchorComponents = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitWeekday fromDate:[NSDate date]];
     
+    NSLog(@"anchorComponents, %@", anchorComponents);
+    
+    
     NSInteger offset = (7 + anchorComponents.weekday - 2) % 7;
+        NSLog(@"anchorComponents.weekday, %ld", (long)anchorComponents.weekday);
+    NSLog(@"offset, %li", (long)offset);
     anchorComponents.day -= offset;
-    anchorComponents.hour = 3;
+    anchorComponents.hour = 0;
     
     NSDate *anchorDate = [calendar dateFromComponents:anchorComponents];
     
     HKQuantityType *quantityType = [HKObjectType quantityTypeForIdentifier:HKQuantityTypeIdentifierStepCount];
     
-    HKStatisticsCollectionQuery *query = [[HKStatisticsCollectionQuery alloc] initWithQuantityType:quantityType quantitySamplePredicate:nil options:HKStatisticsOptionCumulativeSum anchorDate:anchorDate intervalComponents:interval];
     
+    HKStatisticsCollectionQuery *query = [[HKStatisticsCollectionQuery alloc] initWithQuantityType:quantityType
+
+
+                                                                           quantitySamplePredicate:nil
+                                          
+
+                                                                                           options:HKStatisticsOptionCumulativeSum
+                                          
+                                          
+                                                                                        anchorDate:anchorDate
+                                          
+                                                                                intervalComponents:interval];
+    
+   
     query.initialResultsHandler = ^(HKStatisticsCollectionQuery *query, HKStatisticsCollection *results, NSError *error) {
         if (error) {
             // Perform proper error handling here
@@ -66,18 +88,23 @@
                              toDate:endDate
                              options:0];
         
+       
+        
         [results enumerateStatisticsFromDate:startDate toDate:endDate withBlock:^(HKStatistics *result, BOOL *stop) {
             HKQuantity *quantity = result.sumQuantity;
             
             if (quantity) {
+                
                 NSDate *date = result.startDate;
                 
                 NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
                 [dateFormatter setDateFormat:@"yyyy-MM-dd"];
                 
-                self.weightDate = [dateFormatter stringFromDate:date];
+
                 
-                NSLog(@"sample date, %@", self.weightDate);
+                self.stepsDate = [dateFormatter stringFromDate:date];
+                
+                NSLog(@"sample date, %@", self.stepsDate);
                 
                 
                 double value = [quantity doubleValueForUnit:[HKUnit countUnit]];
@@ -88,22 +115,81 @@
 
                 [self.samplesArray addObject:samplesString];
                 
-                [self.samplesDateArray addObject:self.weightDate];
-
+                [self.samplesDateArray addObject:self.stepsDate];
+                
+               
+                
                 NSLog(@"sample date, %@", self.samplesDateArray);
-            }
+                          }
             
             
             [self.tableView reloadData];
         
          
         }];
+        
+        
     };
+    
+    
+    
+    query.statisticsUpdateHandler = ^(HKStatisticsCollectionQuery *query, HKStatistics *result, HKStatisticsCollection *results, NSError *error) {
+        if (error) {
+            // Perform proper error handling here
+            NSLog(@"*** An error occurred while calculating the statistics: %@ ***",
+                  error.localizedDescription);
+            abort();
+        }
+        
+        NSDate *endDate = [NSDate date];
+        NSDate *startDate = [calendar
+                             dateByAddingUnit:NSCalendarUnitMonth
+                             value:-12
+                             toDate:endDate
+                             options:0];
+        
+        [results enumerateStatisticsFromDate:startDate toDate:endDate withBlock:^(HKStatistics *result, BOOL *stop) {
+            HKQuantity *quantity = result.sumQuantity;
+            
+            if (quantity) {
+                NSDate *date = result.startDate;
+                
+                NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+                [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+                
+                //self.weightDate = [dateFormatter stringFromDate:date];
+                self.stepsDate = date;
+                
+                NSLog(@"sample date, %@", self.stepsDate);
+                
+                
+                double value = [quantity doubleValueForUnit:[HKUnit countUnit]];
+                
+                NSLog(@"double value %f", value);
+                
+                NSString *samplesString = [NSString stringWithFormat:@"%@", quantity];
+                
+                [self.samplesArray addObject:samplesString];
+                
+                [self.samplesDateArray addObject:self.stepsDate];
+                
+                NSLog(@"sample date, %@", self.samplesArray);
+                
+                
+            }
+            
+        }];
+        
+    };
+    
+    
+    
     [healthStore executeQuery:query];
+ 
     };
 
-    
-    
+
+
     
     
     
@@ -187,24 +273,29 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Steps Data" forIndexPath:indexPath];
     
-    cell.textLabel.text = [self.samplesArray objectAtIndex:indexPath.row];
-    cell.detailTextLabel.text = [self.samplesDateArray objectAtIndex:indexPath.row];
-    NSLog(@"detail text,%@", [self.samplesDateArray objectAtIndex:indexPath.row]);
+    NSArray *reversedArray = [[self.samplesArray reverseObjectEnumerator] allObjects];
+    NSArray *reversedArrayDate = [[self.samplesDateArray reverseObjectEnumerator] allObjects];
+    
+       UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Steps Data" forIndexPath:indexPath];
+
+    
+    cell.textLabel.text = [reversedArray objectAtIndex:indexPath.row];
+    cell.detailTextLabel.text = [reversedArrayDate objectAtIndex:indexPath.row];
+
     return cell;
 }
 
 
-/*
+
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     // Return NO if you do not want the specified item to be editable.
     return YES;
 }
-*/
 
-/*
+
+
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
@@ -214,7 +305,7 @@
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
     }   
 }
-*/
+
 
 /*
 // Override to support rearranging the table view.
@@ -222,13 +313,13 @@
 }
 */
 
-/*
+
 // Override to support conditional rearranging of the table view.
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
     // Return NO if you do not want the item to be re-orderable.
     return YES;
 }
-*/
+
 
 /*
 #pragma mark - Navigation

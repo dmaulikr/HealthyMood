@@ -49,8 +49,8 @@ typedef void (^WebWiewDelegateHandler)(NSDictionary *oauthParams);
  #define ACCESS_TOKEN_METHOD  @"POST"
  */
 #define OAUTH_CALLBACK       @"com.nadine.healthymood" //Sometimes this has to be the same as the registered app callback url
-#define CONSUMER_KEY         @"f4e4ee059e6610058e745fc4975c595939c3f63e9e903eb127cbb580c2f7"
-#define CONSUMER_SECRET      @"762fbd7ecbd24128f9904f790fdd48bf8ecc0ce854f51430929df833b6cb3"
+#define CONSUMER_KEY         @""
+#define CONSUMER_SECRET      @""
 #define AUTH_URL             @"https://oauth.withings.com/"
 #define REQUEST_TOKEN_URL    @"account/request_token"
 #define AUTHENTICATE_URL     @"account/authorize"
