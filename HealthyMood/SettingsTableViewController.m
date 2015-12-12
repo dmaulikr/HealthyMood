@@ -53,7 +53,7 @@
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     
     
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
     self.kgCell.accessoryType = UITableViewCellAccessoryNone;
     self.lbCell.accessoryType = UITableViewCellAccessoryNone;

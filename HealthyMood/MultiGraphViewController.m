@@ -7,17 +7,38 @@
 //
 
 #import "MultiGraphViewController.h"
+#import "AppDelegate.h"
 #import "CorePlot-CocoaTouch.h"
+#import "WithingsWeightGraphViewController.h"
+#import "OAuth1Controller.h"
+#import <UIKit/UIKit.h>
+#import <CoreData/CoreData.h>
+#import "Mood.h"
 
 @interface MultiGraphViewController ()
+
+@property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
+
+
+@property (nonatomic, strong) OAuth1Controller *oauth1Controller;
+@property (nonatomic, strong) NSString *oauthToken;
+@property (nonatomic, strong) NSString *oauthTokenSecret;
+@property (nonatomic, strong) NSString *withingsWeightMeas;
+@property (nonatomic, strong) NSDate *withingsWeightDate;
+@property (nonatomic, strong) NSMutableArray *withingsWeightVals;
+@property (nonatomic, strong) NSMutableArray *withingsDateVals;
 
 @property (nonatomic, strong) NSMutableArray *samplesArray;
 @property (nonatomic, strong) NSMutableArray *samplesDateArray;
 @property (nonatomic, retain) HKHealthStore *healthStore;
-@property (nonatomic, strong) NSDate *weightDate;
+@property (nonatomic, strong) NSDate *stepsDate;
 
 @property (nonatomic, readwrite, strong) CPTGraph *aGraph;
-@property (nonatomic, readwrite, strong) CPTXYGraph *graph;
+@property (nonatomic, readwrite, strong) CPTXYGraph *stepsGraph;
+@property (nonatomic, readwrite, strong) CPTXYGraph *withingsWeightGraph
+;
+@property (nonatomic, readwrite, strong) CPTXYGraph *moodGraph;
+
 @property (nonatomic, readwrite, strong) NSDate *refDate;
 @property (nonatomic, readwrite, strong) NSDate *refDateMonth;
 @property (nonatomic, readwrite, strong) NSDate *refDateYear;
@@ -28,17 +49,190 @@
 @property (nonatomic) float minSteps;
 @property (nonatomic) float maxSteps;
 
+@property (nonatomic, readwrite,strong) CPTScatterPlot *stepsPlot;
+@property (nonatomic, readwrite,strong) CPTScatterPlot *withingsWeightPlot;
 
 
 @end
 
 @implementation MultiGraphViewController
 
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    
+    [self setupStepsGraph];
+    
+    [self setupsWithingWeightGraph];
+    
+    [self setupMoodGraph];
+    
+    
+    
+  //  [self makeWithingsWeightGraph];
+    
     // Do any additional setup after loading the view.
     
+    
+    
+}
+
+-(void)setupMoodGraph {
+    AppDelegate *delegate = [[UIApplication sharedApplication] delegate];
+    self.managedObjectContext = delegate.managedObjectContext;
+    
+
+    NSError *error = nil;
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Mood"];
+    [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"moodDate" ascending:YES]]];
+    self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:nil];
+    
+    NSLog(@"Before fetch fetchRequests %@", self.fetchedResultsController.fetchedObjects);
+    // Perform Fetch
+    [self.fetchedResultsController performFetch:&error];
+    NSLog(@"After fetch fetchRequests %@", self.fetchedResultsController.fetchedObjects);
+    
+
+        [self makeMoodGraph];
+    
+
+    
+    
+
+}
+
+
+-(void)setupsWithingWeightGraph {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    NSString *oauthToken = [ defaults objectForKey:@"oauthToken"];
+    NSString *oauthTokenSecret = [ defaults objectForKey:@"oauthTokenSecret"];
+    NSString *userid = [defaults objectForKey:@"userid"];
+    
+    NSLog(@"userid, %@", userid);
+    
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    NSError *error;
+    
+    self.withingsWeightVals = [[NSMutableArray alloc] init];
+    self.withingsWeightMeas = [[NSString alloc] init];
+    
+    self.withingsDateVals = [[NSMutableArray alloc] init];
+    self.withingsWeightDate   = [[NSDate alloc] init];
+    
+    [dict setObject:@"getmeas" forKey:@"action"];
+    
+    [dict setObject:@"1" forKey:@"category"];
+    
+    NSURLRequest *request =
+    [OAuth1Controller preparedRequestForPath:@"measure"
+                                  parameters:dict
+                                  HTTPmethod:@"GET"
+                                  oauthToken:oauthToken
+                                 oauthSecret:oauthTokenSecret];
+    
+    
+    
+    NSLog(@"RRRRR %@",request.URL);
+    
+    NSURLResponse *response;
+    
+    NSData *data = [NSURLConnection sendSynchronousRequest:request
+                                         returningResponse:&response
+                                                     error:&error ];
+    
+    
+    if (data.length > 0 && error == nil)
+    {
+        NSDictionary *greeting = [NSJSONSerialization JSONObjectWithData:data
+                                                                 options:0
+                                                                   error:NULL];
+        
+        NSDictionary *body = greeting[@"body"];
+        NSDictionary *measureGroups = body[@"measuregrps"];
+        
+        NSLog(@"greeting %@", greeting);
+        NSLog(@"measuregroups %@", measureGroups);
+        
+        if (!measureGroups)
+        {
+            NSError *error = [NSError errorWithDomain:@"com.nadine.healthymood"
+                                                 code:-1
+                                             userInfo:@{NSLocalizedDescriptionKey:@"Unexpected response, no measurement groups"}];
+        }
+        
+        
+        else
+        {
+            for (NSDictionary *wMeasures in measureGroups) {
+                
+                NSDictionary *measures = wMeasures[@"measures"];
+                NSLog(@"measures, %@", measures);
+                
+                for (NSDictionary *measureWeights in measures)
+                {
+                    if ([measureWeights[@"type"] integerValue] == 1)
+                    {
+                        
+                        NSNumber *measureDateNumber = wMeasures[@"date"];
+                        
+                        NSString *epochTime = [measureDateNumber stringValue];
+                        
+                        NSTimeInterval seconds = [epochTime doubleValue];
+                        
+                        NSDate *epochNSDate = [[NSDate alloc] initWithTimeIntervalSince1970:seconds];
+                        
+                        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+                        [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+                        
+                        self.withingsWeightDate = epochNSDate;
+                        
+                        
+                        
+                        NSUInteger rawMeas = [measureWeights[@"value"] unsignedIntegerValue];
+                        
+                        short unit = [measureWeights[@"unit"] shortValue];
+                        
+                        NSDecimalNumber *measureNum = [NSDecimalNumber decimalNumberWithMantissa: rawMeas
+                                                                                        exponent:unit
+                                                                                      isNegative:NO];
+                        
+                        double measureNumDouble = [measureNum doubleValue];
+                        
+                        double measureNumPounds = measureNumDouble * 2.2046;
+                        
+                        NSNumber *measureNumPoundsNumber = [NSNumber numberWithDouble:measureNumPounds];
+                        
+                        self.withingsWeightMeas = [measureNumPoundsNumber stringValue];
+                        
+                        [self.withingsWeightVals addObject:self.withingsWeightMeas];
+                        
+                        [self.withingsDateVals addObject:self.withingsWeightDate];
+                        
+                        // [self.weightMeas addObject:[measureWeights objectForKey:@"value"]];
+                        NSLog(@"weight asdf, %@, %@", self.withingsWeightMeas, self.withingsWeightVals);
+                        
+                        NSLog(@"weight date, %@, %@", self.withingsWeightDate, self.withingsDateVals);
+                        
+                    }
+                    
+                }
+            }
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+            [self.withingsWeightGraph reloadData];
+
+        });
+    };
+    
+    [self makeWithingsWeightGraph];
+}
+
+
+-(void)setupStepsGraph {
     HKHealthStore *healthStore = [[HKHealthStore alloc] init];
     self.samplesArray = [[NSMutableArray alloc] init];
     self.samplesDateArray = [[NSMutableArray alloc] init];
@@ -101,9 +295,9 @@
                 [dateFormatter setDateFormat:@"yyyy-MM-dd"];
                 
                 //self.weightDate = [dateFormatter stringFromDate:date];
-                self.weightDate = date;
+                self.stepsDate = date;
                 
-                NSLog(@"sample date, %@", self.weightDate);
+                NSLog(@"sample date, %@", self.stepsDate);
                 
                 
                 double value = [quantity doubleValueForUnit:[HKUnit countUnit]];
@@ -114,7 +308,7 @@
                 
                 [self.samplesArray addObject:samplesString];
                 
-                [self.samplesDateArray addObject:self.weightDate];
+                [self.samplesDateArray addObject:self.stepsDate];
                 
                 NSLog(@"sample date, %@", self.samplesArray);
                 
@@ -128,8 +322,8 @@
                 NSLog(@"[STEP] %@", self.samplesArray);
                 [self getMinSteps];
                 [self getMaxSteps];
-                [self.graph reloadData];
-                [self makeGraph];
+                [self.stepsGraph reloadData];
+                [self makeStepsGraph];
                 
             }
         });
@@ -162,9 +356,9 @@
                 [dateFormatter setDateFormat:@"yyyy-MM-dd"];
                 
                 //self.weightDate = [dateFormatter stringFromDate:date];
-                self.weightDate = date;
+                self.stepsDate = date;
                 
-                NSLog(@"sample date, %@", self.weightDate);
+                NSLog(@"sample date, %@", self.stepsDate);
                 
                 
                 double value = [quantity doubleValueForUnit:[HKUnit countUnit]];
@@ -175,7 +369,7 @@
                 
                 [self.samplesArray addObject:samplesString];
                 
-                [self.samplesDateArray addObject:self.weightDate];
+                [self.samplesDateArray addObject:self.stepsDate];
                 
                 NSLog(@"sample date, %@", self.samplesArray);
                 
@@ -189,8 +383,8 @@
                 NSLog(@"[STEP] %@", self.samplesArray);
                 [self getMinSteps];
                 [self getMaxSteps];
-                [self.graph reloadData];
-                [self makeGraph];
+                [self.stepsGraph reloadData];
+                [self makeStepsGraph];
                 
             }
         });
@@ -204,15 +398,15 @@
     [healthStore executeQuery:query];
     
     [[UISegmentedControl appearance] setTintColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0]];
-
-    [self.graph reloadData];
     
+    [self.stepsGraph reloadData];
     
     
     
 }
 
--(void)makeGraph {
+
+-(void)makeStepsGraph {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"MM/dd"];
     
@@ -235,7 +429,7 @@
     
     //CPTTheme *theme      = [CPTTheme themeNamed:kCPTDarkGradientTheme];
     //[newGraph applyTheme:theme];
-    self.graph = newGraph;
+    self.stepsGraph = newGraph;
     
     self.hostView.hostedGraph = newGraph;
     
@@ -282,8 +476,324 @@
     [y setLabelTextStyle:textStyle];
     
     // Create a plot that uses the data source method
+    self.stepsPlot = [[CPTScatterPlot alloc] init];
+    self.stepsPlot.identifier = @"Steps Plot";
+    
+    CPTMutableLineStyle *lineStyle = [self.stepsPlot.dataLineStyle mutableCopy];
+    lineStyle.lineWidth              = 1.0;
+    lineStyle.lineColor              = [CPTColor whiteColor];
+    self.stepsPlot.dataLineStyle = lineStyle;
+    
+    CPTMutableLineStyle *axisLineStyle = [CPTMutableLineStyle lineStyle];
+    axisLineStyle.lineWidth = 1.0;
+    axisLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:0.8];
+    
+    CPTMutableLineStyle *tickLineStyle = [CPTMutableLineStyle lineStyle];
+    tickLineStyle.lineWidth = 0.2;
+    tickLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:1.0];
+    
+    y.majorTickLineStyle = tickLineStyle;
+    x.majorTickLineStyle = tickLineStyle;
+    
+    y.axisLineStyle = axisLineStyle;
+    x.axisLineStyle = axisLineStyle;
+    
+    
+    self.stepsPlot.dataSource = self;
+    [newGraph addPlot:self.stepsPlot];
+    
+    NSInteger countRecords = [self.samplesArray count]; // Our sample graph contains 9 'points'
+    
+    NSLog (@"countRecords %ld", (long)countRecords);
+    
+    
+    // Setup scatter plot space
+    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
+    NSTimeInterval xLow       = 0.0;
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(self.minSteps-1000.0)
+                                                    length:CPTDecimalFromFloat((self.maxSteps- self.minSteps) + 4000.0)];
+    
+    
+   // float timeFrameSize = self.timeFrameSegment.frame.origin.y;
+    CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.timeFrameSegment.frame.size.height + 70, (self.view.frame.size.width), (self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height + 50) )];
+
+    
+    [self.view addSubview:hostingView];
+    
+    hostingView.hostedGraph = self.stepsGraph;
+    
+    if (([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft) ||
+        ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)) {
+        self.stepsGraph.paddingLeft = 40.0;
+        self.stepsGraph.paddingTop = 0.0;
+        self.stepsGraph.paddingRight = 40.0;
+        self.stepsGraph.paddingBottom = 25.0;
+        
+        self.stepsGraph.plotAreaFrame.paddingBottom = 50.0;
+        self.stepsGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.stepsGraph.plotAreaFrame.paddingTop = 5.0;
+        self.stepsGraph.plotAreaFrame.paddingRight = 5.0;
+        
+        
+    }
+    
+    else {
+        self.stepsGraph.paddingLeft = 35.0;
+        self.stepsGraph.paddingTop = 35.0;
+        self.stepsGraph.paddingRight = 35.0;
+        self.stepsGraph.paddingBottom = 25.0;
+        
+        self.stepsGraph.plotAreaFrame.paddingBottom = 50.0;
+        self.stepsGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.stepsGraph.plotAreaFrame.paddingTop = 5.0;
+        self.stepsGraph.plotAreaFrame.paddingRight = 30.0;
+        
+    }
+    
+    
+    for (CPTPlot *p in self.stepsGraph.allPlots)
+    {
+        [p reloadData];
+    }
+
+    
+    [self.stepsGraph reloadData];
+    
+}
+
+
+-(void)makeWithingsWeightGraph {
+    
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"MM/dd"];
+    
+    
+    
+    // NSDate *today = [[NSDate alloc] initWithTimeIntervalSinceNow: 0];
+    
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    
+    NSDate *today = [calendar dateBySettingHour:0 minute:0 second:0 ofDate:[NSDate date] options:0];
+    //   NSDate *refDate            = today;
+    NSTimeInterval oneDay      = 24 * 60 * 60;
+    
+    self.refDate            =     [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (6 * 24 * 60 * 60) ];
+    
+    self.view.backgroundColor = [UIColor colorWithRed:245.0/255.0 green:0.0/255.0 blue:87.0/255.0 alpha:1.0f];
+    CPTXYGraph *newGraph = [[CPTXYGraph alloc] initWithFrame:CGRectZero];
+    
+    [[UISegmentedControl appearance] setTintColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0]];
+    
+    //CPTTheme *theme      = [CPTTheme themeNamed:kCPTDarkGradientTheme];
+    //[newGraph applyTheme:theme];
+    self.withingsWeightGraph = newGraph;
+    
+    self.hostView.hostedGraph = newGraph;
+    
+    
+    CPTMutableTextStyle *textStyle = [CPTMutableTextStyle textStyle];
+    [textStyle setFontSize:8.0f];
+    [textStyle setColor:[CPTColor colorWithComponentRed: 255.0f/255.0f green:250.0f/255.0f blue:250.0f/255.0f alpha:1.0f]];
+    
+    // Axes
+    CPTXYAxisSet *axisSet = (CPTXYAxisSet *)newGraph.axisSet;
+    CPTXYAxis *x          = axisSet.xAxis;
+    
+    x.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
+    x.majorIntervalLength         = CPTDecimalFromDouble(oneDay);
+    
+    x.orthogonalCoordinateDecimal = CPTDecimalFromDouble([self getMinWeight] - 10.0);
+    x.minorTicksPerInterval       = 0;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    
+    [dateFormatter setDateFormat:@"MM/dd"];
+    
+    
+    CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
+    timeFormatter.referenceDate = self.refDate;
+    x.labelFormatter            = timeFormatter;
+    
+    
+    [x setLabelTextStyle:textStyle];
+    
+    CPTXYAxis *y = axisSet.yAxis;
+    
+    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+    [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [numberFormatter setMaximumFractionDigits:0];
+    
+    
+    y.labelFormatter = numberFormatter;
+    
+    y.majorIntervalLength         = CPTDecimalFromDouble(10);
+    y.minorTicksPerInterval       = 0;
+    y.orthogonalCoordinateDecimal = CPTDecimalFromDouble([self getMinWeight] - 10.0);
+    y.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
+    
+    [y setLabelTextStyle:textStyle];
+    
+    // Create a plot that uses the data source method
+    self.withingsWeightPlot= [[CPTScatterPlot alloc] init];
+    self.withingsWeightPlot.identifier = @"Withings Weight Plot";
+    
+    CPTMutableLineStyle *lineStyle = [self.withingsWeightPlot.dataLineStyle mutableCopy];
+    lineStyle.lineWidth              = 1.0;
+    lineStyle.lineColor              = [CPTColor whiteColor];
+    self.withingsWeightPlot.dataLineStyle = lineStyle;
+    
+    CPTMutableLineStyle *axisLineStyle = [CPTMutableLineStyle lineStyle];
+    axisLineStyle.lineWidth = 1.0;
+    axisLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:0.5];
+    
+    CPTMutableLineStyle *tickLineStyle = [CPTMutableLineStyle lineStyle];
+    tickLineStyle.lineWidth = 0.2;
+    tickLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:1.0];
+    
+    y.majorTickLineStyle = tickLineStyle;
+    x.majorTickLineStyle = tickLineStyle;
+    
+    y.axisLineStyle = axisLineStyle;
+    x.axisLineStyle = axisLineStyle;
+    
+    
+    self.withingsWeightPlot.dataSource = self;
+    [newGraph addPlot:self.withingsWeightPlot];
+    
+    NSInteger countRecords = [self.withingsWeightVals count]; // Our sample graph contains 9 'points'
+    
+    NSLog (@"countRecords %ld", (long)countRecords);
+    
+    
+    // Setup scatter plot space
+    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
+    NSTimeInterval xLow       = 0.0;
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat([self getMinWeight]-10.0)
+                                                    length:CPTDecimalFromFloat(([self getMaxWeight]- [self getMinWeight]) + 20.0)];
+    
+    
+    CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, 200, (self.view.frame.size.width), (self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height + 50) )];
+    
+    
+    [self.view addSubview:hostingView];
+    
+    hostingView.hostedGraph = self.withingsWeightGraph;
+    
+    if (([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft) ||
+        ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)) {
+        self.withingsWeightGraph.paddingLeft = 40.0;
+        self.withingsWeightGraph.paddingTop = 0.0;
+        self.withingsWeightGraph.paddingRight = 40.0;
+        self.withingsWeightGraph.paddingBottom = 25.0;
+        
+        self.withingsWeightGraph.plotAreaFrame.paddingBottom = 50.0;
+        self.withingsWeightGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.withingsWeightGraph.plotAreaFrame.paddingTop = 5.0;
+        self.withingsWeightGraph.plotAreaFrame.paddingRight = 5.0;
+        
+        
+    }
+    
+    else {
+        self.withingsWeightGraph.paddingLeft = 35.0;
+        self.withingsWeightGraph.paddingTop = 35.0;
+        self.withingsWeightGraph.paddingRight = 35.0;
+        self.withingsWeightGraph.paddingBottom = 25.0;
+        
+        self.withingsWeightGraph.plotAreaFrame.paddingBottom = 50.0;
+        self.withingsWeightGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.withingsWeightGraph.plotAreaFrame.paddingTop = 5.0;
+        self.withingsWeightGraph.plotAreaFrame.paddingRight = 30.0;
+        
+    }
+    
+    
+    for (CPTPlot *p in self.withingsWeightGraph.allPlots)
+    {
+        [p reloadData];
+    }
+
+    
+
+}
+
+-(void)makeMoodGraph {
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"MM/dd"];
+    
+    
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    
+    NSDate *today = [calendar dateBySettingHour:10 minute:0 second:0 ofDate:[NSDate date] options:0];
+    //   NSDate *refDate            = today;
+    NSTimeInterval oneDay      = 24 * 60 * 60;
+    
+    self.refDate            =     [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (6 * 24 * 60 * 60) ];
+    
+    self.view.backgroundColor = [UIColor colorWithRed:245.0/255.0 green:0.0/255.0 blue:87.0/255.0 alpha:1.0f];
+    CPTXYGraph *newGraph = [[CPTXYGraph alloc] initWithFrame:CGRectZero];
+    
+    [[UISegmentedControl appearance] setTintColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0]];
+    
+    self.moodGraph = newGraph;
+    
+    self.hostView.hostedGraph = newGraph;
+    
+    // Setup scatter plot space
+    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
+    NSTimeInterval xLow       = 0.0;
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(0.0)
+                                                    length:CPTDecimalFromFloat(7.0)];
+    
+    
+    
+    CPTMutableTextStyle *textStyle = [CPTMutableTextStyle textStyle];
+    [textStyle setFontSize:8.0f];
+    [textStyle setColor:[CPTColor colorWithComponentRed: 255.0f/255.0f green:250.0f/255.0f blue:250.0f/255.0f alpha:1.0f]];
+    
+    // Axes
+    CPTXYAxisSet *axisSet = (CPTXYAxisSet *)newGraph.axisSet;
+    CPTXYAxis *x          = axisSet.xAxis;
+    
+    x.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
+    x.majorIntervalLength         = CPTDecimalFromDouble(oneDay);
+    
+    x.orthogonalCoordinateDecimal = CPTDecimalFromDouble(0.0);
+    x.minorTicksPerInterval       = 0;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    
+    [dateFormatter setDateFormat:@"MM/dd"];
+    
+    
+    CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
+    timeFormatter.referenceDate = self.refDate;
+    x.labelFormatter            = timeFormatter;
+    
+    
+    [x setLabelTextStyle:textStyle];
+    
+    CPTXYAxis *y = axisSet.yAxis;
+    
+    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+    [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [numberFormatter setMaximumFractionDigits:0];
+    
+    
+    y.labelFormatter = numberFormatter;
+    
+    y.majorIntervalLength         = CPTDecimalFromDouble(1);
+    y.minorTicksPerInterval       = 0;
+    y.orthogonalCoordinateDecimal = CPTDecimalFromDouble(0.0);
+    y.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
+    
+    [y setLabelTextStyle:textStyle];
+    
+    // Create a plot that uses the data source method
     CPTScatterPlot *dataSourceLinePlot = [[CPTScatterPlot alloc] init];
-    dataSourceLinePlot.identifier = @"Date Plot";
+    dataSourceLinePlot.identifier = @"Mood Plot";
     
     CPTMutableLineStyle *lineStyle = [dataSourceLinePlot.dataLineStyle mutableCopy];
     lineStyle.lineWidth              = 1.0;
@@ -291,8 +801,8 @@
     dataSourceLinePlot.dataLineStyle = lineStyle;
     
     CPTMutableLineStyle *axisLineStyle = [CPTMutableLineStyle lineStyle];
-    axisLineStyle.lineWidth = 2.5;
-    axisLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:0.8];
+    axisLineStyle.lineWidth = 0.5;
+    axisLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:0.5];
     
     CPTMutableLineStyle *tickLineStyle = [CPTMutableLineStyle lineStyle];
     tickLineStyle.lineWidth = 0.2;
@@ -308,38 +818,80 @@
     dataSourceLinePlot.dataSource = self;
     [newGraph addPlot:dataSourceLinePlot];
     
-    NSInteger countRecords = [self.samplesArray count]; // Our sample graph contains 9 'points'
+    NSInteger countRecords = [self.fetchedResultsController.fetchedObjects count]; // Our sample graph contains 9 'points'
     
     NSLog (@"countRecords %ld", (long)countRecords);
     
-    
-    // Setup scatter plot space
-    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
-    NSTimeInterval xLow       = 0.0;
-    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(self.minSteps-1000.0)
-                                                    length:CPTDecimalFromFloat((self.maxSteps- self.minSteps) + 4000.0)];
+    CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.timeFrameSegment.frame.size.height + 250, (self.view.frame.size.width), (self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height + 50) )];
     
     
-    [self.graph reloadData];
+    [self.view addSubview:hostingView];
+    
+    hostingView.hostedGraph = self.moodGraph;
+    
+   if (([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft) ||
+        ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)) {
+        self.moodGraph.paddingLeft = 40.0;
+        self.moodGraph.paddingTop = 0.0;
+        self.moodGraph.paddingRight = 40.0;
+        self.moodGraph.paddingBottom = 25.0;
+        
+        self.moodGraph.plotAreaFrame.paddingBottom = 50.0;
+        self.moodGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.moodGraph.plotAreaFrame.paddingTop = 5.0;
+        self.moodGraph.plotAreaFrame.paddingRight = 5.0;
+        
+        
+    }
+    
+    else {
+        self.moodGraph.paddingLeft = 35.0;
+        self.moodGraph.paddingTop = 35.0;
+        self.moodGraph.paddingRight = 35.0;
+        self.moodGraph.paddingBottom = 25.0;
+        
+        self.moodGraph.plotAreaFrame.paddingBottom = 50.0;
+        self.moodGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.moodGraph.plotAreaFrame.paddingTop = 5.0;
+        self.moodGraph.plotAreaFrame.paddingRight = 30.0;
+        
+    }
+    
+    
+    for (CPTPlot *p in self.moodGraph.allPlots)
+    {
+        [p reloadData];
+    }
+ 
+    
+    [self.moodGraph reloadData];
+
+    
     
 }
-
-
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-/*
+
+
 -(IBAction)segmentChange {
     NSTimeInterval oneDay = 24 * 60 * 60;
-    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)self.graph.defaultPlotSpace;
+    CPTXYPlotSpace *stepsPlotSpace = (CPTXYPlotSpace *)self.stepsGraph.defaultPlotSpace;
+
+    CPTXYPlotSpace *weightPlotSpace = (CPTXYPlotSpace *)self.withingsWeightGraph.defaultPlotSpace;
+
+    
+    CPTXYPlotSpace *moodPlotSpace = (CPTXYPlotSpace *)self.moodGraph.defaultPlotSpace;
+
+    
     
     NSTimeInterval xLow = 0.0f;
     
-    CPTXYAxisSet *axisSet = (id)self.graph.axisSet;
+    CPTXYAxisSet *stepsAxisSet = (id)self.stepsGraph.axisSet;
+    CPTXYAxisSet *weightAxisSet = (id)self.withingsWeightGraph.axisSet;
+    CPTXYAxisSet *moodAxisSet = (id)self.moodGraph.axisSet;
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
@@ -394,49 +946,103 @@
             self.refDate = [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (6 * 24 * 60 * 60) ];
             
             
-            plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
-            //   plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble([self getMinWeight]) length:CPTDecimalFromDouble([self getMaxWeight] + 20.0)];
+            stepsPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
+            
+            weightPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
+
+            moodPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
+
+            
             [dateFormatter setDateFormat:@"MM/d"];
             
-            axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay );
+            stepsAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay );
+
+            weightAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay );
+
+            
+            moodAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay );
+
             timeFormatter.referenceDate = self.refDate;
-            axisSet.xAxis.labelFormatter = timeFormatter;
+            
+            stepsAxisSet.xAxis.labelFormatter = timeFormatter;
+            weightAxisSet.xAxis.labelFormatter = timeFormatter;
+            moodAxisSet.xAxis.labelFormatter = timeFormatter;
             
             //x.title = @"Week";
             
             
-            [self.graph reloadData];
+            [self.stepsGraph reloadData];
+            [self.withingsWeightGraph reloadData];
+            [self.moodGraph reloadData];
+            
             
             break;
         case 1:
             self.refDate = [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (oneDay * (numberOfDaysInMonth-1))];
             
-            plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
+            stepsPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
                                                             length:CPTDecimalFromFloat(oneDay * (numberOfDaysInMonth - 1) + (oneDay * .99) )];
             
+            weightPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
+                                                                 length:CPTDecimalFromFloat(oneDay * (numberOfDaysInMonth - 1) + (oneDay * .99) )];
+
+            moodPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
+                                                                  length:CPTDecimalFromFloat(oneDay * (numberOfDaysInMonth - 1) + (oneDay * .99) )];
+
+            
             [dateFormatter setDateFormat:@"MMM d"];
-            axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 7);
+            stepsAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 7);
+
+            weightAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 7);
+
+            moodAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 7);
+
+            
             timeFormatter.referenceDate = self.refDate;
-            axisSet.xAxis.labelFormatter = timeFormatter;
+
+            stepsAxisSet.xAxis.labelFormatter = timeFormatter;
+            weightAxisSet.xAxis.labelFormatter = timeFormatter;
+            moodAxisSet.xAxis.labelFormatter = timeFormatter;
             // x.title = @"Day of Month";
             
-            [self.graph reloadData];
+            [self.stepsGraph reloadData];
+            [self.withingsWeightGraph reloadData];
+            [self.moodGraph reloadData];
             
             break;
         case 2:
             
             self.refDate = [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (((daysInYear - numberOfDaysInMonth)) * 24 * 60 * 60) ];
-            plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
+            stepsPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
                                                             length:CPTDecimalFromFloat((oneDay * (daysInYear-30) + (oneDay * 12)) )];
+            weightPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
+                                                                 length:CPTDecimalFromFloat((oneDay * (daysInYear-30) + (oneDay * 12)) )];
+
+            moodPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
+                                                                  length:CPTDecimalFromFloat((oneDay * (daysInYear-30) + (oneDay * 12)) )];
+
+            
+            
+            
             [dateFormatter setDateFormat:@"MMM"];
-            axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * numberOfDaysInMonth);
+            stepsAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * numberOfDaysInMonth);
+            weightAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * numberOfDaysInMonth);
+
+            moodAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * numberOfDaysInMonth);
+
+            
             
             timeFormatter.referenceDate = self.refDate;
-            axisSet.xAxis.labelFormatter = timeFormatter;
+            
+            stepsAxisSet.xAxis.labelFormatter = timeFormatter;
+            weightAxisSet.xAxis.labelFormatter = timeFormatter;
+            moodAxisSet.xAxis.labelFormatter = timeFormatter;
             
             //x.title = @"Year";
             
-            [self.graph reloadData];
+            [self.stepsGraph reloadData];
+            [self.withingsWeightGraph reloadData];
+            [self.moodGraph reloadData];
             
             break;
             
@@ -444,23 +1050,40 @@
             self.refDate = [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (3 * 24 * 60 * 60) ];
             
             
-            plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0)];
-            plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble([self getMinSteps]) length:CPTDecimalFromDouble([self getMaxSteps] + 20.0)];
+            stepsPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0)];
+            stepsPlotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble([self getMinSteps]) length:CPTDecimalFromDouble([self getMaxSteps] + 20.0)];
+            
+            weightPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0)];
+            weightPlotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble([self getMinSteps]) length:CPTDecimalFromDouble([self getMaxSteps] + 20.0)];
+
+            moodPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0)];
+            moodPlotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble([self getMinSteps]) length:CPTDecimalFromDouble([self getMaxSteps] + 20.0)];
+
             
             
-            axisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 3 );
+            
+            
+            
+            stepsAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 3 );
+            weightAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 3 );
+            moodAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 3 );
+
+            
+            
+            
             //timeFormatter.referenceDate = self.refDate;
             //axisSet.xAxis.labelFormatter = timeFormatter;
             //   x.title = @"Week";
             
-            [self.graph reloadData];
+            [self.stepsGraph reloadData];
+            [self.withingsWeightGraph reloadData];
+            [self.moodGraph reloadData];
+            
             
             break;
     }
 }
 
-
-*/
 
 - (CPTPlotSymbol *)symbolForScatterPlot:(CPTScatterPlot *)aPlot recordIndex:(NSUInteger)index
 {
@@ -473,7 +1096,9 @@
     return plotSymbol;
 }
 
+/*
 -(void)viewDidLayoutSubviews {
+    
     
     CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, 70, (self.view.frame.size.width), (self.view.frame.size.height *0.5) - (70) )];
     
@@ -481,68 +1106,68 @@
     
     [self.view addSubview:hostingView];
     
-    hostingView.hostedGraph = self.graph;
+    hostingView.hostedGraph = self.stepsGraph;
     
     if (([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft) ||
         ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)) {
-        self.graph.paddingLeft = 40.0;
-        self.graph.paddingTop = 0.0;
-        self.graph.paddingRight = 40.0;
-        self.graph.paddingBottom = 25.0;
+        self.stepsGraph.paddingLeft = 40.0;
+        self.stepsGraph.paddingTop = 0.0;
+        self.stepsGraph.paddingRight = 40.0;
+        self.stepsGraph.paddingBottom = 25.0;
         
-        self.graph.plotAreaFrame.paddingBottom = 50.0;
-        self.graph.plotAreaFrame.paddingLeft = 30.0;
-        self.graph.plotAreaFrame.paddingTop = 5.0;
-        self.graph.plotAreaFrame.paddingRight = 5.0;
+        self.stepsGraph.plotAreaFrame.paddingBottom = 50.0;
+        self.stepsGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.stepsGraph.plotAreaFrame.paddingTop = 5.0;
+        self.stepsGraph.plotAreaFrame.paddingRight = 5.0;
         
         
     }
     
     else {
-        self.graph.paddingLeft = 35.0;
-        self.graph.paddingTop = 35.0;
-        self.graph.paddingRight = 35.0;
-        self.graph.paddingBottom = 25.0;
+        self.stepsGraph.paddingLeft = 35.0;
+        self.stepsGraph.paddingTop = 35.0;
+        self.stepsGraph.paddingRight = 35.0;
+        self.stepsGraph.paddingBottom = 25.0;
         
-        self.graph.plotAreaFrame.paddingBottom = 50.0;
-        self.graph.plotAreaFrame.paddingLeft = 30.0;
-        self.graph.plotAreaFrame.paddingTop = 5.0;
-        self.graph.plotAreaFrame.paddingRight = 30.0;
+        self.stepsGraph.plotAreaFrame.paddingBottom = 50.0;
+        self.stepsGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.stepsGraph.plotAreaFrame.paddingTop = 5.0;
+        self.stepsGraph.plotAreaFrame.paddingRight = 30.0;
         
     }
     
     
-    for (CPTPlot *p in self.graph.allPlots)
+    for (CPTPlot *p in self.stepsGraph.allPlots)
     {
         [p reloadData];
     }
     
-    [self.graph reloadData];
+    [self.stepsGraph reloadData];
     
 }
 
-
+*/
 -(void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
     if ( UIInterfaceOrientationIsPortrait(fromInterfaceOrientation) )
     {
-        self.graph.paddingLeft = 40.0;
-        self.graph.paddingTop = 0.0;
-        self.graph.paddingRight = 40.0;
-        self.graph.paddingBottom = 25.0;
+        self.stepsGraph.paddingLeft = 40.0;
+        self.stepsGraph.paddingTop = 0.0;
+        self.stepsGraph.paddingRight = 40.0;
+        self.stepsGraph.paddingBottom = 25.0;
         
-        self.graph.plotAreaFrame.paddingBottom = 50.0;
-        self.graph.plotAreaFrame.paddingLeft = 30.0;
-        self.graph.plotAreaFrame.paddingTop = 5.0;
-        self.graph.plotAreaFrame.paddingRight = 5.0;
+        self.stepsGraph.plotAreaFrame.paddingBottom = 50.0;
+        self.stepsGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.stepsGraph.plotAreaFrame.paddingTop = 5.0;
+        self.stepsGraph.plotAreaFrame.paddingRight = 5.0;
     }
     
-    for (CPTPlot *p in self.graph.allPlots)
+    for (CPTPlot *p in self.stepsGraph.allPlots)
     {
         [p reloadData];
     }
     
-    [self.graph reloadData];
+    [self.stepsGraph reloadData];
 }
 
 - (float)getTotalStepsEntries
@@ -592,7 +1217,7 @@
     
     NSLog(@"maxSteps %f", self.maxSteps);
     
-    [self.graph reloadData];
+    [self.stepsGraph reloadData];
     return self.maxSteps;
 }
 
@@ -634,17 +1259,116 @@
     
     NSLog(@"minStpes %f", self.minSteps);
     
-    [self.graph reloadData];
+    [self.stepsGraph reloadData];
     return self.minSteps;
     
 }
 
+- (float)getMaxWeight
+{
+    //NSLog(@"minWeightNumber", minWeightNumber);
+    NSNumber *maxWeightNumber = [self.withingsWeightVals valueForKeyPath:@"@max.intValue"];
+    NSLog(@"maxWeightNumber, %@", maxWeightNumber);
+    
+    float maxWeight = [maxWeightNumber doubleValue];
+    
+    
+    
+    //  double minWeight = [self.vals indexOfObject:min];
+    
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
+        
+        maxWeight = ([maxWeightNumber floatValue] * 0.453592);
+    } else {
+        maxWeight = [maxWeightNumber floatValue];
+    }
+    
+    if (maxWeightNumber == nil) {
+        return 50.0;
+    }
+    
+    else if (maxWeightNumber == 0)
+    {
+        NSLog (@"no values");
+        maxWeight = 50.0;
+        
+    }
+    
+    [self.withingsWeightGraph reloadData];
+    
+    NSLog(@"minWeight %f", maxWeight);
+    return maxWeight;
+}
+
+- (float)getMinWeight
+{
+    
+    //NSLog(@"minWeightNumber", minWeightNumber);
+    NSNumber *minWeightNumber = [self.withingsWeightVals valueForKeyPath:@"@min.intValue"];
+    NSLog(@"minWeightNumber, %@", minWeightNumber);
+    
+    float minWeight = [minWeightNumber doubleValue];
+    
+    
+    
+    //  double minWeight = [self.vals indexOfObject:min];
+    
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
+        
+        minWeight = ([minWeightNumber floatValue] * 0.453592);
+    } else {
+        minWeight = [minWeightNumber floatValue];
+    }
+    
+    if (minWeightNumber == nil) {
+        return 50.0;
+    }
+    
+    else if (minWeightNumber == 0)
+    {
+        NSLog (@"no values");
+        minWeight = 50.0;
+        
+    }
+    
+    [self.withingsWeightGraph reloadData];
+    
+    NSLog(@"minWeight %f", minWeight);
+    return minWeight;
+    
+}
+
+
 
 -(NSUInteger)numberOfRecordsForPlot:(CPTPlot *)plotnumberOfRecords {
     
-    //  return self.plotData.count;
     
-    return [self.samplesArray count]; // Our sample graph contains 9 'points'
+    int recordNumber;
+    //  return self.plotData.count;
+    if ([plotnumberOfRecords.identifier isEqual:@"Steps Plot"])
+    {
+        return [self.samplesArray count]; // Our sample graph contains 9 'points'
+    }
+    
+    else if ([plotnumberOfRecords.identifier isEqual:@"Withings Weight Plot"])
+    {
+        return [self.withingsWeightVals count]; // Our sample graph contains 9 'points'
+    }
+    
+    else if ([plotnumberOfRecords.identifier isEqual:@"Mood Plot"])
+    {
+        return [self.fetchedResultsController.fetchedObjects count]; // Our 
+    }
+
+    
+    
+    NSLog(@"plot identifier, %@", plotnumberOfRecords.identifier);
+    return recordNumber;
+
 }
 
 // This method is here because this class also functions as datasource for our graph
@@ -661,28 +1385,84 @@
     
     if (fieldEnum == CPTScatterPlotFieldX)
     {
+        if ([plot.identifier isEqual:@"Steps Plot"])
+                {
+                    
+                    NSDate * dateResult = [self.samplesDateArray objectAtIndex:index];
+                    
+                    NSLog(@"dateResult, %@", dateResult);
+                    NSLog(@"index, %lu", (unsigned long)index);
+                    
+                    NSLog(@"withings dateResult, %@", dateResult);
+                    
+                    NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:dateResult];
+                    
+                    [components setHour: 0];
+                    
+                    NSDate *newDate = [[NSCalendar currentCalendar] dateFromComponents:components];
+                    
+                    double intervalInSecondsFirst  = ([newDate timeIntervalSinceDate:self.refDate]);
+                    
+                    result = [NSNumber numberWithDouble:intervalInSecondsFirst];
+                    
+                    NSLog (@"intervalinsecondsfirst %f", intervalInSecondsFirst);
+                    
+                    NSLog(@"x results, %@", [NSNumber numberWithDouble:intervalInSecondsFirst]);
+                    return [NSNumber numberWithDouble:intervalInSecondsFirst];
+                    
+                }
+
+        else if ([plot.identifier isEqual:@"Withings Weight Plot"])
+        {
+            
+            NSDate * dateResult = [self.withingsDateVals objectAtIndex:index];
+            
+            NSLog(@"dateResult, %@", dateResult);
+            NSLog(@"index, %lu", (unsigned long)index);
+            
+            NSLog(@"withings dateResult, %@", dateResult);
+            
+            NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:dateResult];
+            
+            [components setHour: 0];
+            
+            NSDate *newDate = [[NSCalendar currentCalendar] dateFromComponents:components];
+            
+            double intervalInSecondsFirst  = ([newDate timeIntervalSinceDate:self.refDate]);
+            
+            result = [NSNumber numberWithDouble:intervalInSecondsFirst];
+            
+            NSLog (@"intervalinsecondsfirst %f", intervalInSecondsFirst);
+            
+            NSLog(@"x results, %@", [NSNumber numberWithDouble:intervalInSecondsFirst]);
+            return [NSNumber numberWithDouble:intervalInSecondsFirst];
+            
+            
+        }
         
-        NSDate * dateResult = [self.samplesDateArray objectAtIndex:index];
+        else if ([plot.identifier isEqual:@"Mood Plot"])
+        {
+            
+            
+            NSDate * moodDateResult = ((Mood*)[self.fetchedResultsController.fetchedObjects objectAtIndex:index]).moodDate;
+            
+            NSLog(@"moodDateResult, %@", moodDateResult);
+            
+            NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:moodDateResult];
+            
+            [components setHour: 0];
+            
+            NSDate *newDate = [[NSCalendar currentCalendar] dateFromComponents:components];
+            
+            double intervalInSecondsFirst  = ([newDate timeIntervalSinceDate:self.refDate]);
+            result = [NSNumber numberWithDouble:intervalInSecondsFirst];
+            
+            
+        }
         
-        NSLog(@"withings dateResult, %@", dateResult);
+
         
-        NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:dateResult];
-        
-        [components setHour: 0];
-        
-        NSDate *newDate = [[NSCalendar currentCalendar] dateFromComponents:components];
-        
-        double intervalInSecondsFirst  = ([newDate timeIntervalSinceDate:self.refDate]);
-        
-        result = [NSNumber numberWithDouble:intervalInSecondsFirst];
-        
-        
-        
-        NSLog (@"intervalinsecondsfirst %f", intervalInSecondsFirst);
-        
-        NSLog(@"x results, %@", [NSNumber numberWithDouble:intervalInSecondsFirst]);
-        return [NSNumber numberWithDouble:intervalInSecondsFirst];
-        /*
+                /*
         if (self.timeFrameSegment.selectedSegmentIndex == 0)
         {
             double intervalInSecondsFirst = ([newDate timeIntervalSinceDate:self.refDate]); // get difference
@@ -716,15 +1496,82 @@
         //Return y value, for this example we'll be plotting y = x * x
         //        if ([self.fetchedResultsController.fetchedObjects count] > index) {
         
-        NSNumber *result = [self.samplesArray objectAtIndex:index];
-        NSLog(@"y %@", result);
-        return  result;
+        if ([plot.identifier isEqual:@"Steps Plot"])
+        {
+            NSNumber *result = [self.samplesArray objectAtIndex:index];
+            NSLog(@"y %@", result);
+            return  result;
+            
+        }
+        
         /*            }
          
          
          } else {
          return nil;
          }*/
+        
+        else if ([plot.identifier isEqual:@"Withings Weight Plot"])
+        {
+            if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
+                NSNumber *initResult = [self.withingsWeightVals objectAtIndex:index];
+                float floatResult = [initResult floatValue] * 0.453592;
+                result = @(floatResult);
+                NSLog(@"x %@", result);
+                return result;
+            }
+            else {
+                NSNumber *result = [self.withingsWeightVals objectAtIndex:index];
+                NSLog(@"y %@", result);
+                return  result;
+            
+            }
+            
+            /*            }
+             
+             
+             } else {
+             return nil;
+             }*/
+            
+        }
+        else if ([plot.identifier isEqual:@"Mood Plot"])
+        {
+            if ([self.fetchedResultsController.fetchedObjects count] > index) {
+                NSString *initResult = ((Mood*)[self.fetchedResultsController.fetchedObjects objectAtIndex:index]).mood;
+                if ([initResult  isEqual: @"Very Happy"])
+                {
+                    result = @(5.0);
+                }
+                else if ([initResult  isEqual: @"Happy"])
+                {
+                    result = @(4.0);
+                }
+                else if ([initResult  isEqual: @"Okay"])
+                {
+                    result = @(3.0);
+                }
+                else if ([initResult  isEqual: @"Sad"])
+                {
+                    result = @(2.0);
+                }
+                else if ([initResult  isEqual: @"Very Sad"])
+                {
+                    result = @(1.0);
+                }
+                
+                
+                return result;
+            }
+            
+            
+            else {
+                return nil;
+            }
+        }
+        
+        
+        
         
     }
     return result;

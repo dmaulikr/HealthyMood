@@ -9,6 +9,14 @@
 #import <UIKit/UIKit.h>
 #import <HealthKit/HealthKit.h>
 
-@interface MultiGraphViewController : UIViewController
+#import <Foundation/Foundation.h>
+#import "CorePlot-CocoaTouch.h"
+
+@interface MultiGraphViewController : UIViewController <CPTPlotDataSource> 
+
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+
+@property (weak, nonatomic) IBOutlet UISegmentedControl *timeFrameSegment;
+-(IBAction)segmentChange;
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "LoginWebViewController.h"
+#import "WithingsSelectionTableViewController.h"
 
 @interface LoginWebViewController ()
 
@@ -35,12 +36,20 @@
     // Dispose of any resources that can be recreated.
 }
 
+/*
 -(void)webViewDidFinishLoad:(UIWebView *)webView{
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
+    WithingsSelectionTableViewController *withingsSelection = [[WithingsSelectionTableViewController alloc] init];
+   
+        [self presentViewController:withingsSelection animated:YES completion:nil];
+    
+     }
+ 
+ */
 
 - (IBAction)cancelTapped:(id)sender
 {
+
+    
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 

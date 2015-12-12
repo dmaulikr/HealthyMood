@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="8195" systemVersion="14F27" minimumToolsVersion="Xcode 4.3">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9057" systemVersion="14F1021" minimumToolsVersion="Xcode 4.3">
+    <entity name="Mood" syncable="YES">
+        <attribute name="happiest" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="happy" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="okay" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sad" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="saddest" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="Weight" representedClassName="Weight" syncable="YES">
         <attribute name="sectionIdentifier" optional="YES" transient="YES" attributeType="String" syncable="YES"/>
         <attribute name="weight" optional="YES" attributeType="Double" defaultValueString="0" syncable="YES"/>
@@ -7,5 +14,6 @@
     </entity>
     <elements>
         <element name="Weight" positionX="-54" positionY="-9" width="128" height="90"/>
+        <element name="Mood" positionX="-54" positionY="18" width="128" height="120"/>
     </elements>
 </model>

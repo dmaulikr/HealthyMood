@@ -19,6 +19,11 @@
 		E941B0F41BF1B5DD00FA91F5 /* sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = E941B0F21BF1B5DD00FA91F5 /* sha1.c */; };
 		E941B0FC1BF1B73C00FA91F5 /* OAuth1Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = E941B0FB1BF1B73C00FA91F5 /* OAuth1Controller.m */; };
 		E941B0FF1BF1B7A400FA91F5 /* NSString+URLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = E941B0FE1BF1B7A400FA91F5 /* NSString+URLEncoding.m */; };
+		E9438F261C1052CF00C4B330 /* MoodTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9438F251C1052CF00C4B330 /* MoodTableViewController.m */; };
+		E9438F411C112C4E00C4B330 /* Mood.m in Sources */ = {isa = PBXBuildFile; fileRef = E9438F3F1C112C4E00C4B330 /* Mood.m */; };
+		E9438F441C112EDE00C4B330 /* MoodSelectionTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9438F431C112EDE00C4B330 /* MoodSelectionTableViewController.m */; };
+		E9438F4A1C1136D700C4B330 /* ViewMoodsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9438F491C1136D700C4B330 /* ViewMoodsTableViewController.m */; };
+		E9438F4D1C151E7E00C4B330 /* MoodGraphViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9438F4C1C151E7E00C4B330 /* MoodGraphViewController.m */; };
 		E971AD991B9CBE350092F9A8 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E971AD971B9CBE350092F9A8 /* Model.xcdatamodeld */; };
 		E971ADA11B9D24170092F9A8 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E971ADA01B9D24170092F9A8 /* CoreData.framework */; };
 		E971ADA31B9D241F0092F9A8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E971ADA21B9D241F0092F9A8 /* Foundation.framework */; };
@@ -100,6 +105,19 @@
 		E941B0FD1BF1B7A400FA91F5 /* NSString+URLEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+URLEncoding.h"; sourceTree = "<group>"; };
 		E941B0FE1BF1B7A400FA91F5 /* NSString+URLEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+URLEncoding.m"; sourceTree = "<group>"; };
 		E941B1001BF1B92500FA91F5 /* Simple-OAuth1-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Simple-OAuth1-Prefix.pch"; sourceTree = "<group>"; };
+		E9438F241C1052CF00C4B330 /* MoodTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MoodTableViewController.h; path = ../MoodTableViewController.h; sourceTree = "<group>"; };
+		E9438F251C1052CF00C4B330 /* MoodTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MoodTableViewController.m; path = ../MoodTableViewController.m; sourceTree = "<group>"; };
+		E9438F271C10C53000C4B330 /* Model 8.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 8.xcdatamodel"; sourceTree = "<group>"; };
+		E9438F341C11281E00C4B330 /* Model 9.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 9.xcdatamodel"; sourceTree = "<group>"; };
+		E9438F3B1C112C1100C4B330 /* Model 10.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 10.xcdatamodel"; sourceTree = "<group>"; };
+		E9438F3E1C112C4E00C4B330 /* Mood.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mood.h; sourceTree = "<group>"; };
+		E9438F3F1C112C4E00C4B330 /* Mood.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mood.m; sourceTree = "<group>"; };
+		E9438F421C112EDE00C4B330 /* MoodSelectionTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoodSelectionTableViewController.h; sourceTree = "<group>"; };
+		E9438F431C112EDE00C4B330 /* MoodSelectionTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoodSelectionTableViewController.m; sourceTree = "<group>"; };
+		E9438F481C1136D700C4B330 /* ViewMoodsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewMoodsTableViewController.h; sourceTree = "<group>"; };
+		E9438F491C1136D700C4B330 /* ViewMoodsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewMoodsTableViewController.m; sourceTree = "<group>"; };
+		E9438F4B1C151E7E00C4B330 /* MoodGraphViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoodGraphViewController.h; sourceTree = "<group>"; };
+		E9438F4C1C151E7E00C4B330 /* MoodGraphViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoodGraphViewController.m; sourceTree = "<group>"; };
 		E971AD981B9CBE350092F9A8 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		E971ADA01B9D24170092F9A8 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		E971ADA21B9D241F0092F9A8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -230,6 +248,8 @@
 		E97D79001B9BC0D300F6DC79 /* HealthyMood */ = {
 			isa = PBXGroup;
 			children = (
+				E9438F3E1C112C4E00C4B330 /* Mood.h */,
+				E9438F3F1C112C4E00C4B330 /* Mood.m */,
 				E9D0A24F1BFACE0000B9A6A1 /* HealthyMood.entitlements */,
 				E92E4FCF1BB5B74F0063D774 /* ChooseViewViewController.h */,
 				E92E4FD01BB5B74F0063D774 /* ChooseViewViewController.m */,
@@ -238,8 +258,16 @@
 				E97D79051B9BC0D300F6DC79 /* AppDelegate.h */,
 				E97D79061B9BC0D300F6DC79 /* AppDelegate.m */,
 				E97D790E1B9BC0D300F6DC79 /* Main.storyboard */,
+				E9438F4B1C151E7E00C4B330 /* MoodGraphViewController.h */,
+				E9438F4C1C151E7E00C4B330 /* MoodGraphViewController.m */,
+				E9438F481C1136D700C4B330 /* ViewMoodsTableViewController.h */,
+				E9438F491C1136D700C4B330 /* ViewMoodsTableViewController.m */,
+				E9438F421C112EDE00C4B330 /* MoodSelectionTableViewController.h */,
+				E9438F431C112EDE00C4B330 /* MoodSelectionTableViewController.m */,
 				E913D0BC1C0BF4FB00725EDE /* MultiGraphViewController.h */,
 				E913D0BD1C0BF4FB00725EDE /* MultiGraphViewController.m */,
+				E9438F241C1052CF00C4B330 /* MoodTableViewController.h */,
+				E9438F251C1052CF00C4B330 /* MoodTableViewController.m */,
 				E913D0B91C001DD700725EDE /* StepsGraphViewController.h */,
 				E913D0BA1C001DD700725EDE /* StepsGraphViewController.m */,
 				E9D0A2591BFE8C5D00B9A6A1 /* StepsTableViewController.h */,
@@ -441,10 +469,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9438F411C112C4E00C4B330 /* Mood.m in Sources */,
 				E9BC86801BA1EEC5002177B0 /* SettingsTableViewController.m in Sources */,
 				E97D792F1B9BC19000F6DC79 /* WeightTableViewController.m in Sources */,
 				E9F7FBEC1BB6D4D7006992FD /* WeightGraphViewController.m in Sources */,
 				E9D0A24B1BF5896700B9A6A1 /* WithingsWeightGraphViewController.m in Sources */,
+				E9438F4D1C151E7E00C4B330 /* MoodGraphViewController.m in Sources */,
 				E97D79071B9BC0D300F6DC79 /* AppDelegate.m in Sources */,
 				E99D7B101BBA2F4100CD5480 /* WeightDataSource.m in Sources */,
 				E913D0BB1C001DD700725EDE /* StepsGraphViewController.m in Sources */,
@@ -459,6 +489,7 @@
 				E971AD991B9CBE350092F9A8 /* Model.xcdatamodeld in Sources */,
 				E941B0FF1BF1B7A400FA91F5 /* NSString+URLEncoding.m in Sources */,
 				E941B0CD1BF19A1200FA91F5 /* LoginWebViewController.m in Sources */,
+				E9438F441C112EDE00C4B330 /* MoodSelectionTableViewController.m in Sources */,
 				E9F7FBE91BB6BAC3006992FD /* SelectionTableViewController.m in Sources */,
 				E92E4FD11BB5B74F0063D774 /* ChooseViewViewController.m in Sources */,
 				E941B0F41BF1B5DD00FA91F5 /* sha1.c in Sources */,
@@ -468,6 +499,8 @@
 				E941B0F11BF1B5D300FA91F5 /* hmac.c in Sources */,
 				E913D0BE1C0BF4FB00725EDE /* MultiGraphViewController.m in Sources */,
 				E97D79041B9BC0D300F6DC79 /* main.m in Sources */,
+				E9438F4A1C1136D700C4B330 /* ViewMoodsTableViewController.m in Sources */,
+				E9438F261C1052CF00C4B330 /* MoodTableViewController.m in Sources */,
 				E9D0A2481BF582E400B9A6A1 /* WithingsSelectionTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -698,6 +731,9 @@
 		E971AD971B9CBE350092F9A8 /* Model.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				E9438F3B1C112C1100C4B330 /* Model 10.xcdatamodel */,
+				E9438F341C11281E00C4B330 /* Model 9.xcdatamodel */,
+				E9438F271C10C53000C4B330 /* Model 8.xcdatamodel */,
 				E99D7AF81BB803F400CD5480 /* Model 7.xcdatamodel */,
 				E994D3A11BA9E3C900B9AC23 /* Model 6.xcdatamodel */,
 				E93A03161BA5FC46004E505E /* Model 5.xcdatamodel */,
@@ -706,7 +742,7 @@
 				E971ADA91B9EF0530092F9A8 /* Model 2.xcdatamodel */,
 				E971AD981B9CBE350092F9A8 /* Model.xcdatamodel */,
 			);
-			currentVersion = E99D7AF81BB803F400CD5480 /* Model 7.xcdatamodel */;
+			currentVersion = E9438F3B1C112C1100C4B330 /* Model 10.xcdatamodel */;
 			path = Model.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

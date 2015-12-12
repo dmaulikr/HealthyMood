@@ -1,29 +1,30 @@
 //
-//  WithingsSelectionTableViewController.m
+//  MoodSelectionTableViewController.m
 //  HealthyMood
 //
-//  Created by Nadine Khattak on 11/12/15.
+//  Created by Nadine Khattak on 12/3/15.
 //  Copyright © 2015 Ensach. All rights reserved.
 //
 
-#import "WithingsSelectionTableViewController.h"
+#import "MoodSelectionTableViewController.h"
 
-@interface WithingsSelectionTableViewController ()
+@interface MoodSelectionTableViewController ()
 
 @end
 
-@implementation WithingsSelectionTableViewController
+@implementation MoodSelectionTableViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.withingsViewDataSelCell.textLabel.text = @"View Data";
-    self.withingsViewGraphSelCell.textLabel.text = @"View Graphs";
-    self.withingsViewSettingsSelCell.textLabel.text = @"Choose Unit";
-    self.multiGraph.textLabel.text = @"View All Graphs";
     
+    self.enterMood.textLabel.text = @"Enter Mood";
+    self.viewMoods.textLabel.text = @"View Moods";
+    self.viewMoodGraphs.textLabel.text = @"View Graphs";
+    // Uncomment the following line to preserve selection between presentations.
+    // self.clearsSelectionOnViewWillAppear = NO;
     
-    
-
+    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -34,13 +35,13 @@
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-
+#warning Incomplete implementation, return the number of sections
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-
-    return 4;
+#warning Incomplete implementation, return the number of rows
+    return 3;
 }
 
 /*
@@ -96,7 +97,5 @@
     // Pass the selected object to the new view controller.
 }
 */
-
-
 
 @end

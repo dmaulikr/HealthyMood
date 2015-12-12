@@ -29,8 +29,8 @@
      }
 
 
-    self.autoWeightEntrySelection.textLabel.text = @"Use Withings Scale Weight";
-    self.manualWeightEntrySelection.textLabel.text = @"Enter My Own Weight";
+    self.autoWeightEntrySelection.textLabel.text = @"View Withings Weight Data";
+    self.manualWeightEntrySelection.textLabel.text = @"View Entered Weight Data";
 }
 
 - (void)didReceiveMemoryWarning {
@@ -47,7 +47,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return 3;
+    return 4;
 }
 
 /*

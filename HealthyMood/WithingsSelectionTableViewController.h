@@ -16,5 +16,7 @@
 @property (weak, nonatomic) IBOutlet UITableViewCell *withingsViewDataSelCell;
 @property (weak, nonatomic) IBOutlet UITableViewCell *withingsViewGraphSelCell;
 @property (weak, nonatomic) IBOutlet UITableViewCell *withingsViewSettingsSelCell;
+@property (weak, nonatomic) IBOutlet UITableViewCell *multiGraph;
+
 
 @end

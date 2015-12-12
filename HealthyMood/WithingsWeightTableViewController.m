@@ -120,7 +120,7 @@
                              NSDate *epochNSDate = [[NSDate alloc] initWithTimeIntervalSince1970:seconds];
                              
                              NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-                             [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+                             [dateFormatter setDateFormat:@"yyyy-MM-dd 'at' hh:mm a"];
                              
                              self.weightDate = [dateFormatter stringFromDate:epochNSDate];
                              
