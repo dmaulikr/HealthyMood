@@ -22,15 +22,36 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-            NSUserDefaults *authSettings = [NSUserDefaults standardUserDefaults];
+    NSUserDefaults *authSettings = [NSUserDefaults standardUserDefaults];
      if([authSettings boolForKey:@"authSwitchStatus"])
      {
          [self.authSwitch isOn];
      }
+    self.autoWeightEntrySelection.textLabel.text = @"Use Withings Scale Weight";
+    self.manualWeightCell.textLabel.text = @"Enter My Own Weight";
 
+    self.viewWeightInfo.textLabel.text = @"View Weight Data";
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    /*
+    
 
-    self.autoWeightEntrySelection.textLabel.text = @"View Withings Weight Data";
-    self.manualWeightEntrySelection.textLabel.text = @"View Entered Weight Data";
+    if ([[defaults objectForKey:@"weightEntryType"]  isEqual: @"autoWithings"])
+    {
+        self.autoWeightEntrySelection.accessoryType = UITableViewCellAccessoryCheckmark;
+        self.manualWeightEntrySelection.accessoryType = UITableViewCellAccessoryNone;
+        
+    }
+    else if ([[defaults objectForKey:@"weightEntryType"]  isEqual: @"manualWeightEntry"] )
+    {
+        self.manualWeightEntrySelection.accessoryType = UITableViewCellAccessoryCheckmark;
+        self.autoWeightEntrySelection.accessoryType = UITableViewCellAccessoryNone;
+    }
+*/
+  
+    NSLog(@"default weight type,%@", [defaults objectForKey:@"weightEntryType"]);
+
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -42,23 +63,126 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 
-    return 1;
+    return 3;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return 4;
+    if (section == 0 || section == 1)
+    {
+        return 2;
+    }
+    else
+    {
+        return 1;
+    }
+
 }
 
-/*
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
+
+- (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath
+{
     
-    // Configure the cell...
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     
-    return cell;
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    self.autoWeightEntrySelection.accessoryType = UITableViewCellAccessoryNone;
+    self.manualWeightCell.accessoryType = UITableViewCellAccessoryNone;
+
+    
+    if (cell.accessoryType == UITableViewCellAccessoryNone)
+    {
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    }
+    else
+    {
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
+    
+    if (self.autoWeightEntrySelection.accessoryType == UITableViewCellAccessoryCheckmark) {
+        [defaults setObject:@"autoWithings" forKey:@"weightEntryType"];
+    } else if (self.manualWeightCell.accessoryType == UITableViewCellAccessoryCheckmark) {
+        [defaults setObject:@"manualWeightEntry" forKey:@"weightEntryType"];
+    }
+    
+   
+    
 }
-*/
+
+
+/*
+
+- (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath
+{
+    
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    self.autoWeightEntrySelection.accessoryType = UITableViewCellAccessoryNone;
+    self.manualWeightEntrySelection = UITableViewCellAccessoryNone;
+
+    
+    if (cell.accessoryType == UITableViewCellAccessoryNone)
+    {
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    }
+    else if (cell.accessoryType == UITableViewCellAccessoryCheckmark)
+    {
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
+    
+    if (self.autoWeightEntrySelection.accessoryType == UITableViewCellAccessoryCheckmark) {
+        [defaults setObject:@"autoWithings" forKey:@"weightEntryType"];
+    } else if (self.manualWeightEntrySelection.accessoryType == UITableViewCellAccessoryCheckmark) {
+        [defaults setObject:@"manualWeightEntry" forKey:@"weightEntryType"];
+    }
+    
+    
+}
+
+ 
+ */
+
+-(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryNone;
+}
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    
+        UITableViewCell *cell = [super tableView:tableView cellForRowAtIndexPath:indexPath];
+        
+        [self configureCell:cell atIndexPath:indexPath];
+        
+        return cell;
+
+}
+
+- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
+
+    UITableViewCell *autoWeight = self.autoWeightEntrySelection;
+    UITableViewCell *manualWeight = self.manualWeightCell;
+
+                                 
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                                 
+    if ([[defaults objectForKey:@"weightEntryType"]  isEqual: @"autoWithings"]) {
+        autoWeight.accessoryType = UITableViewCellAccessoryCheckmark;
+        manualWeight.accessoryType = UITableViewCellAccessoryNone;
+    }
+    else if ([[defaults objectForKey:@"weightEntryType"]  isEqual: @"manualWeightEntry"]) {
+        manualWeight.accessoryType = UITableViewCellAccessoryCheckmark;
+        autoWeight.accessoryType = UITableViewCellAccessoryNone;
+    }
+}
+                             
+                             
 
 - (IBAction)buttonTapped {
     LoginWebViewController *loginWebViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"loginWebViewController"];

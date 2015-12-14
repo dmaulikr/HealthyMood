@@ -41,6 +41,7 @@
 		E99D7B0A1BB8DAD300CD5480 /* libCorePlot-CocoaTouch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E99D7B071BB8DA7300CD5480 /* libCorePlot-CocoaTouch.a */; };
 		E99D7B0C1BB8DADA00CD5480 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E99D7B0B1BB8DADA00CD5480 /* Accelerate.framework */; };
 		E99D7B101BBA2F4100CD5480 /* WeightDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = E99D7B0F1BBA2F4100CD5480 /* WeightDataSource.m */; };
+		E9B75FBB1C1C353F007170AA /* SelectWeightSourceOptionTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9B75FBA1C1C353F007170AA /* SelectWeightSourceOptionTableViewController.m */; };
 		E9BC86801BA1EEC5002177B0 /* SettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BC867F1BA1EEC5002177B0 /* SettingsTableViewController.m */; };
 		E9D0A2431BF4387800B9A6A1 /* WithingsWeightTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D0A2421BF4387800B9A6A1 /* WithingsWeightTableViewCell.m */; };
 		E9D0A2481BF582E400B9A6A1 /* WithingsSelectionTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D0A2471BF582E400B9A6A1 /* WithingsSelectionTableViewController.m */; };
@@ -148,6 +149,8 @@
 		E99D7B0B1BB8DADA00CD5480 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		E99D7B0E1BBA2F4100CD5480 /* WeightDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeightDataSource.h; sourceTree = "<group>"; };
 		E99D7B0F1BBA2F4100CD5480 /* WeightDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeightDataSource.m; sourceTree = "<group>"; };
+		E9B75FB91C1C353F007170AA /* SelectWeightSourceOptionTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectWeightSourceOptionTableViewController.h; sourceTree = "<group>"; };
+		E9B75FBA1C1C353F007170AA /* SelectWeightSourceOptionTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectWeightSourceOptionTableViewController.m; sourceTree = "<group>"; };
 		E9BC867E1BA1EEC5002177B0 /* SettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsTableViewController.h; sourceTree = "<group>"; };
 		E9BC867F1BA1EEC5002177B0 /* SettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsTableViewController.m; sourceTree = "<group>"; };
 		E9D0A2411BF4387800B9A6A1 /* WithingsWeightTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WithingsWeightTableViewCell.h; sourceTree = "<group>"; };
@@ -258,6 +261,8 @@
 				E97D79051B9BC0D300F6DC79 /* AppDelegate.h */,
 				E97D79061B9BC0D300F6DC79 /* AppDelegate.m */,
 				E97D790E1B9BC0D300F6DC79 /* Main.storyboard */,
+				E9B75FB91C1C353F007170AA /* SelectWeightSourceOptionTableViewController.h */,
+				E9B75FBA1C1C353F007170AA /* SelectWeightSourceOptionTableViewController.m */,
 				E9438F4B1C151E7E00C4B330 /* MoodGraphViewController.h */,
 				E9438F4C1C151E7E00C4B330 /* MoodGraphViewController.m */,
 				E9438F481C1136D700C4B330 /* ViewMoodsTableViewController.h */,
@@ -502,6 +507,7 @@
 				E9438F4A1C1136D700C4B330 /* ViewMoodsTableViewController.m in Sources */,
 				E9438F261C1052CF00C4B330 /* MoodTableViewController.m in Sources */,
 				E9D0A2481BF582E400B9A6A1 /* WithingsSelectionTableViewController.m in Sources */,
+				E9B75FBB1C1C353F007170AA /* SelectWeightSourceOptionTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

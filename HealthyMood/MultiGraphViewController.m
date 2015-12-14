@@ -14,10 +14,12 @@
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
 #import "Mood.h"
+#import "Weight.h"
 
 @interface MultiGraphViewController ()
 
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
+@property (nonatomic, strong) NSFetchedResultsController *manualWeightFetchedResultsController;
 
 
 @property (nonatomic, strong) OAuth1Controller *oauth1Controller;
@@ -35,7 +37,9 @@
 
 @property (nonatomic, readwrite, strong) CPTGraph *aGraph;
 @property (nonatomic, readwrite, strong) CPTXYGraph *stepsGraph;
-@property (nonatomic, readwrite, strong) CPTXYGraph *withingsWeightGraph
+@property (nonatomic, readwrite, strong) CPTXYGraph *withingsWeightGraph;
+@property (nonatomic, readwrite, strong) CPTXYGraph *manualWeightGraph;
+
 ;
 @property (nonatomic, readwrite, strong) CPTXYGraph *moodGraph;
 
@@ -51,6 +55,7 @@
 
 @property (nonatomic, readwrite,strong) CPTScatterPlot *stepsPlot;
 @property (nonatomic, readwrite,strong) CPTScatterPlot *withingsWeightPlot;
+@property (nonatomic, readwrite,strong) CPTScatterPlot *manualWeightPlot;
 
 
 @end
@@ -62,12 +67,21 @@
     [super viewDidLoad];
     
     
-    [self setupStepsGraph];
     
-    [self setupsWithingWeightGraph];
+    [self setupStepsGraph];
     
     [self setupMoodGraph];
     
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([[defaults objectForKey:@"weightEntryType"] isEqual:@"autoWithings"]) {
+        
+         [self setupsWithingWeightGraph];
+    }
+    
+    else if ([[defaults objectForKey:@"weightEntryType"]  isEqual: @"manualWeightEntry"])
+    {
+        [self setupManualWeightGraph];
+    }
     
     
   //  [self makeWithingsWeightGraph];
@@ -238,19 +252,10 @@
     self.samplesDateArray = [[NSMutableArray alloc] init];
     
     
-    // Read date of birth, biological sex and step count
-    NSSet *readObjectTypes  = [NSSet setWithObjects:
-                               [HKObjectType characteristicTypeForIdentifier:HKCharacteristicTypeIdentifierDateOfBirth],
-                               [HKObjectType characteristicTypeForIdentifier:HKCharacteristicTypeIdentifierBiologicalSex],
-                               [HKObjectType quantityTypeForIdentifier:HKQuantityTypeIdentifierStepCount],
-                               nil];
-    
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDateComponents *interval = [[NSDateComponents alloc] init];
     
     interval.day = 1;
-    
-    
     
     NSDateComponents *anchorComponents = [calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitWeekday fromDate:[NSDate date]];
     
@@ -403,6 +408,24 @@
     
     
     
+}
+
+
+- (void)setupManualWeightGraph {
+    AppDelegate *newDelegate = [[UIApplication sharedApplication] delegate];
+    self.managedObjectContext = newDelegate.managedObjectContext;
+    
+    NSError *error = nil;
+    NSFetchRequest *manualWeightFetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Weight"];
+    [manualWeightFetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"weightDate" ascending:YES]]];
+    self.manualWeightFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:manualWeightFetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:@"sectionIdentifier" cacheName:nil];
+    
+    NSLog(@"Before fetch fetchRequests manual weight, %@", self.manualWeightFetchedResultsController.fetchedObjects);
+    // Perform Fetch
+    [self.manualWeightFetchedResultsController performFetch:&error];
+    NSLog(@"After fetch fetchRequests manual weight, %@", self.manualWeightFetchedResultsController.fetchedObjects);
+    
+    [self makeManualWeightGraph];
 }
 
 
@@ -865,10 +888,170 @@
  
     
     [self.moodGraph reloadData];
+    
+}
+
+
+- (void)makeManualWeightGraph {
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"MM/dd"];
+    
+    
+    
+    // NSDate *today = [[NSDate alloc] initWithTimeIntervalSinceNow: 0];
+    
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    
+    NSDate *today = [calendar dateBySettingHour:0 minute:0 second:0 ofDate:[NSDate date] options:0];
+    //   NSDate *refDate            = today;
+    NSTimeInterval oneDay      = 24 * 60 * 60;
+    
+    self.refDate            =     [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (6 * 24 * 60 * 60) ];
+    
+    self.view.backgroundColor = [UIColor colorWithRed:245.0/255.0 green:0.0/255.0 blue:87.0/255.0 alpha:1.0f];
+    CPTXYGraph *newGraph = [[CPTXYGraph alloc] initWithFrame:CGRectZero];
+    
+    [[UISegmentedControl appearance] setTintColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0]];
+    
+    //CPTTheme *theme      = [CPTTheme themeNamed:kCPTDarkGradientTheme];
+    //[newGraph applyTheme:theme];
+    self.manualWeightGraph = newGraph;
+    
+    self.hostView.hostedGraph = newGraph;
+    
+    // Setup scatter plot space
+    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
+    NSTimeInterval xLow       = 0.0;
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat([self getMinManualWeight]-10.0)
+                                                    length:CPTDecimalFromFloat((([self getMaxManualWeight])- [self getMinManualWeight]) + 20.0)];
+    
+    
+    
+    CPTMutableTextStyle *textStyle = [CPTMutableTextStyle textStyle];
+    [textStyle setFontSize:8.0f];
+    [textStyle setColor:[CPTColor colorWithComponentRed: 255.0f/255.0f green:250.0f/255.0f blue:250.0f/255.0f alpha:1.0f]];
+    
+    // Axes
+    CPTXYAxisSet *axisSet = (CPTXYAxisSet *)newGraph.axisSet;
+    CPTXYAxis *x          = axisSet.xAxis;
+    
+    x.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
+    x.majorIntervalLength         = CPTDecimalFromDouble(oneDay);
+    
+    x.orthogonalCoordinateDecimal = CPTDecimalFromDouble([self getMinManualWeight] - 10.0);
+    x.minorTicksPerInterval       = 0;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    
+    [dateFormatter setDateFormat:@"MM/dd"];
+    
+    
+    CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
+    timeFormatter.referenceDate = self.refDate;
+    x.labelFormatter            = timeFormatter;
+    
+    
+    [x setLabelTextStyle:textStyle];
+    
+    CPTXYAxis *y = axisSet.yAxis;
+    
+    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+    [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [numberFormatter setMaximumFractionDigits:0];
+    
+    
+    y.labelFormatter = numberFormatter;
+    
+    y.majorIntervalLength         = CPTDecimalFromDouble(10);
+    y.minorTicksPerInterval       = 0;
+    y.orthogonalCoordinateDecimal = CPTDecimalFromDouble([self getMinManualWeight] - 10.0);
+    y.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
+    
+    [y setLabelTextStyle:textStyle];
+    
+    // Create a plot that uses the data source method
+    self.manualWeightPlot = [[CPTScatterPlot alloc] init];
+    self.manualWeightPlot.identifier = @"Manual Weight Plot";
+    
+    CPTMutableLineStyle *lineStyle = [self.manualWeightPlot.dataLineStyle mutableCopy];
+    lineStyle.lineWidth              = 1.0;
+    lineStyle.lineColor              = [CPTColor whiteColor];
+    self.manualWeightPlot.dataLineStyle = lineStyle;
+    
+    CPTMutableLineStyle *axisLineStyle = [CPTMutableLineStyle lineStyle];
+    axisLineStyle.lineWidth = 0.5;
+    axisLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:0.5];
+    
+    CPTMutableLineStyle *tickLineStyle = [CPTMutableLineStyle lineStyle];
+    tickLineStyle.lineWidth = 0.2;
+    tickLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:1.0];
+    
+    y.majorTickLineStyle = tickLineStyle;
+    x.majorTickLineStyle = tickLineStyle;
+    
+    y.axisLineStyle = axisLineStyle;
+    x.axisLineStyle = axisLineStyle;
+    
+    
+    self.manualWeightPlot.dataSource = self;
+    [newGraph addPlot:self.manualWeightPlot];
+    
+    NSInteger countRecords = [self.manualWeightFetchedResultsController.fetchedObjects count]; // Our sample graph contains 9 'points'
+    
+    NSLog (@"countRecords %ld", (long)countRecords);
+    
+    
+    CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, 200, (self.view.frame.size.width), (self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height + 50) )];
+    
+    
+    
+    [self.view addSubview:hostingView];
+    
+    hostingView.hostedGraph = self.manualWeightGraph;
+    
+    if (([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft) ||
+        ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)) {
+        self.manualWeightGraph.paddingLeft = 40.0;
+        self.manualWeightGraph.paddingTop = 0.0;
+        self.manualWeightGraph.paddingRight = 40.0;
+        self.manualWeightGraph.paddingBottom = 25.0;
+        
+        self.manualWeightGraph.plotAreaFrame.paddingBottom = 50.0;
+        self.manualWeightGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.manualWeightGraph.plotAreaFrame.paddingTop = 5.0;
+        self.manualWeightGraph.plotAreaFrame.paddingRight = 5.0;
+        
+        
+    }
+    
+    else {
+        self.manualWeightGraph.paddingLeft = 35.0;
+        self.manualWeightGraph.paddingTop = 35.0;
+        self.manualWeightGraph.paddingRight = 35.0;
+        self.manualWeightGraph.paddingBottom = 25.0;
+        
+        self.manualWeightGraph.plotAreaFrame.paddingBottom = 50.0;
+        self.manualWeightGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.manualWeightGraph.plotAreaFrame.paddingTop = 5.0;
+        self.manualWeightGraph.plotAreaFrame.paddingRight = 30.0;
+        
+    }
+    
+    
+    for (CPTPlot *p in self.manualWeightGraph.allPlots)
+    {
+        [p reloadData];
+    }
+    
+    
+    [self.manualWeightGraph reloadData];
 
     
     
+
 }
+
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -884,6 +1067,8 @@
 
     
     CPTXYPlotSpace *moodPlotSpace = (CPTXYPlotSpace *)self.moodGraph.defaultPlotSpace;
+    
+    CPTXYPlotSpace *manualWeightPlotSpace = (CPTXYPlotSpace *)self.manualWeightGraph.defaultPlotSpace;
 
     
     
@@ -892,6 +1077,7 @@
     CPTXYAxisSet *stepsAxisSet = (id)self.stepsGraph.axisSet;
     CPTXYAxisSet *weightAxisSet = (id)self.withingsWeightGraph.axisSet;
     CPTXYAxisSet *moodAxisSet = (id)self.moodGraph.axisSet;
+    CPTXYAxisSet *manualWeightAxisSet = (id)self.manualWeightGraph.axisSet;
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
@@ -952,6 +1138,9 @@
 
             moodPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
 
+            manualWeightPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
+            
+            
             
             [dateFormatter setDateFormat:@"MM/d"];
             
@@ -961,12 +1150,15 @@
 
             
             moodAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay );
+            
+            manualWeightAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay );
 
             timeFormatter.referenceDate = self.refDate;
             
             stepsAxisSet.xAxis.labelFormatter = timeFormatter;
             weightAxisSet.xAxis.labelFormatter = timeFormatter;
             moodAxisSet.xAxis.labelFormatter = timeFormatter;
+            manualWeightAxisSet.xAxis.labelFormatter = timeFormatter;
             
             //x.title = @"Week";
             
@@ -974,6 +1166,7 @@
             [self.stepsGraph reloadData];
             [self.withingsWeightGraph reloadData];
             [self.moodGraph reloadData];
+            [self.manualWeightGraph reloadData];
             
             
             break;
@@ -989,6 +1182,9 @@
             moodPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
                                                                   length:CPTDecimalFromFloat(oneDay * (numberOfDaysInMonth - 1) + (oneDay * .99) )];
 
+            manualWeightPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
+                                                                length:CPTDecimalFromFloat(oneDay * (numberOfDaysInMonth - 1) + (oneDay * .99) )];
+            
             
             [dateFormatter setDateFormat:@"MMM d"];
             stepsAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 7);
@@ -996,6 +1192,8 @@
             weightAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 7);
 
             moodAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 7);
+            
+            manualWeightAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 7);
 
             
             timeFormatter.referenceDate = self.refDate;
@@ -1003,11 +1201,13 @@
             stepsAxisSet.xAxis.labelFormatter = timeFormatter;
             weightAxisSet.xAxis.labelFormatter = timeFormatter;
             moodAxisSet.xAxis.labelFormatter = timeFormatter;
+            manualWeightAxisSet.xAxis.labelFormatter = timeFormatter;
             // x.title = @"Day of Month";
             
             [self.stepsGraph reloadData];
             [self.withingsWeightGraph reloadData];
             [self.moodGraph reloadData];
+            [self.manualWeightGraph reloadData];
             
             break;
         case 2:
@@ -1021,6 +1221,9 @@
             moodPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
                                                                   length:CPTDecimalFromFloat((oneDay * (daysInYear-30) + (oneDay * 12)) )];
 
+            manualWeightPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(xLow)
+                                                                length:CPTDecimalFromFloat((oneDay * (daysInYear-30) + (oneDay * 12)) )];
+
             
             
             
@@ -1029,6 +1232,7 @@
             weightAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * numberOfDaysInMonth);
 
             moodAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * numberOfDaysInMonth);
+            manualWeightAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * numberOfDaysInMonth);
 
             
             
@@ -1037,12 +1241,14 @@
             stepsAxisSet.xAxis.labelFormatter = timeFormatter;
             weightAxisSet.xAxis.labelFormatter = timeFormatter;
             moodAxisSet.xAxis.labelFormatter = timeFormatter;
+            manualWeightAxisSet.xAxis.labelFormatter = timeFormatter;
             
             //x.title = @"Year";
             
             [self.stepsGraph reloadData];
             [self.withingsWeightGraph reloadData];
             [self.moodGraph reloadData];
+            [self.manualWeightGraph reloadData];
             
             break;
             
@@ -1059,6 +1265,9 @@
             moodPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0)];
             moodPlotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble([self getMinSteps]) length:CPTDecimalFromDouble([self getMaxSteps] + 20.0)];
 
+            manualWeightPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0)];
+            manualWeightPlotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble([self getMinSteps]) length:CPTDecimalFromDouble([self getMaxSteps] + 20.0)];
+
             
             
             
@@ -1067,6 +1276,7 @@
             stepsAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 3 );
             weightAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 3 );
             moodAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 3 );
+            manualWeightAxisSet.xAxis.majorIntervalLength = CPTDecimalFromFloat(oneDay * 3 );
 
             
             
@@ -1078,6 +1288,7 @@
             [self.stepsGraph reloadData];
             [self.withingsWeightGraph reloadData];
             [self.moodGraph reloadData];
+            [self.manualWeightGraph reloadData];
             
             
             break;
@@ -1343,7 +1554,134 @@
 }
 
 
+- (float)getMaxManualWeight
+{
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Weight" inManagedObjectContext:self.managedObjectContext];
+    [request setEntity:entity];
+    
+    // Specify that the request should return dictionaries.
+    [request setResultType:NSDictionaryResultType];
+    
+    // Create an expression for the key path.
+    NSExpression *keyPathExpression = [NSExpression expressionForKeyPath:@"weight"];
+    
+    // Create an expression to represent the maximum value at the key path 'creationDate'
+    NSExpression *maxExpression = [NSExpression expressionForFunction:@"max:" arguments:[NSArray arrayWithObject:keyPathExpression]];
+    
+    // Create an expression description using the maxExpression and returning a date.
+    NSExpressionDescription *expressionDescription = [[NSExpressionDescription alloc] init];
+    
+    // The name is the key that will be used in the dictionary for the return value.
+    [expressionDescription setName:@"maxDate"];
+    [expressionDescription setExpression:maxExpression];
+    [expressionDescription setExpressionResultType:NSFloatAttributeType];
+    
+    // Set the request's properties to fetch just the property represented by the expressions.
+    [request setPropertiesToFetch:[NSArray arrayWithObject:expressionDescription]];
+    
+    // Execute the fetch.
+    NSError *error = nil;
+    NSArray *objects = [self.managedObjectContext executeFetchRequest:request error:&error];
+    
+    NSString *theObject = [[objects objectAtIndex:0] valueForKey:@"maxDate"];
+    
+    float maxWeight = [theObject floatValue];
+    
+    NSLog(@"Maximum date: %@", theObject);
+    NSLog(@"Maximum date float: %f", maxWeight);
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
+        
+        maxWeight = ([theObject floatValue] * 0.453592);
+    } else {
+        maxWeight = [theObject floatValue];
+    }
+    
+    if (objects == nil) {
+        maxWeight = 50.0;
+        
+    }
+    
+    else if (maxWeight == 0) {
+        maxWeight = 50.0;
+        
+    }
+    
+    
+    else if (objects > 0)
+    {
+        return maxWeight;
+    }
+    
+    [self.manualWeightGraph reloadData];
+    
+    return maxWeight;
+}
 
+- (float)getMinManualWeight
+{
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Weight" inManagedObjectContext:self.managedObjectContext];
+    [request setEntity:entity];
+    
+    // Specify that the request should return dictionaries.
+    [request setResultType:NSDictionaryResultType];
+    
+    // Create an expression for the key path.
+    NSExpression *keyPathExpression = [NSExpression expressionForKeyPath:@"weight"];
+    
+    // Create an expression to represent the maximum value at the key path 'creationDate'
+    NSExpression *maxExpression = [NSExpression expressionForFunction:@"min:" arguments:[NSArray arrayWithObject:keyPathExpression]];
+    
+    // Create an expression description using the maxExpression and returning a date.
+    NSExpressionDescription *expressionDescription = [[NSExpressionDescription alloc] init];
+    
+    // The name is the key that will be used in the dictionary for the return value.
+    [expressionDescription setName:@"minWeight"];
+    [expressionDescription setExpression:maxExpression];
+    [expressionDescription setExpressionResultType:NSFloatAttributeType];
+    
+    // Set the request's properties to fetch just the property represented by the expressions.
+    [request setPropertiesToFetch:[NSArray arrayWithObject:expressionDescription]];
+    
+    // Execute the fetch.
+    NSError *error = nil;
+    NSArray *objects = [self.managedObjectContext executeFetchRequest:request error:&error];
+    
+    NSString *theObject = [[objects objectAtIndex:0] valueForKey:@"minWeight"];
+    
+    float minWeight = [theObject floatValue];
+    
+    NSLog(@"Maximum date: %@", theObject);
+    NSLog(@"Maximum date float: %f", minWeight);
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
+        
+        minWeight = ([theObject floatValue] * 0.453592);
+    } else {
+        minWeight = [theObject floatValue];
+    }
+    
+    if (objects == nil) {
+        return 50.0;
+    }
+    
+    else if (objects == 0)
+    {
+        NSLog (@"no values");
+        minWeight = 50.0;
+        
+    }
+    
+    [self.manualWeightGraph reloadData];
+    
+    NSLog(@"minWeight %f", minWeight);
+    return minWeight;
+    
+}
 -(NSUInteger)numberOfRecordsForPlot:(CPTPlot *)plotnumberOfRecords {
     
     
@@ -1363,7 +1701,12 @@
     {
         return [self.fetchedResultsController.fetchedObjects count]; // Our 
     }
+    else if ([plotnumberOfRecords.identifier isEqual:@"Manual Weight Plot"])
+    {
+        return [self.manualWeightFetchedResultsController.fetchedObjects count];
+    }
 
+    
     
     
     NSLog(@"plot identifier, %@", plotnumberOfRecords.identifier);
@@ -1460,7 +1803,22 @@
             
         }
         
+        else if ([plot.identifier isEqual:@"Manual Weight Plot"])
+        {
+            NSDate * manualWeightDateResult = ((Weight*)[self.manualWeightFetchedResultsController.fetchedObjects objectAtIndex:index]).weightDate;
+            
+            NSLog(@"dateResult, %@", manualWeightDateResult);
+            
+            NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:manualWeightDateResult];
+            
+            [components setHour: 0];
+            
+            NSDate *manualWeightNewDate = [[NSCalendar currentCalendar] dateFromComponents:components];
+            
+            double intervalInSecondsFirst  = ([manualWeightNewDate timeIntervalSinceDate:self.refDate]);
+            result = [NSNumber numberWithDouble:intervalInSecondsFirst];
 
+        }
         
                 /*
         if (self.timeFrameSegment.selectedSegmentIndex == 0)
@@ -1569,7 +1927,29 @@
                 return nil;
             }
         }
-        
+
+        else if ([plot.identifier isEqual:@"Manual Weight Plot"])
+        {
+            if ([self.manualWeightFetchedResultsController.fetchedObjects count] > index) {
+                if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
+                    NSNumber *initResult = ((Weight*)[self.manualWeightFetchedResultsController.fetchedObjects objectAtIndex:index]).weight;
+                    float floatResult = [initResult floatValue] * 0.453592;
+                    result = @(floatResult);
+                    NSLog(@"x %@", result);
+                    return result;
+                }
+                else {
+                    NSNumber *result = ((Weight*)[self.manualWeightFetchedResultsController.fetchedObjects objectAtIndex:index]).weight;
+                    NSLog(@"y %@", result);
+                    return  result;
+                }
+                
+                
+            } else {
+                return nil;
+            }
+            
+        }
         
         
         

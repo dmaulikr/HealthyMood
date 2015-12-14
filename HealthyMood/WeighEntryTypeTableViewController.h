@@ -17,9 +17,13 @@
 
 }
 @property (weak, nonatomic) IBOutlet UITableViewCell *autoWeightEntrySelection;
-@property (weak, nonatomic) IBOutlet UITableViewCell *manualWeightEntrySelection;
+
+@property (weak, nonatomic) IBOutlet UITableViewCell *manualWeightCell;
 @property (weak, nonatomic) IBOutlet UISwitch *authSwitch;
 
+
+
+@property (weak, nonatomic) IBOutlet UITableViewCell *viewWeightInfo;
 @property (weak, nonatomic) IBOutlet UILabel *accessTokenLabel;
 @property (weak, nonatomic) IBOutlet UILabel *accessTokenSecretLabel;
 @property (weak, nonatomic) IBOutlet UITextView *responseTextView;

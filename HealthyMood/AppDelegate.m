@@ -59,6 +59,12 @@
     [defaults setObject:@"lb" forKey:@"unit"];
     }
 
+    if ([[defaults objectForKey:@"weightEntryType"]  isEqual: nil])
+    {
+        [defaults setObject:@"manualWeightEntry" forKey:@"weightEntryType"];
+    }
+    
+    
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     return YES;

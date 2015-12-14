@@ -210,11 +210,34 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     
-    cell.weightDateLabel.text = [self.vals objectAtIndex:indexPath.row];
-    cell.weightLabel.text = [self.dateVals objectAtIndex:indexPath.row];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    NSNumber *weightRecord = [self.vals objectAtIndex:indexPath.row];
+    
+    NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
+    f.numberStyle = NSNumberFormatterDecimalStyle;
+    f.generatesDecimalNumbers = YES;
+    f.maximumFractionDigits = 2;
+
+    
+    double weightRecordDouble = [weightRecord doubleValue];
+    double weightRecordKgDisplay = weightRecordDouble * 0.453592;
+
+    //cell.weightDateLabel.text = [self.vals objectAtIndex:indexPath.row];
+    //cell.weightLabel.text = [self.dateVals objectAtIndex:indexPath.row];
     
         NSLog(@"asdfasdf,%@",[self.dateVals objectAtIndex:indexPath.row]);
-    cell.textLabel.text = [self.vals objectAtIndex:indexPath.row];
+    
+    if([[defaults objectForKey:@"unit"] isEqual:@"kg"])
+    {
+        cell.textLabel.text = [NSString stringWithFormat:@"%.01f", weightRecordKgDisplay];
+    }
+    else {
+        cell.textLabel.text = [NSString stringWithFormat:@"%.01f", weightRecordDouble];
+    }
+    
+    
     cell.detailTextLabel.text = [self.dateVals objectAtIndex:indexPath.row];
    
    // self.weightDateLabel.text =[self.dateVals objectAtIndex:row];
