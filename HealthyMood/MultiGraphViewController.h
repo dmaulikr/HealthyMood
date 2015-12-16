@@ -16,6 +16,8 @@
 
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
+
+
 @property (weak, nonatomic) IBOutlet UISegmentedControl *timeFrameSegment;
 -(IBAction)segmentChange;
 

@@ -45,7 +45,7 @@
     [fetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"weightDate" ascending:NO]]];
     
     // Initialize Fetched Results Controller
-    self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:@"sectionIdentifier" cacheName:nil];
+    self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:nil];
     
     // Configure Fetched Results Controller
     NSLog(@"Before fetch fetchRequests %@", self.fetchedResultsController.fetchedObjects);
@@ -164,9 +164,10 @@
     
     if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
         
-        [cell.nameLabel setText:[NSString stringWithFormat:@"%.01f", weightRecordKgDisplay]];
+        cell.textLabel.text = [NSString stringWithFormat:@"%.01f", weightRecordKgDisplay];
     } else {
-        [cell.nameLabel setText:[f stringFromNumber:[record valueForKey:@"weight"]]];
+        cell.textLabel.text = [NSString stringWithFormat:@"%.01f", weightRecordDouble];
+
     }
     //store:
     // if user chooses kg, change the record to be stored as pounds
@@ -185,23 +186,23 @@
     [dateTimeFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
     NSString *dateTimeStr = [[record valueForKey:@"weightDate"] description];
     NSDate *dateTime = [dateTimeFormatter dateFromString:dateTimeStr];
-    [dateTimeFormatter setDateFormat:@"HH:mm a"];
+    [dateTimeFormatter setDateFormat:@"yyyy-MM-dd 'at' hh:mm a"];
     
     //[cell.nameLabel setText:[f stringFromNumber:[record valueForKey:@"weight"]]];
-    cell.dateLabel.text = [dateFormatter stringFromDate:date];
-    cell.timeLabel.text = [dateTimeFormatter stringFromDate:dateTime];
+    cell.detailTextLabel.text = [dateTimeFormatter stringFromDate:date];
+   // cell.timeLabel.text = [dateTimeFormatter stringFromDate:dateTime];
     
     
 }
-
+/*
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
     id <NSFetchedResultsSectionInfo> theSection = [[self.fetchedResultsController sections] objectAtIndex:section];
     NSLog (@"theSection, %@", theSection);
-    /*
-     Section information derives from an event's sectionIdentifier, which is a string representing the number (year * 1000) + month.
-     To display the section title, convert the year and month components to a string representation.
-     */
+ 
+    // Section information derives from an event's sectionIdentifier, which is a string representing the number (year * 1000) + month.
+    // To display the section title, convert the year and month components to a string representation.
+ 
     static NSDateFormatter *formatter = nil;
     
     if (!formatter)
@@ -230,7 +231,7 @@
     return titleString;
 }
 
-
+*/
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     return YES;

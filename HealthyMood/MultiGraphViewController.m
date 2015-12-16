@@ -58,10 +58,13 @@
 @property (nonatomic, readwrite,strong) CPTScatterPlot *manualWeightPlot;
 
 
+
+
 @end
 
 @implementation MultiGraphViewController
 
+float minWeight;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -83,7 +86,10 @@
         [self setupManualWeightGraph];
     }
     
-    
+    else if ([[defaults objectForKey:@"weightEntryType"]  isEqual:nil])
+    {
+        [self setupManualWeightGraph];
+    }
   //  [self makeWithingsWeightGraph];
     
     // Do any additional setup after loading the view.
@@ -130,6 +136,10 @@
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     NSError *error;
     
+    if (error){
+        //[self makeWithingsWeightGraph];
+    }
+    
     self.withingsWeightVals = [[NSMutableArray alloc] init];
     self.withingsWeightMeas = [[NSString alloc] init];
     
@@ -157,6 +167,9 @@
                                          returningResponse:&response
                                                      error:&error ];
     
+    if (error) {
+        [self makeWithingsWeightGraph];
+    }
     
     if (data.length > 0 && error == nil)
     {
@@ -280,7 +293,14 @@
             // Perform proper error handling here
             NSLog(@"*** An error occurred while calculating the statistics: %@ ***",
                   error.localizedDescription);
-            abort();
+            self.stepsDate = [NSDate date];
+            
+            NSString *samplesString = [NSString stringWithFormat:@"%@", @"0"];
+            
+            [self.samplesArray addObject:self.stepsDate];
+            [self.samplesArray addObject:samplesString];
+            
+            [self makeStepsGraph];
         }
         
         NSDate *endDate = [NSDate date];
@@ -341,7 +361,7 @@
             // Perform proper error handling here
             NSLog(@"*** An error occurred while calculating the statistics: %@ ***",
                   error.localizedDescription);
-            abort();
+            [self makeStepsGraph];
         }
         
         NSDate *endDate = [NSDate date];
@@ -418,14 +438,20 @@
     NSError *error = nil;
     NSFetchRequest *manualWeightFetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Weight"];
     [manualWeightFetchRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"weightDate" ascending:YES]]];
-    self.manualWeightFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:manualWeightFetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:@"sectionIdentifier" cacheName:nil];
+    self.manualWeightFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:manualWeightFetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:nil];
     
     NSLog(@"Before fetch fetchRequests manual weight, %@", self.manualWeightFetchedResultsController.fetchedObjects);
     // Perform Fetch
     [self.manualWeightFetchedResultsController performFetch:&error];
     NSLog(@"After fetch fetchRequests manual weight, %@", self.manualWeightFetchedResultsController.fetchedObjects);
-    
-    [self makeManualWeightGraph];
+    if ((error) || [self.manualWeightFetchedResultsController.fetchedObjects count] == 0)
+    {
+        [self makeEmptyManualWeightGraph];
+    }
+    else {
+        [self makeManualWeightGraph];
+    }
+
 }
 
 
@@ -453,6 +479,21 @@
     //CPTTheme *theme      = [CPTTheme themeNamed:kCPTDarkGradientTheme];
     //[newGraph applyTheme:theme];
     self.stepsGraph = newGraph;
+    
+
+    
+    CPTMutableTextStyle *titleStyle = [CPTMutableTextStyle textStyle];
+    titleStyle.color = [CPTColor whiteColor];
+    titleStyle.fontName = @"Helvetica-Bold";
+    titleStyle.fontSize = 10.0f;
+    
+
+    self.stepsGraph.title = @"Steps";
+    self.stepsGraph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
+    self.stepsGraph.titleDisplacement = CGPointMake(0.0f, 16.0f);
+    
+    self.stepsGraph.titleTextStyle = titleStyle;
+    
     
     self.hostView.hostedGraph = newGraph;
     
@@ -483,7 +524,7 @@
     [x setLabelTextStyle:textStyle];
     
     CPTXYAxis *y = axisSet.yAxis;
-    
+    //y.title=@"Steps";
     NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
     [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [numberFormatter setMaximumFractionDigits:0];
@@ -539,36 +580,55 @@
     
     
    // float timeFrameSize = self.timeFrameSegment.frame.origin.y;
-    CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.timeFrameSegment.frame.size.height + 70, (self.view.frame.size.width), (self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height + 50) )];
+    
 
-    
-    [self.view addSubview:hostingView];
-    
-    hostingView.hostedGraph = self.stepsGraph;
     
     if (([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft) ||
         ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)) {
-        self.stepsGraph.paddingLeft = 40.0;
-        self.stepsGraph.paddingTop = 0.0;
-        self.stepsGraph.paddingRight = 40.0;
+        
+        CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(self.view.frame.size.width * 0.1,
+                                                                                                 self.timeFrameSegment.frame.size.height + (self.timeFrameSegment.frame.size.height * 1.9),
+                                                                                                 (self.view.frame.size.width * 0.83),
+                                                                                                 (self.view.frame.size.height *0.45) - (self.timeFrameSegment.frame.size.height) )];
+        
+        
+        [self.view addSubview:hostingView];
+        
+        hostingView.hostedGraph = self.stepsGraph;
+        
+        
+        self.stepsGraph.paddingLeft = 35.0;
+        self.stepsGraph.paddingTop = 5.0;
+        self.stepsGraph.paddingRight = 35.0;
         self.stepsGraph.paddingBottom = 25.0;
         
         self.stepsGraph.plotAreaFrame.paddingBottom = 50.0;
-        self.stepsGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.stepsGraph.plotAreaFrame.paddingLeft = 40.0;
         self.stepsGraph.plotAreaFrame.paddingTop = 5.0;
-        self.stepsGraph.plotAreaFrame.paddingRight = 5.0;
+        self.stepsGraph.plotAreaFrame.paddingRight = 30.0;
         
         
     }
     
     else {
+       
+        CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0,
+                                                                                                 self.timeFrameSegment.frame.size.height + (self.timeFrameSegment.frame.size.height + 30),
+                                                                                                 (self.view.frame.size.width),
+                                                                                                 (self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height + 20) )];
+        
+        
+        [self.view addSubview:hostingView];
+        
+        hostingView.hostedGraph = self.stepsGraph;
+        
         self.stepsGraph.paddingLeft = 35.0;
         self.stepsGraph.paddingTop = 35.0;
         self.stepsGraph.paddingRight = 35.0;
         self.stepsGraph.paddingBottom = 25.0;
         
         self.stepsGraph.plotAreaFrame.paddingBottom = 50.0;
-        self.stepsGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.stepsGraph.plotAreaFrame.paddingLeft = 40.0;
         self.stepsGraph.plotAreaFrame.paddingTop = 5.0;
         self.stepsGraph.plotAreaFrame.paddingRight = 30.0;
         
@@ -614,6 +674,19 @@
     self.withingsWeightGraph = newGraph;
     
     self.hostView.hostedGraph = newGraph;
+    
+    CPTMutableTextStyle *titleStyle = [CPTMutableTextStyle textStyle];
+    titleStyle.color = [CPTColor whiteColor];
+    titleStyle.fontName = @"Helvetica-Bold";
+    titleStyle.fontSize = 10.0f;
+    
+    
+    self.withingsWeightGraph.title = @"Weight (Withings)";
+    self.withingsWeightGraph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
+    self.withingsWeightGraph.titleDisplacement = CGPointMake(0.0f, 16.0f);
+    
+    self.withingsWeightGraph.titleTextStyle = titleStyle;
+
     
     
     CPTMutableTextStyle *textStyle = [CPTMutableTextStyle textStyle];
@@ -692,41 +765,60 @@
     // Setup scatter plot space
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
     NSTimeInterval xLow       = 0.0;
+    
+
     plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
     plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat([self getMinWeight]-10.0)
                                                     length:CPTDecimalFromFloat(([self getMaxWeight]- [self getMinWeight]) + 20.0)];
     
     
-    CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, 200, (self.view.frame.size.width), (self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height + 50) )];
-    
-    
-    [self.view addSubview:hostingView];
-    
-    hostingView.hostedGraph = self.withingsWeightGraph;
     
     if (([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft) ||
         ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)) {
-        self.withingsWeightGraph.paddingLeft = 40.0;
-        self.withingsWeightGraph.paddingTop = 0.0;
-        self.withingsWeightGraph.paddingRight = 40.0;
+        
+        
+        CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(self.view.frame.size.width * 0.1,
+                                                                                                 (self.timeFrameSegment.frame.size.height + (self.timeFrameSegment.frame.size.height ) + (self.view.frame.size.height *0.45) - (self.timeFrameSegment.frame.size.height)),
+                                                                                                 (self.view.frame.size.width * 0.83),
+                                                                                                 (self.view.frame.size.height *0.45) - (self.timeFrameSegment.frame.size.height))];
+        
+        
+        [self.view addSubview:hostingView];
+        
+        hostingView.hostedGraph = self.withingsWeightGraph;
+        
+        self.withingsWeightGraph.paddingLeft = 35.0;
+        self.withingsWeightGraph.paddingTop = 5.0;
+        self.withingsWeightGraph.paddingRight = 35.0;
         self.withingsWeightGraph.paddingBottom = 25.0;
         
         self.withingsWeightGraph.plotAreaFrame.paddingBottom = 50.0;
-        self.withingsWeightGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.withingsWeightGraph.plotAreaFrame.paddingLeft = 40.0;
         self.withingsWeightGraph.plotAreaFrame.paddingTop = 5.0;
-        self.withingsWeightGraph.plotAreaFrame.paddingRight = 5.0;
+        self.withingsWeightGraph.plotAreaFrame.paddingRight = 30.0;
         
         
     }
     
     else {
+        
+        CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.timeFrameSegment.frame.size.height + (self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height + 30), (self.view.frame.size.width), (self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height + 30) )];
+        
+        
+    
+        
+        [self.view addSubview:hostingView];
+        
+        hostingView.hostedGraph = self.withingsWeightGraph;
+
+        
         self.withingsWeightGraph.paddingLeft = 35.0;
         self.withingsWeightGraph.paddingTop = 35.0;
         self.withingsWeightGraph.paddingRight = 35.0;
         self.withingsWeightGraph.paddingBottom = 25.0;
         
         self.withingsWeightGraph.plotAreaFrame.paddingBottom = 50.0;
-        self.withingsWeightGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.withingsWeightGraph.plotAreaFrame.paddingLeft = 40.0;
         self.withingsWeightGraph.plotAreaFrame.paddingTop = 5.0;
         self.withingsWeightGraph.plotAreaFrame.paddingRight = 30.0;
         
@@ -763,6 +855,20 @@
     self.moodGraph = newGraph;
     
     self.hostView.hostedGraph = newGraph;
+    
+    
+    CPTMutableTextStyle *titleStyle = [CPTMutableTextStyle textStyle];
+    titleStyle.color = [CPTColor whiteColor];
+    titleStyle.fontName = @"Helvetica-Bold";
+    titleStyle.fontSize = 10.0f;
+    
+    
+    self.moodGraph.title = @"Mood";
+    self.moodGraph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
+    self.moodGraph.titleDisplacement = CGPointMake(0.0f, 16.0f);
+    
+    self.moodGraph.titleTextStyle = titleStyle;
+
     
     // Setup scatter plot space
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
@@ -845,36 +951,64 @@
     
     NSLog (@"countRecords %ld", (long)countRecords);
     
-    CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.timeFrameSegment.frame.size.height + 250, (self.view.frame.size.width), (self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height + 50) )];
+ //   CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.timeFrameSegment.frame.size.height + ((self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height - 60)*2), (self.view.frame.size.width), (self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height + 30) )];
+    
+//    CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.timeFrameSegment.frame.size.height + 70, (self.view.frame.size.width), (self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height + 20) )];
+
     
     
-    [self.view addSubview:hostingView];
     
-    hostingView.hostedGraph = self.moodGraph;
+    
     
    if (([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft) ||
         ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)) {
-        self.moodGraph.paddingLeft = 40.0;
-        self.moodGraph.paddingTop = 0.0;
-        self.moodGraph.paddingRight = 40.0;
+       
+       CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(self.view.frame.size.width * 0.1,
+                                                                                                (self.timeFrameSegment.frame.size.height + (self.timeFrameSegment.frame.size.height ) + (self.view.frame.size.height *0.3) - (self.timeFrameSegment.frame.size.height) + (self.view.frame.size.height *0.45) - (self.timeFrameSegment.frame.size.height)),
+                                                                                                (self.view.frame.size.width * 0.83),
+                                                                                                (self.view.frame.size.height *0.45) - (self.timeFrameSegment.frame.size.height))];
+       
+       
+       /*CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(self.view.frame.size.width * 0.1,
+                                                                                                (self.timeFrameSegment.frame.size.height + (self.timeFrameSegment.frame.size.height ) + (self.view.frame.size.height *0.4) - (self.timeFrameSegment.frame.size.height)),
+                                                                                                (self.view.frame.size.width * 0.83),
+                                                                                                (self.view.frame.size.height *0.45) - (self.timeFrameSegment.frame.size.height))];
+       */
+       
+       [self.view addSubview:hostingView];
+       
+       hostingView.hostedGraph = self.moodGraph;
+
+        self.moodGraph.paddingLeft = 35.0;
+        self.moodGraph.paddingTop = 5.0;
+        self.moodGraph.paddingRight = 35.0;
         self.moodGraph.paddingBottom = 25.0;
         
         self.moodGraph.plotAreaFrame.paddingBottom = 50.0;
-        self.moodGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.moodGraph.plotAreaFrame.paddingLeft = 40.0;
         self.moodGraph.plotAreaFrame.paddingTop = 5.0;
-        self.moodGraph.plotAreaFrame.paddingRight = 5.0;
+        self.moodGraph.plotAreaFrame.paddingRight = 35.0;
         
         
     }
     
     else {
+        
+        CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.timeFrameSegment.frame.size.height + ((self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height - 60)*2), (self.view.frame.size.width), (self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height + 30) )];
+
+        
+        
+        [self.view addSubview:hostingView];
+        
+        hostingView.hostedGraph = self.moodGraph;
+        
         self.moodGraph.paddingLeft = 35.0;
         self.moodGraph.paddingTop = 35.0;
         self.moodGraph.paddingRight = 35.0;
         self.moodGraph.paddingBottom = 25.0;
         
         self.moodGraph.plotAreaFrame.paddingBottom = 50.0;
-        self.moodGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.moodGraph.plotAreaFrame.paddingLeft = 40.0;
         self.moodGraph.plotAreaFrame.paddingTop = 5.0;
         self.moodGraph.plotAreaFrame.paddingRight = 30.0;
         
@@ -891,10 +1025,12 @@
     
 }
 
-
-- (void)makeManualWeightGraph {
+- (void)makeEmptyManualWeightGraph {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"MM/dd"];
+    
+    self.manualWeightPlot = [[CPTScatterPlot alloc] init];
+    self.manualWeightPlot.identifier = @"Manual Weight Plot";
     
     
     
@@ -918,6 +1054,208 @@
     self.manualWeightGraph = newGraph;
     
     self.hostView.hostedGraph = newGraph;
+    
+    
+    CPTMutableTextStyle *titleStyle = [CPTMutableTextStyle textStyle];
+    titleStyle.color = [CPTColor whiteColor];
+    titleStyle.fontName = @"Helvetica-Bold";
+    titleStyle.fontSize = 10.0f;
+    
+    
+    self.manualWeightGraph.title = @"Weight (Manual)";
+    self.manualWeightGraph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
+    self.manualWeightGraph.titleDisplacement = CGPointMake(0.0f, 16.0f);
+    
+    self.manualWeightGraph.titleTextStyle = titleStyle;
+    
+    
+    // Setup scatter plot space
+    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
+    NSTimeInterval xLow       = 0.0;
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(0)
+                                                    length:CPTDecimalFromFloat(50)];
+    
+    
+    
+    CPTMutableTextStyle *textStyle = [CPTMutableTextStyle textStyle];
+    [textStyle setFontSize:8.0f];
+    [textStyle setColor:[CPTColor colorWithComponentRed: 255.0f/255.0f green:250.0f/255.0f blue:250.0f/255.0f alpha:1.0f]];
+    
+    // Axes
+    CPTXYAxisSet *axisSet = (CPTXYAxisSet *)newGraph.axisSet;
+    CPTXYAxis *x          = axisSet.xAxis;
+    
+    x.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
+    x.majorIntervalLength         = CPTDecimalFromDouble(oneDay);
+    
+    x.orthogonalCoordinateDecimal = CPTDecimalFromDouble(0);
+    x.minorTicksPerInterval       = 0;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    
+    [dateFormatter setDateFormat:@"MM/dd"];
+    
+    
+    CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
+    timeFormatter.referenceDate = self.refDate;
+    x.labelFormatter            = timeFormatter;
+    
+    
+    [x setLabelTextStyle:textStyle];
+    
+    CPTXYAxis *y = axisSet.yAxis;
+    
+    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+    [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [numberFormatter setMaximumFractionDigits:0];
+    
+    
+    y.labelFormatter = numberFormatter;
+    
+    y.majorIntervalLength         = CPTDecimalFromDouble(10);
+    y.minorTicksPerInterval       = 0;
+    y.orthogonalCoordinateDecimal = CPTDecimalFromDouble([self getMinManualWeight] - 10.0);
+    y.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
+    
+    [y setLabelTextStyle:textStyle];
+    
+    // Create a plot that uses the data source method
+    CPTMutableLineStyle *lineStyle = [self.manualWeightPlot.dataLineStyle mutableCopy];
+    lineStyle.lineWidth              = 1.0;
+    lineStyle.lineColor              = [CPTColor whiteColor];
+    self.manualWeightPlot.dataLineStyle = lineStyle;
+    
+    CPTMutableLineStyle *axisLineStyle = [CPTMutableLineStyle lineStyle];
+    axisLineStyle.lineWidth = 0.5;
+    axisLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:0.5];
+    
+    CPTMutableLineStyle *tickLineStyle = [CPTMutableLineStyle lineStyle];
+    tickLineStyle.lineWidth = 0.2;
+    tickLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:1.0];
+    
+    y.majorTickLineStyle = tickLineStyle;
+    x.majorTickLineStyle = tickLineStyle;
+    
+    y.axisLineStyle = axisLineStyle;
+    x.axisLineStyle = axisLineStyle;
+    
+    
+    self.manualWeightPlot.dataSource = self;
+    [newGraph addPlot:self.manualWeightPlot];
+    
+    NSInteger countRecords = [self.manualWeightFetchedResultsController.fetchedObjects count]; // Our sample graph contains 9 'points'
+    
+    NSLog (@"countRecords %ld", (long)countRecords);
+    
+    
+    if (([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft) ||
+        ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)) {
+        
+        
+        CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(self.view.frame.size.width * 0.1,
+                                                                                                 (self.timeFrameSegment.frame.size.height + (self.timeFrameSegment.frame.size.height ) + (self.view.frame.size.height *0.4) - (self.timeFrameSegment.frame.size.height)),
+                                                                                                 (self.view.frame.size.width * 0.83),
+                                                                                                 (self.view.frame.size.height *0.45) - (self.timeFrameSegment.frame.size.height))];
+        
+        
+        [self.view addSubview:hostingView];
+        
+        hostingView.hostedGraph = self.manualWeightGraph;
+        
+        self.manualWeightGraph.paddingLeft = 35.0;
+        self.manualWeightGraph.paddingTop = 5.0;
+        self.manualWeightGraph.paddingRight = 35.0;
+        self.manualWeightGraph.paddingBottom = 25.0;
+        
+        self.manualWeightGraph.plotAreaFrame.paddingBottom = 50.0;
+        self.manualWeightGraph.plotAreaFrame.paddingLeft = 40.0;
+        self.manualWeightGraph.plotAreaFrame.paddingTop = 5.0;
+        self.manualWeightGraph.plotAreaFrame.paddingRight = 30.0;
+        
+        
+    }
+    
+    else {
+        
+        CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.timeFrameSegment.frame.size.height + (self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height + 30), (self.view.frame.size.width), (self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height + 30) )];
+        
+        
+        
+        
+        [self.view addSubview:hostingView];
+        
+        hostingView.hostedGraph = self.manualWeightGraph;
+        
+        
+        self.manualWeightGraph.paddingLeft = 35.0;
+        self.manualWeightGraph.paddingTop = 35.0;
+        self.manualWeightGraph.paddingRight = 35.0;
+        self.manualWeightGraph.paddingBottom = 25.0;
+        
+        self.manualWeightGraph.plotAreaFrame.paddingBottom = 50.0;
+        self.manualWeightGraph.plotAreaFrame.paddingLeft = 40.0;
+        self.manualWeightGraph.plotAreaFrame.paddingTop = 5.0;
+        self.manualWeightGraph.plotAreaFrame.paddingRight = 30.0;
+        
+    }
+    
+    
+    
+    for (CPTPlot *p in self.manualWeightGraph.allPlots)
+    {
+        [p reloadData];
+    }
+    
+    
+    [self.manualWeightGraph reloadData];
+    
+    
+    
+    
+}
+- (void)makeManualWeightGraph {
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"MM/dd"];
+    
+    self.manualWeightPlot = [[CPTScatterPlot alloc] init];
+    self.manualWeightPlot.identifier = @"Manual Weight Plot";
+    
+
+    
+    // NSDate *today = [[NSDate alloc] initWithTimeIntervalSinceNow: 0];
+    
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    
+    NSDate *today = [calendar dateBySettingHour:0 minute:0 second:0 ofDate:[NSDate date] options:0];
+    //   NSDate *refDate            = today;
+    NSTimeInterval oneDay      = 24 * 60 * 60;
+    
+    self.refDate            =     [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (6 * 24 * 60 * 60) ];
+    
+    self.view.backgroundColor = [UIColor colorWithRed:245.0/255.0 green:0.0/255.0 blue:87.0/255.0 alpha:1.0f];
+    CPTXYGraph *newGraph = [[CPTXYGraph alloc] initWithFrame:CGRectZero];
+    
+    [[UISegmentedControl appearance] setTintColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0]];
+    
+    //CPTTheme *theme      = [CPTTheme themeNamed:kCPTDarkGradientTheme];
+    //[newGraph applyTheme:theme];
+    self.manualWeightGraph = newGraph;
+    
+    self.hostView.hostedGraph = newGraph;
+    
+    
+    CPTMutableTextStyle *titleStyle = [CPTMutableTextStyle textStyle];
+    titleStyle.color = [CPTColor whiteColor];
+    titleStyle.fontName = @"Helvetica-Bold";
+    titleStyle.fontSize = 10.0f;
+    
+    
+    self.manualWeightGraph.title = @"Weight (Manual)";
+    self.manualWeightGraph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
+    self.manualWeightGraph.titleDisplacement = CGPointMake(0.0f, 16.0f);
+    
+    self.manualWeightGraph.titleTextStyle = titleStyle;
+
     
     // Setup scatter plot space
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
@@ -970,9 +1308,6 @@
     [y setLabelTextStyle:textStyle];
     
     // Create a plot that uses the data source method
-    self.manualWeightPlot = [[CPTScatterPlot alloc] init];
-    self.manualWeightPlot.identifier = @"Manual Weight Plot";
-    
     CPTMutableLineStyle *lineStyle = [self.manualWeightPlot.dataLineStyle mutableCopy];
     lineStyle.lineWidth              = 1.0;
     lineStyle.lineColor              = [CPTColor whiteColor];
@@ -1001,42 +1336,58 @@
     NSLog (@"countRecords %ld", (long)countRecords);
     
     
-    CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, 200, (self.view.frame.size.width), (self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height + 50) )];
-    
-    
-    
-    [self.view addSubview:hostingView];
-    
-    hostingView.hostedGraph = self.manualWeightGraph;
-    
     if (([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft) ||
         ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)) {
-        self.manualWeightGraph.paddingLeft = 40.0;
-        self.manualWeightGraph.paddingTop = 0.0;
-        self.manualWeightGraph.paddingRight = 40.0;
+        
+        
+        CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(self.view.frame.size.width * 0.1,
+                                                                                                 (self.timeFrameSegment.frame.size.height + (self.timeFrameSegment.frame.size.height ) + (self.view.frame.size.height *0.4) - (self.timeFrameSegment.frame.size.height)),
+                                                                                                 (self.view.frame.size.width * 0.83),
+                                                                                                 (self.view.frame.size.height *0.45) - (self.timeFrameSegment.frame.size.height))];
+        
+        
+        [self.view addSubview:hostingView];
+        
+        hostingView.hostedGraph = self.manualWeightGraph;
+        
+        self.manualWeightGraph.paddingLeft = 35.0;
+        self.manualWeightGraph.paddingTop = 5.0;
+        self.manualWeightGraph.paddingRight = 35.0;
         self.manualWeightGraph.paddingBottom = 25.0;
         
         self.manualWeightGraph.plotAreaFrame.paddingBottom = 50.0;
-        self.manualWeightGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.manualWeightGraph.plotAreaFrame.paddingLeft = 40.0;
         self.manualWeightGraph.plotAreaFrame.paddingTop = 5.0;
-        self.manualWeightGraph.plotAreaFrame.paddingRight = 5.0;
+        self.manualWeightGraph.plotAreaFrame.paddingRight = 30.0;
         
         
     }
     
     else {
+        
+        CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.timeFrameSegment.frame.size.height + (self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height + 30), (self.view.frame.size.width), (self.view.frame.size.height *0.5) - (self.timeFrameSegment.frame.size.height + 30) )];
+        
+        
+        
+        
+        [self.view addSubview:hostingView];
+        
+        hostingView.hostedGraph = self.manualWeightGraph;
+        
+        
         self.manualWeightGraph.paddingLeft = 35.0;
         self.manualWeightGraph.paddingTop = 35.0;
         self.manualWeightGraph.paddingRight = 35.0;
         self.manualWeightGraph.paddingBottom = 25.0;
         
         self.manualWeightGraph.plotAreaFrame.paddingBottom = 50.0;
-        self.manualWeightGraph.plotAreaFrame.paddingLeft = 30.0;
+        self.manualWeightGraph.plotAreaFrame.paddingLeft = 40.0;
         self.manualWeightGraph.plotAreaFrame.paddingTop = 5.0;
         self.manualWeightGraph.plotAreaFrame.paddingRight = 30.0;
         
     }
     
+
     
     for (CPTPlot *p in self.manualWeightGraph.allPlots)
     {
@@ -1515,36 +1866,36 @@
 
 - (float)getMinWeight
 {
-    
+  
     //NSLog(@"minWeightNumber", minWeightNumber);
     NSNumber *minWeightNumber = [self.withingsWeightVals valueForKeyPath:@"@min.intValue"];
     NSLog(@"minWeightNumber, %@", minWeightNumber);
-    
-    float minWeight = [minWeightNumber doubleValue];
-    
-    
-    
-    //  double minWeight = [self.vals indexOfObject:min];
-    
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
+        float minWeight = [minWeightNumber doubleValue];
         
-        minWeight = ([minWeightNumber floatValue] * 0.453592);
-    } else {
-        minWeight = [minWeightNumber floatValue];
-    }
-    
-    if (minWeightNumber == nil) {
-        return 50.0;
-    }
-    
-    else if (minWeightNumber == 0)
-    {
-        NSLog (@"no values");
-        minWeight = 50.0;
         
-    }
+        
+        //  double minWeight = [self.vals indexOfObject:min];
+        
+        
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
+            
+            minWeight = ([minWeightNumber floatValue] * 0.453592);
+        } else {
+            minWeight = [minWeightNumber floatValue];
+        }
+        
+        if (minWeightNumber == nil) {
+            return 50.0;
+        }
+        
+        else if (minWeightNumber == 0)
+        {
+            NSLog (@"no values");
+            minWeight = 50.0;
+            
+        }
+    
     
     [self.withingsWeightGraph reloadData];
     
