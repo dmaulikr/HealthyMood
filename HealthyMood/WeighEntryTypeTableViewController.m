@@ -29,32 +29,27 @@
      }
     self.autoWeightEntrySelection.textLabel.text = @"Use Withings Scale Weight";
     self.manualWeightCell.textLabel.text = @"Enter My Own Weight";
-
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
-
-    /*
-    
-     
-
-    if ([[defaults objectForKey:@"weightEntryType"]  isEqual: @"autoWithings"])
-    {
-        self.autoWeightEntrySelection.accessoryType = UITableViewCellAccessoryCheckmark;
-        self.manualWeightEntrySelection.accessoryType = UITableViewCellAccessoryNone;
-        
-    }
-    else if ([[defaults objectForKey:@"weightEntryType"]  isEqual: @"manualWeightEntry"] )
-    {
-        self.manualWeightEntrySelection.accessoryType = UITableViewCellAccessoryCheckmark;
-        self.autoWeightEntrySelection.accessoryType = UITableViewCellAccessoryNone;
-    }
-*/
 
     self.autoWeightEntrySelection.accessoryType = UITableViewCellAccessoryNone;
     self.manualWeightCell.accessoryType = UITableViewCellAccessoryCheckmark;
     NSLog(@"default weight type,%@", [defaults objectForKey:@"weightEntryType"]);
 
+    if ([[defaults objectForKey:@"weightEntryType"]  isEqual: @"manualWeightEntry"]) {
+        [self.authorizeWithingsButton setEnabled: NO];
+        [self.logoutWithingsButton setEnabled: NO];
+    }
+    
+    else
+    {
+        [self.authorizeWithingsButton setEnabled: YES];
+        [self.logoutWithingsButton setEnabled: YES];
+    }
+    
+    self.authorizeCell.selectionStyle = UITableViewCellSelectionStyleNone;
+    self.logoutCell.selectionStyle = UITableViewCellSelectionStyleNone;
+    
     
 }
 
@@ -83,30 +78,36 @@
     
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     
-    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     self.autoWeightEntrySelection.accessoryType = UITableViewCellAccessoryNone;
     self.manualWeightCell.accessoryType = UITableViewCellAccessoryNone;
 
-    
-    if (cell.accessoryType == UITableViewCellAccessoryNone)
+    if (indexPath.section == 0)
     {
-        cell.accessoryType = UITableViewCellAccessoryCheckmark;
-    }
-    else
-    {
-        cell.accessoryType = UITableViewCellAccessoryNone;
+        if (cell.accessoryType == UITableViewCellAccessoryNone)
+        {
+            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        }
+        else
+        {
+            cell.accessoryType = UITableViewCellAccessoryNone;
+        }
+        
     }
     
     if (self.autoWeightEntrySelection.accessoryType == UITableViewCellAccessoryCheckmark) {
         [defaults setObject:@"autoWithings" forKey:@"weightEntryType"];
+        [self.authorizeWithingsButton setEnabled: YES];
+        [self.logoutWithingsButton setEnabled: YES];
+
     } else if (self.manualWeightCell.accessoryType == UITableViewCellAccessoryCheckmark) {
         [defaults setObject:@"manualWeightEntry" forKey:@"weightEntryType"];
+        [self.authorizeWithingsButton setEnabled: NO];
+        [self.logoutWithingsButton setEnabled: NO];
+
     }
-    
-   
-    
+
 }
 
 
@@ -147,7 +148,13 @@
 
 -(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryNone;
+    
+    if (indexPath.section == 0)
+    {
+        [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryNone;
+    }
+    
+
 }
 
 

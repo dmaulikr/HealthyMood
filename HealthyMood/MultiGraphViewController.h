@@ -16,9 +16,12 @@
 
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
-
++ (MultiGraphViewController *)sharedManager;
 
 @property (weak, nonatomic) IBOutlet UISegmentedControl *timeFrameSegment;
 -(IBAction)segmentChange;
+
+
+- (void)requestAuthorization;
 
 @end

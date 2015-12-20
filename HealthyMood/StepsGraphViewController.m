@@ -30,6 +30,7 @@
 
 
 
+
 @end
 
 @implementation StepsGraphViewController
@@ -137,7 +138,7 @@
         
     };
     
-    query.statisticsUpdateHandler = ^(HKStatisticsCollectionQuery *query, HKStatistics *result, HKStatisticsCollection *results, NSError *error) {
+ /*   query.statisticsUpdateHandler = ^(HKStatisticsCollectionQuery *query, HKStatistics *result, HKStatisticsCollection *results, NSError *error) {
         if (error) {
             // Perform proper error handling here
             NSLog(@"*** An error occurred while calculating the statistics: %@ ***",
@@ -196,7 +197,7 @@
         });
         
         
-    };
+    };*/
     
     
 

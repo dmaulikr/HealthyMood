@@ -184,8 +184,8 @@
     
     NSDateFormatter *dateTimeFormatter = [[NSDateFormatter alloc] init];
     [dateTimeFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
-    NSString *dateTimeStr = [[record valueForKey:@"weightDate"] description];
-    NSDate *dateTime = [dateTimeFormatter dateFromString:dateTimeStr];
+
+    
     [dateTimeFormatter setDateFormat:@"yyyy-MM-dd 'at' hh:mm a"];
     
     //[cell.nameLabel setText:[f stringFromNumber:[record valueForKey:@"weight"]]];
