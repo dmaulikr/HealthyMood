@@ -222,11 +222,18 @@ float minWeight;
         NSLog(@"greeting %@", greeting);
         NSLog(@"measuregroups %@", measureGroups);
         
-        if (!measureGroups)
+        if (!measureGroups || measureGroups == NULL)
         {
             NSError *error = [NSError errorWithDomain:@"com.nadine.healthymood"
                                                  code:-1
                                              userInfo:@{NSLocalizedDescriptionKey:@"Unexpected response, no measurement groups"}];
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Oops!" message:@"No Measurement Groups" preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+            [alertController addAction:ok];
+            
+            [self presentViewController:alertController animated:YES completion:nil];
+            
         }
         
         
@@ -286,13 +293,32 @@ float minWeight;
                     
                 }
             }
+            
         }
+        
+        
         dispatch_async(dispatch_get_main_queue(), ^{
             [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
             [self.withingsWeightGraph reloadData];
 
         });
-    };
+        
+        
+
+    }
+    
+    
+    else {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"No Weight History" message:@"Check your internet connection" preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:ok];
+        
+        [self presentViewController:alertController animated:YES completion:nil];
+        
+    }
+    
+
     
     [self makeWithingsWeightGraph];
 }
@@ -784,8 +810,8 @@ float minWeight;
     self.withingsWeightPlot.dataLineStyle = lineStyle;
     
     CPTMutableLineStyle *axisLineStyle = [CPTMutableLineStyle lineStyle];
-    axisLineStyle.lineWidth = 1.0;
-    axisLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:0.5];
+    axisLineStyle.lineWidth = 2.5;
+    axisLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:0.8];
     
     CPTMutableLineStyle *tickLineStyle = [CPTMutableLineStyle lineStyle];
     tickLineStyle.lineWidth = 0.2;
@@ -925,8 +951,8 @@ float minWeight;
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
     NSTimeInterval xLow       = 0.0;
     plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(0.0)
-                                                    length:CPTDecimalFromFloat(7.0)];
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(1.0)
+                                                    length:CPTDecimalFromFloat(4.1)];
     
     
     
@@ -941,7 +967,7 @@ float minWeight;
     x.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
     x.majorIntervalLength         = CPTDecimalFromDouble(oneDay);
     
-    x.orthogonalCoordinateDecimal = CPTDecimalFromDouble(0.0);
+    x.orthogonalCoordinateDecimal = CPTDecimalFromDouble(1.0);
     x.minorTicksPerInterval       = 0;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     
@@ -966,8 +992,22 @@ float minWeight;
     
     y.majorIntervalLength         = CPTDecimalFromDouble(1);
     y.minorTicksPerInterval       = 0;
-    y.orthogonalCoordinateDecimal = CPTDecimalFromDouble(0.0);
-    y.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
+    y.orthogonalCoordinateDecimal = CPTDecimalFromDouble(1.0);
+    y.labelingPolicy = CPTAxisLabelingPolicyNone;
+    NSArray *customTickLocations = [NSArray arrayWithObjects:[NSDecimalNumber numberWithInt:1], [NSDecimalNumber numberWithInt:2], [NSDecimalNumber numberWithInt:3], [NSDecimalNumber numberWithInt:4],  [NSDecimalNumber numberWithInt:5], nil];
+    NSArray *yAxisLabels = [NSArray arrayWithObjects:@"Very Sad", @"Sad", @"Okay", @"Happy", @"Very Happy", nil];
+    NSUInteger labelLocation = 0;
+    NSMutableArray *customLabels = [NSMutableArray arrayWithCapacity:[yAxisLabels count]];
+    for (NSNumber *tickLocation in customTickLocations) {
+        CPTAxisLabel *newLabel = [[CPTAxisLabel alloc] initWithText: [yAxisLabels objectAtIndex:labelLocation++] textStyle:y.labelTextStyle];
+        newLabel.tickLocation = [tickLocation decimalValue];
+        newLabel.offset = y.labelOffset + y.majorTickLength;
+        
+        [customLabels addObject:newLabel];
+        
+    }
+    
+    y.axisLabels =  [NSSet setWithArray:customLabels];
     
     [y setLabelTextStyle:textStyle];
     
@@ -981,8 +1021,8 @@ float minWeight;
     dataSourceLinePlot.dataLineStyle = lineStyle;
     
     CPTMutableLineStyle *axisLineStyle = [CPTMutableLineStyle lineStyle];
-    axisLineStyle.lineWidth = 0.5;
-    axisLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:0.5];
+    axisLineStyle.lineWidth = 2.5;
+    axisLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:0.8];
     
     CPTMutableLineStyle *tickLineStyle = [CPTMutableLineStyle lineStyle];
     tickLineStyle.lineWidth = 0.2;
@@ -1165,8 +1205,8 @@ float minWeight;
     self.manualWeightPlot.dataLineStyle = lineStyle;
     
     CPTMutableLineStyle *axisLineStyle = [CPTMutableLineStyle lineStyle];
-    axisLineStyle.lineWidth = 0.5;
-    axisLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:0.5];
+    axisLineStyle.lineWidth = 2.5;
+    axisLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:0.8];
     
     CPTMutableLineStyle *tickLineStyle = [CPTMutableLineStyle lineStyle];
     tickLineStyle.lineWidth = 0.2;
@@ -1353,8 +1393,8 @@ float minWeight;
     self.manualWeightPlot.dataLineStyle = lineStyle;
     
     CPTMutableLineStyle *axisLineStyle = [CPTMutableLineStyle lineStyle];
-    axisLineStyle.lineWidth = 0.5;
-    axisLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:0.5];
+    axisLineStyle.lineWidth = 2.5;
+    axisLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:0.8];
     
     CPTMutableLineStyle *tickLineStyle = [CPTMutableLineStyle lineStyle];
     tickLineStyle.lineWidth = 0.2;

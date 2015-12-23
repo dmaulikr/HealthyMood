@@ -138,66 +138,7 @@
         
     };
     
- /*   query.statisticsUpdateHandler = ^(HKStatisticsCollectionQuery *query, HKStatistics *result, HKStatisticsCollection *results, NSError *error) {
-        if (error) {
-            // Perform proper error handling here
-            NSLog(@"*** An error occurred while calculating the statistics: %@ ***",
-                  error.localizedDescription);
-            abort();
-        }
-        
-        NSDate *endDate = [NSDate date];
-        NSDate *startDate = [calendar
-                             dateByAddingUnit:NSCalendarUnitMonth
-                             value:-12
-                             toDate:endDate
-                             options:0];
-        
-        [results enumerateStatisticsFromDate:startDate toDate:endDate withBlock:^(HKStatistics *result, BOOL *stop) {
-            HKQuantity *quantity = result.sumQuantity;
-            
-            if (quantity) {
-                NSDate *date = result.startDate;
-                
-                NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-                [dateFormatter setDateFormat:@"yyyy-MM-dd"];
-                
-                //self.weightDate = [dateFormatter stringFromDate:date];
-                self.weightDate = date;
-                
-                NSLog(@"sample date, %@", self.weightDate);
-                
-                
-                double value = [quantity doubleValueForUnit:[HKUnit countUnit]];
-                
-                NSLog(@"double value %f", value);
-                
-                NSString *samplesString = [NSString stringWithFormat:@"%@", quantity];
-                
-                [self.samplesArray addObject:samplesString];
-                
-                [self.samplesDateArray addObject:self.weightDate];
-                
-                NSLog(@"sample date, %@", self.samplesArray);
-                
-                
-            }
-            
-        }];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (!error) {
-                NSLog(@"[STEP] %@", self.samplesArray);
-                [self getMinSteps];
-                [self getMaxSteps];
-                [self.graph reloadData];
-                [self makeGraph];
-                
-            }
-        });
-        
-        
-    };*/
+ 
     
     
 
@@ -207,114 +148,7 @@
     [[UISegmentedControl appearance] setTintColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0]];
 
     
- /*   NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"MM/dd"];
-    
-    
-    
-    // NSDate *today = [[NSDate alloc] initWithTimeIntervalSinceNow: 0];
-    
 
-    
-    NSDate *today = [calendar dateBySettingHour:10 minute:0 second:0 ofDate:[NSDate date] options:0];
-    //   NSDate *refDate            = today;
-    NSTimeInterval oneDay      = 24 * 60 * 60;
-    
-    self.refDate            =     [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (6 * 24 * 60 * 60) ];
-    
-    self.view.backgroundColor = [UIColor colorWithRed:245.0/255.0 green:0.0/255.0 blue:87.0/255.0 alpha:1.0f];
-    CPTXYGraph *newGraph = [[CPTXYGraph alloc] initWithFrame:CGRectZero];
-    
-    [[UISegmentedControl appearance] setTintColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0]];
-    
-    //CPTTheme *theme      = [CPTTheme themeNamed:kCPTDarkGradientTheme];
-    //[newGraph applyTheme:theme];
-    self.graph = newGraph;
-    
-    self.hostView.hostedGraph = newGraph;
-    
-    
-    CPTMutableTextStyle *textStyle = [CPTMutableTextStyle textStyle];
-    [textStyle setFontSize:8.0f];
-    [textStyle setColor:[CPTColor colorWithComponentRed: 255.0f/255.0f green:250.0f/255.0f blue:250.0f/255.0f alpha:1.0f]];
-    
-    // Axes
-    CPTXYAxisSet *axisSet = (CPTXYAxisSet *)newGraph.axisSet;
-    CPTXYAxis *x          = axisSet.xAxis;
-    
-    x.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
-    x.majorIntervalLength         = CPTDecimalFromDouble(oneDay);
-    
-    x.orthogonalCoordinateDecimal = CPTDecimalFromDouble([self getMinSteps] - 10.0);
-    x.minorTicksPerInterval       = 0;
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    
-    [dateFormatter setDateFormat:@"MM/dd"];
-    
-    
-    CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
-    timeFormatter.referenceDate = self.refDate;
-    x.labelFormatter            = timeFormatter;
-    
-    
-    [x setLabelTextStyle:textStyle];
-    
-    CPTXYAxis *y = axisSet.yAxis;
-    
-    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-    [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    [numberFormatter setMaximumFractionDigits:0];
-    
-    
-    y.labelFormatter = numberFormatter;
-    
-    y.majorIntervalLength         = CPTDecimalFromDouble(5000);
-    y.minorTicksPerInterval       = 0;
-    y.orthogonalCoordinateDecimal = CPTDecimalFromDouble([self getMinSteps] - 10.0);
-    y.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
-    
-    [y setLabelTextStyle:textStyle];
-    
-    // Create a plot that uses the data source method
-    CPTScatterPlot *dataSourceLinePlot = [[CPTScatterPlot alloc] init];
-    dataSourceLinePlot.identifier = @"Date Plot";
-    
-    CPTMutableLineStyle *lineStyle = [dataSourceLinePlot.dataLineStyle mutableCopy];
-    lineStyle.lineWidth              = 1.0;
-    lineStyle.lineColor              = [CPTColor whiteColor];
-    dataSourceLinePlot.dataLineStyle = lineStyle;
-    
-    CPTMutableLineStyle *axisLineStyle = [CPTMutableLineStyle lineStyle];
-    axisLineStyle.lineWidth = 0.5;
-    axisLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:0.5];
-    
-    CPTMutableLineStyle *tickLineStyle = [CPTMutableLineStyle lineStyle];
-    tickLineStyle.lineWidth = 0.2;
-    tickLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:1.0];
-    
-    y.majorTickLineStyle = tickLineStyle;
-    x.majorTickLineStyle = tickLineStyle;
-    
-    y.axisLineStyle = axisLineStyle;
-    x.axisLineStyle = axisLineStyle;
-    
-    
-    dataSourceLinePlot.dataSource = self;
-    [newGraph addPlot:dataSourceLinePlot];
-    
-    NSInteger countRecords = [self.samplesArray count]; // Our sample graph contains 9 'points'
-    
-    NSLog (@"countRecords %ld", (long)countRecords);
-    
-    
-    // Setup scatter plot space
-    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
-    NSTimeInterval xLow       = 0.0;
-    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(self.minSteps-10.0)
-                                                    length:CPTDecimalFromFloat((20000- self.minSteps) + 20.0)];
-    
-*/
     [self.graph reloadData];
 
 
@@ -338,7 +172,7 @@
     
     self.refDate            =     [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (6 * 24 * 60 * 60) ];
     
-    self.view.backgroundColor = [UIColor colorWithRed:245.0/255.0 green:0.0/255.0 blue:87.0/255.0 alpha:1.0f];
+    self.view.backgroundColor = [UIColor colorWithRed:212.0/255.0 green:179.0/255.0 blue:148.0/255.0 alpha:1.0f];
     CPTXYGraph *newGraph = [[CPTXYGraph alloc] initWithFrame:CGRectZero];
     
     [[UISegmentedControl appearance] setTintColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0]];
@@ -358,10 +192,19 @@
     CPTXYAxisSet *axisSet = (CPTXYAxisSet *)newGraph.axisSet;
     CPTXYAxis *x          = axisSet.xAxis;
     
+    CPTMutableTextStyle *titleStyle = [CPTMutableTextStyle textStyle];
+    titleStyle.color = [CPTColor whiteColor];
+    titleStyle.fontName = @"Helvetica-Bold";
+    titleStyle.fontSize = 7.0f;
+    
+    x.titleTextStyle = titleStyle;
+    x.title = @"Date";
+
+    
     x.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
     x.majorIntervalLength         = CPTDecimalFromDouble(oneDay);
     
-    x.orthogonalCoordinateDecimal = CPTDecimalFromDouble(self.minSteps - 1000.0);
+    x.orthogonalCoordinateDecimal = CPTDecimalFromDouble(self.minSteps);
     x.minorTicksPerInterval       = 0;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     
@@ -376,6 +219,10 @@
     [x setLabelTextStyle:textStyle];
     
     CPTXYAxis *y = axisSet.yAxis;
+
+    y.title = @"Steps";
+    y.titleOffset = 30;
+    y.titleTextStyle = titleStyle;
     
     NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
     [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
@@ -386,7 +233,7 @@
     
     y.majorIntervalLength         = CPTDecimalFromDouble(5000);
     y.minorTicksPerInterval       = 0;
-    y.orthogonalCoordinateDecimal = CPTDecimalFromDouble(self.minSteps - 1000.0);
+    y.orthogonalCoordinateDecimal = CPTDecimalFromDouble(self.minSteps);
     y.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
     
     [y setLabelTextStyle:textStyle];
@@ -396,12 +243,12 @@
     dataSourceLinePlot.identifier = @"Date Plot";
     
     CPTMutableLineStyle *lineStyle = [dataSourceLinePlot.dataLineStyle mutableCopy];
-    lineStyle.lineWidth              = 1.0;
-    lineStyle.lineColor              = [CPTColor whiteColor];
+    lineStyle.lineWidth              = 4.0;
+    lineStyle.lineColor              = [[CPTColor whiteColor] colorWithAlphaComponent:1.0];
     dataSourceLinePlot.dataLineStyle = lineStyle;
     
     CPTMutableLineStyle *axisLineStyle = [CPTMutableLineStyle lineStyle];
-    axisLineStyle.lineWidth = 2.5;
+    axisLineStyle.lineWidth = 5.0;
     axisLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:0.8];
     
     CPTMutableLineStyle *tickLineStyle = [CPTMutableLineStyle lineStyle];
@@ -427,8 +274,8 @@
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
     NSTimeInterval xLow       = 0.0;
     plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(self.minSteps-1000.0)
-                                                    length:CPTDecimalFromFloat((self.maxSteps- self.minSteps) + 4000.0)];
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(self.minSteps)
+                                                    length:CPTDecimalFromFloat((self.maxSteps- self.minSteps) + 5000.0)];
     
     
     [self.graph reloadData];
@@ -576,7 +423,7 @@
 {
     CPTPlotSymbol *plotSymbol = [CPTPlotSymbol ellipsePlotSymbol];
     [plotSymbol setSize:CGSizeMake(6, 6)];
-    [plotSymbol setFill:[CPTFill fillWithColor:[CPTColor colorWithComponentRed: 255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.5f]]];
+    [plotSymbol setFill:[CPTFill fillWithColor:[CPTColor colorWithComponentRed: 191.0f/255.0f green:255.0f/255.0f blue:126.0f/255.0f alpha:0.5f]]];
     [plotSymbol setLineStyle:nil];
     [aPlot setPlotSymbol:plotSymbol];
     
@@ -585,23 +432,23 @@
 
 -(void)viewDidLayoutSubviews {
     
-    CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.timeFrameSegment.frame.size.height + 70, self.view.frame.size.width, self.view.frame.size.height - (self.timeFrameSegment.frame.size.height + 70) )];
-    
-    
-    
-    [self.view addSubview:hostingView];
-    
-    hostingView.hostedGraph = self.graph;
-    
     if (([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft) ||
         ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)) {
+        
+        CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(self.view.frame.size.width * 0.15, self.view.frame.size.height * .35, self.view.frame.size.width * 0.7, self.view.frame.size.height * 0.6 )];
+        
+        [self.view addSubview:hostingView];
+        
+        hostingView.hostedGraph = self.graph;
+        
+        
         self.graph.paddingLeft = 40.0;
         self.graph.paddingTop = 0.0;
         self.graph.paddingRight = 40.0;
         self.graph.paddingBottom = 25.0;
         
         self.graph.plotAreaFrame.paddingBottom = 50.0;
-        self.graph.plotAreaFrame.paddingLeft = 30.0;
+        self.graph.plotAreaFrame.paddingLeft = 50.0;
         self.graph.plotAreaFrame.paddingTop = 5.0;
         self.graph.plotAreaFrame.paddingRight = 5.0;
         
@@ -609,13 +456,22 @@
     }
     
     else {
-        self.graph.paddingLeft = 35.0;
+        
+        CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height * .25, self.view.frame.size.width, self.view.frame.size.height * 0.6 )];
+        
+        [self.view addSubview:hostingView];
+        
+        hostingView.hostedGraph = self.graph;
+        
+        
+        
+        self.graph.paddingLeft = 30.0;
         self.graph.paddingTop = 35.0;
         self.graph.paddingRight = 35.0;
         self.graph.paddingBottom = 25.0;
         
         self.graph.plotAreaFrame.paddingBottom = 50.0;
-        self.graph.plotAreaFrame.paddingLeft = 30.0;
+        self.graph.plotAreaFrame.paddingLeft = 50.0;
         self.graph.plotAreaFrame.paddingTop = 5.0;
         self.graph.plotAreaFrame.paddingRight = 30.0;
         
@@ -631,20 +487,48 @@
     
 }
 
-
 -(void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
     if ( UIInterfaceOrientationIsPortrait(fromInterfaceOrientation) )
     {
+        CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(self.view.frame.size.width * 0.15, self.view.frame.size.height * .35, self.view.frame.size.width * 0.7, self.view.frame.size.height * 0.6 )];
+        
+        [self.view addSubview:hostingView];
+        
+        hostingView.hostedGraph = self.graph;
+        
+        
         self.graph.paddingLeft = 40.0;
         self.graph.paddingTop = 0.0;
         self.graph.paddingRight = 40.0;
         self.graph.paddingBottom = 25.0;
         
         self.graph.plotAreaFrame.paddingBottom = 50.0;
-        self.graph.plotAreaFrame.paddingLeft = 30.0;
+        self.graph.plotAreaFrame.paddingLeft = 50.0;
         self.graph.plotAreaFrame.paddingTop = 5.0;
         self.graph.plotAreaFrame.paddingRight = 5.0;
+    }
+    
+    else if ( UIInterfaceOrientationIsLandscape(fromInterfaceOrientation) )
+    {
+        CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height * .25, self.view.frame.size.width, self.view.frame.size.height * 0.6 )];
+        
+        [self.view addSubview:hostingView];
+        
+        hostingView.hostedGraph = self.graph;
+        
+        
+        
+        self.graph.paddingLeft = 30.0;
+        self.graph.paddingTop = 35.0;
+        self.graph.paddingRight = 35.0;
+        self.graph.paddingBottom = 25.0;
+        
+        self.graph.plotAreaFrame.paddingBottom = 50.0;
+        self.graph.plotAreaFrame.paddingLeft = 50.0;
+        self.graph.plotAreaFrame.paddingTop = 5.0;
+        self.graph.plotAreaFrame.paddingRight = 30.0;
+        
     }
     
     for (CPTPlot *p in self.graph.allPlots)
@@ -654,6 +538,8 @@
     
     [self.graph reloadData];
 }
+
+
 
 - (float)getTotalStepsEntries
 {
@@ -684,19 +570,19 @@
      } else {
      minWeight = [minWeightNumber floatValue];
      }
-     */
+     
     
     if (maxStepsNumber == nil) {
         //  [self.graph reloadData];
-        return 10000.0;
+        return 6000.0;
     }
     
     else if (maxStepsNumber == 0)
     {
         NSLog (@"no values");
-        self.maxSteps = 50.0;
+        self.maxSteps =1000.0;
         
-    }
+    }*/
     
     
     
@@ -728,19 +614,19 @@
     } else {
         minWeight = [minWeightNumber floatValue];
     }
-     */
+     
     
     if (minStepsNumber == nil) {
       //  [self.graph reloadData];
-        return 50.0;
+        return 1000.0;
     }
     
     else if (minStepsNumber == 0)
     {
         NSLog (@"no values");
-        self.minSteps = 50.0;
+        self.minSteps = 1000.0;
         
-    }
+    }*/
     
 
     

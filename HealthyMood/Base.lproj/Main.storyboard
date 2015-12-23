@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -54,10 +55,10 @@
             </objects>
             <point key="canvasLocation" x="2098" y="-785"/>
         </scene>
-        <!--Settings Table View Controller-->
+        <!--Measurement Unit-->
         <scene sceneID="fgB-Vi-iHA">
             <objects>
-                <tableViewController id="1mh-gV-NcC" customClass="SettingsTableViewController" sceneMemberID="viewController">
+                <tableViewController title="Measurement Unit" id="1mh-gV-NcC" customClass="SettingsTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="vao-ds-LNO">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -81,14 +82,6 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="VuG-hZ-chC">
-                                        <rect key="frame" x="0.0" y="202" width="600" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="VuG-hZ-chC" id="21P-dj-yGH">
-                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                         </sections>
@@ -98,12 +91,11 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" id="WX4-HB-hGW"/>
+                    <navigationItem key="navigationItem" title="Unit" id="WX4-HB-hGW"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="kgCell" destination="uzG-hB-Z9T" id="qac-Hw-Rxy"/>
                         <outlet property="lbCell" destination="OsP-Mk-fHa" id="pXX-Sc-7G5"/>
-                        <outlet property="stCell" destination="VuG-hZ-chC" id="Wht-2x-Hl5"/>
                         <outlet property="tableView" destination="vao-ds-LNO" id="dUa-W7-KFR"/>
                     </connections>
                 </tableViewController>
@@ -123,22 +115,62 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="at1-Y4-kBV" userLabel="Weight Name">
-                                <rect key="frame" x="233" y="285" width="135" height="30"/>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="center" minimumFontSize="50" translatesAutoresizingMaskIntoConstraints="NO" id="at1-Y4-kBV" userLabel="Weight Name">
+                                <rect key="frame" x="20" y="275" width="560" height="50"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="135" id="NJu-Le-EJM"/>
+                                    <constraint firstAttribute="height" constant="50" id="iPP-Qm-nUH"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="35"/>
                                 <textInputTraits key="textInputTraits" keyboardType="decimalPad"/>
                             </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter Weight" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kt3-L7-rkD">
+                                <rect key="frame" x="20" y="206" width="560" height="45"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="37"/>
+                                <color key="textColor" red="0.74901960779999999" green="1" blue="0.4941176471" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="at1-Y4-kBV" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="GCk-jB-2ds"/>
-                            <constraint firstItem="at1-Y4-kBV" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="aaS-ar-weq"/>
+                            <constraint firstItem="kt3-L7-rkD" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="1Hp-NT-4tU"/>
+                            <constraint firstItem="at1-Y4-kBV" firstAttribute="trailing" secondItem="kt3-L7-rkD" secondAttribute="trailing" id="7cQ-Nc-Eib"/>
+                            <constraint firstItem="at1-Y4-kBV" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="D5P-RQ-6nC"/>
+                            <constraint firstItem="at1-Y4-kBV" firstAttribute="top" secondItem="kt3-L7-rkD" secondAttribute="bottom" constant="24" id="F3o-fy-I2Y"/>
+                            <constraint firstItem="at1-Y4-kBV" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="FeO-GJ-cZY"/>
+                            <constraint firstItem="kt3-L7-rkD" firstAttribute="trailing" secondItem="at1-Y4-kBV" secondAttribute="trailing" id="H1K-3A-0Sl"/>
+                            <constraint firstItem="kt3-L7-rkD" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="118" id="HXr-Dw-F3W"/>
+                            <constraint firstItem="kt3-L7-rkD" firstAttribute="centerX" secondItem="at1-Y4-kBV" secondAttribute="centerX" id="Nca-Wc-QOc"/>
+                            <constraint firstItem="kt3-L7-rkD" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="RiL-uo-4WM"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="at1-Y4-kBV" secondAttribute="bottom" constant="295" id="Sqv-ci-efl"/>
+                            <constraint firstItem="kt3-L7-rkD" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="VSq-oY-XGm"/>
+                            <constraint firstItem="at1-Y4-kBV" firstAttribute="width" secondItem="kt3-L7-rkD" secondAttribute="height" multiplier="112:9" id="YYv-De-ZXm"/>
+                            <constraint firstItem="at1-Y4-kBV" firstAttribute="top" secondItem="kt3-L7-rkD" secondAttribute="bottom" constant="8" symbolic="YES" id="Zuh-ys-zuW"/>
+                            <constraint firstItem="kt3-L7-rkD" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="118" id="bsd-Ix-IV8"/>
+                            <constraint firstItem="at1-Y4-kBV" firstAttribute="leading" secondItem="kt3-L7-rkD" secondAttribute="leading" id="pCz-IZ-5N6"/>
+                            <constraint firstItem="at1-Y4-kBV" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="pyW-Nz-FQs"/>
+                            <constraint firstItem="kt3-L7-rkD" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="qOx-ja-Sdn"/>
+                            <constraint firstItem="kt3-L7-rkD" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="v2I-zG-TUu"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="at1-Y4-kBV" secondAttribute="bottom" constant="275" id="wcZ-jc-KzU"/>
+                            <constraint firstItem="kt3-L7-rkD" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="xXQ-dL-JI0"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="H1K-3A-0Sl"/>
+                                <exclude reference="HXr-Dw-F3W"/>
+                                <exclude reference="Nca-Wc-QOc"/>
+                                <exclude reference="RiL-uo-4WM"/>
+                                <exclude reference="VSq-oY-XGm"/>
+                                <exclude reference="bsd-Ix-IV8"/>
+                                <exclude reference="v2I-zG-TUu"/>
+                                <exclude reference="xXQ-dL-JI0"/>
+                                <exclude reference="YYv-De-ZXm"/>
+                                <exclude reference="Zuh-ys-zuW"/>
+                                <exclude reference="Sqv-ci-efl"/>
+                                <exclude reference="wcZ-jc-KzU"/>
+                            </mask>
+                        </variation>
                     </view>
-                    <navigationItem key="navigationItem" title="Add Weight Item" id="GOE-Gx-Twy">
+                    <navigationItem key="navigationItem" id="GOE-Gx-Twy">
                         <barButtonItem key="rightBarButtonItem" systemItem="save" id="lvQ-Dr-6b2">
                             <connections>
                                 <action selector="save:" destination="BYZ-38-t0r" id="rHB-ih-rMF"/>
@@ -153,7 +185,7 @@
             </objects>
             <point key="canvasLocation" x="1401" y="-961"/>
         </scene>
-        <!--Selection Table View Controller-->
+        <!--Weight Data-->
         <scene sceneID="E3D-RL-Gny">
             <objects>
                 <tableViewController id="ntC-Cz-dg2" customClass="SelectionTableViewController" sceneMemberID="viewController">
@@ -216,7 +248,7 @@
                             <outlet property="delegate" destination="ntC-Cz-dg2" id="ZXR-Sj-5NN"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="hLj-l8-Gj4"/>
+                    <navigationItem key="navigationItem" title="Weight Data" id="hLj-l8-Gj4"/>
                     <connections>
                         <outlet property="ViewDataSelCell" destination="MHq-xD-A45" id="rxS-hr-7Is"/>
                         <outlet property="entrySelCell" destination="etq-yt-g9E" id="76n-iy-jMu"/>
@@ -228,10 +260,10 @@
             </objects>
             <point key="canvasLocation" x="1520" y="-247"/>
         </scene>
-        <!--Steps Graph View Controller-->
+        <!--Steps Graph-->
         <scene sceneID="aKz-bI-Vrb">
             <objects>
-                <viewController id="bmp-r5-kAn" customClass="StepsGraphViewController" sceneMemberID="viewController">
+                <viewController title="Steps Graph" id="bmp-r5-kAn" customClass="StepsGraphViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="cmw-zg-bG2"/>
                         <viewControllerLayoutGuide type="bottom" id="paD-9q-zEg"/>
@@ -267,19 +299,19 @@
             </objects>
             <point key="canvasLocation" x="-1569" y="954"/>
         </scene>
-        <!--Mood Selection Table View Controller-->
+        <!--Mood-->
         <scene sceneID="ZBZ-B2-xhR">
             <objects>
-                <tableViewController id="HDb-rO-bB7" customClass="MoodSelectionTableViewController" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="2w9-No-F22">
+                <tableViewController title="Mood" id="HDb-rO-bB7" customClass="MoodSelectionTableViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="2w9-No-F22">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                         <sections>
                             <tableViewSection id="btr-kc-Diq">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="MzG-Xg-cEL">
-                                        <rect key="frame" x="0.0" y="64" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="99" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="MzG-Xg-cEL" id="JZO-6p-fs7">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -290,7 +322,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="hjZ-k8-hNb">
-                                        <rect key="frame" x="0.0" y="108" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="143" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="hjZ-k8-hNb" id="sRn-Sn-eri">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -301,7 +333,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="xUd-LT-5we">
-                                        <rect key="frame" x="0.0" y="152" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="187" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xUd-LT-5we" id="UXD-RP-Nhg">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -327,12 +359,12 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gCr-5C-zYp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1477" y="1498"/>
+            <point key="canvasLocation" x="-1569" y="1670"/>
         </scene>
-        <!--View Moods Table View Controller-->
+        <!--Mood History-->
         <scene sceneID="j8k-3i-Vsa">
             <objects>
-                <tableViewController id="UDD-Gu-fvh" customClass="ViewMoodsTableViewController" sceneMemberID="viewController">
+                <tableViewController title="Mood History" id="UDD-Gu-fvh" customClass="ViewMoodsTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="wEc-sH-RfS">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -373,10 +405,10 @@
             </objects>
             <point key="canvasLocation" x="-758" y="1498"/>
         </scene>
-        <!--Mood Table View Controller-->
+        <!--Select Mood-->
         <scene sceneID="xMl-Ui-LMv">
             <objects>
-                <tableViewController id="WSR-VS-Qhb" customClass="MoodTableViewController" sceneMemberID="viewController">
+                <tableViewController title="Select Mood" id="WSR-VS-Qhb" customClass="MoodTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="fc1-rY-JAU">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -432,9 +464,7 @@
                             <outlet property="delegate" destination="WSR-VS-Qhb" id="ti1-MN-mgn"/>
                         </connections>
                     </tableView>
-                    <toolbarItems>
-                        <barButtonItem title="Item" id="mvM-Ac-JOc"/>
-                    </toolbarItems>
+                    <toolbarItems/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="happiest" destination="fVA-Re-wfB" id="Reh-FA-N3n"/>
@@ -446,12 +476,12 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="z0J-9D-Caf" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1505" y="2242"/>
+            <point key="canvasLocation" x="-1569" y="2426"/>
         </scene>
-        <!--Mood Graph View Controller-->
+        <!--Mood Graph-->
         <scene sceneID="BvG-4G-R1m">
             <objects>
-                <viewController id="kzQ-qi-fPq" customClass="MoodGraphViewController" sceneMemberID="viewController">
+                <viewController title="Mood Graph" id="kzQ-qi-fPq" customClass="MoodGraphViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="rDJ-uY-6pf"/>
                         <viewControllerLayoutGuide type="bottom" id="Crs-RE-8Kd"/>
@@ -461,7 +491,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="rzZ-JS-RAr">
-                                <rect key="frame" x="20" y="64" width="560" height="29"/>
+                                <rect key="frame" x="20" y="72" width="560" height="29"/>
                                 <segments>
                                     <segment title="Week"/>
                                     <segment title="Month"/>
@@ -474,9 +504,9 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="rzZ-JS-RAr" firstAttribute="leading" secondItem="Wto-sM-BoZ" secondAttribute="leadingMargin" id="ViH-fU-hKR"/>
-                            <constraint firstItem="rzZ-JS-RAr" firstAttribute="trailing" secondItem="Wto-sM-BoZ" secondAttribute="trailingMargin" id="kPN-zk-8Pw"/>
-                            <constraint firstItem="rzZ-JS-RAr" firstAttribute="top" secondItem="rDJ-uY-6pf" secondAttribute="bottom" id="lUv-8U-8oi"/>
+                            <constraint firstItem="rzZ-JS-RAr" firstAttribute="top" secondItem="rDJ-uY-6pf" secondAttribute="bottom" constant="8" symbolic="YES" id="7It-sP-RDE"/>
+                            <constraint firstItem="rzZ-JS-RAr" firstAttribute="leading" secondItem="Wto-sM-BoZ" secondAttribute="leadingMargin" id="Iwl-Yl-L78"/>
+                            <constraint firstItem="rzZ-JS-RAr" firstAttribute="trailing" secondItem="Wto-sM-BoZ" secondAttribute="trailingMargin" id="f1I-Dw-cEh"/>
                         </constraints>
                     </view>
                     <connections>
@@ -487,10 +517,10 @@
             </objects>
             <point key="canvasLocation" x="-827" y="2242"/>
         </scene>
-        <!--Steps Table View Controller-->
+        <!--Steps History-->
         <scene sceneID="gVA-Kf-Z4Q">
             <objects>
-                <tableViewController id="k5w-ZG-iee" customClass="StepsTableViewController" sceneMemberID="viewController">
+                <tableViewController title="Steps History" id="k5w-ZG-iee" customClass="StepsTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="fXm-yT-xrQ">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -531,10 +561,10 @@
             </objects>
             <point key="canvasLocation" x="-747" y="819"/>
         </scene>
-        <!--Withings Weight Table View Controller-->
+        <!--Weight History-->
         <scene sceneID="LAW-eb-yKa">
             <objects>
-                <tableViewController id="JGR-PV-yh3" customClass="WithingsWeightTableViewController" sceneMemberID="viewController">
+                <tableViewController title="Weight History" id="JGR-PV-yh3" customClass="WithingsWeightTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="UQJ-Lk-TcC">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -575,10 +605,10 @@
             </objects>
             <point key="canvasLocation" x="-67" y="759"/>
         </scene>
-        <!--Withings Weight Graph View Controller-->
+        <!--Weight Graph-->
         <scene sceneID="PyF-9M-HFz">
             <objects>
-                <viewController id="vJ3-gk-dPu" customClass="WithingsWeightGraphViewController" sceneMemberID="viewController">
+                <viewController title="Weight Graph" id="vJ3-gk-dPu" customClass="WithingsWeightGraphViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="9od-WB-dKF"/>
                         <viewControllerLayoutGuide type="bottom" id="ao2-9O-G3s"/>
@@ -588,7 +618,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="4hj-XO-cYI">
-                                <rect key="frame" x="28" y="64" width="560" height="29"/>
+                                <rect key="frame" x="20" y="72" width="560" height="29"/>
                                 <segments>
                                     <segment title="Week"/>
                                     <segment title="Month"/>
@@ -601,12 +631,13 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailingMargin" secondItem="4hj-XO-cYI" secondAttribute="trailing" constant="-8" id="A0J-2g-DsH"/>
-                            <constraint firstItem="4hj-XO-cYI" firstAttribute="top" secondItem="9od-WB-dKF" secondAttribute="bottom" id="HXK-uj-Xq6"/>
-                            <constraint firstItem="4hj-XO-cYI" firstAttribute="leading" secondItem="je5-kc-8ne" secondAttribute="leadingMargin" constant="8" id="f2K-G7-UNC"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="4hj-XO-cYI" secondAttribute="trailing" id="A0J-2g-DsH"/>
+                            <constraint firstItem="4hj-XO-cYI" firstAttribute="top" secondItem="9od-WB-dKF" secondAttribute="bottom" constant="8" id="HXK-uj-Xq6"/>
+                            <constraint firstItem="4hj-XO-cYI" firstAttribute="leading" secondItem="je5-kc-8ne" secondAttribute="leadingMargin" id="f2K-G7-UNC"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="timeFrameSegment" destination="4hj-XO-cYI" id="3zs-m9-zQ8"/>
                         <outlet property="withingsSegment" destination="4hj-XO-cYI" id="BSt-pF-Rn5"/>
                     </connections>
                 </viewController>
@@ -614,10 +645,10 @@
             </objects>
             <point key="canvasLocation" x="797" y="759"/>
         </scene>
-        <!--Measurement Type Table View Controller-->
+        <!--Home-->
         <scene sceneID="RdQ-Df-Lch">
             <objects>
-                <tableViewController id="JNm-fR-Xlo" customClass="MeasurementTypeTableViewController" sceneMemberID="viewController">
+                <tableViewController title="Home" id="JNm-fR-Xlo" customClass="MeasurementTypeTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="eR1-8K-hLD">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -677,7 +708,7 @@
                             <outlet property="delegate" destination="JNm-fR-Xlo" id="o0r-rw-UgI"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="e06-Ky-h51"/>
+                    <navigationItem key="navigationItem" title="Home" id="e06-Ky-h51"/>
                     <connections>
                         <outlet property="exercise" destination="VjS-5d-6aJ" id="I9V-YF-H5n"/>
                         <outlet property="mood" destination="dUt-9M-Mqa" id="pg9-J9-yoZ"/>
@@ -689,10 +720,10 @@
             </objects>
             <point key="canvasLocation" x="-701" y="-747"/>
         </scene>
-        <!--Select Weight Source Option Table View Controller-->
+        <!--Weight-->
         <scene sceneID="SwJ-Mc-ErG">
             <objects>
-                <tableViewController id="OkD-Qp-7JT" customClass="SelectWeightSourceOptionTableViewController" sceneMemberID="viewController">
+                <tableViewController title="Weight" id="OkD-Qp-7JT" customClass="SelectWeightSourceOptionTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="vmg-jR-7mN">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -738,10 +769,10 @@
             </objects>
             <point key="canvasLocation" x="-23" y="-747"/>
         </scene>
-        <!--Exercise Table View Controller-->
+        <!--Steps-->
         <scene sceneID="cJV-lP-SBe">
             <objects>
-                <tableViewController id="lYS-ge-n2T" customClass="ExerciseTableViewController" sceneMemberID="viewController">
+                <tableViewController title="Steps" id="lYS-ge-n2T" customClass="ExerciseTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="Wfb-fS-iTZ">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -788,10 +819,10 @@
             </objects>
             <point key="canvasLocation" x="-656" y="-27"/>
         </scene>
-        <!--Weigh Entry Type Table View Controller-->
+        <!--Weight Source-->
         <scene sceneID="oAM-ck-7sL">
             <objects>
-                <tableViewController id="zU3-gU-JBP" customClass="WeighEntryTypeTableViewController" sceneMemberID="viewController">
+                <tableViewController title="Weight Source" id="zU3-gU-JBP" customClass="WeighEntryTypeTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="m2X-r7-Hcm">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -879,7 +910,7 @@
                             <outlet property="delegate" destination="zU3-gU-JBP" id="HVK-Ap-TSK"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="p54-cU-xOf"/>
+                    <navigationItem key="navigationItem" title="Weight Source" id="p54-cU-xOf"/>
                     <connections>
                         <outlet property="authorizeCell" destination="CAg-g8-z5k" id="Wxt-5r-ABd"/>
                         <outlet property="authorizeWithingsButton" destination="v6K-cz-j6J" id="rPs-2N-5CM"/>
@@ -893,10 +924,10 @@
             </objects>
             <point key="canvasLocation" x="682" y="-752"/>
         </scene>
-        <!--Withings Selection Table View Controller-->
+        <!--Weight Data-->
         <scene sceneID="NoO-n6-kc3">
             <objects>
-                <tableViewController storyboardIdentifier="Withings Selection" id="p9n-ii-X7d" customClass="WithingsSelectionTableViewController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="Withings Selection" title="Weight Data" id="p9n-ii-X7d" customClass="WithingsSelectionTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="EMu-Ub-agi">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -937,17 +968,6 @@
                                             <segue destination="1mh-gV-NcC" kind="show" id="vGm-kq-A4Q"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="tQN-B4-uPC">
-                                        <rect key="frame" x="0.0" y="231" width="600" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="tQN-B4-uPC" id="S6w-bS-fzk">
-                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <segue destination="cfa-Hf-XdA" kind="show" id="GJa-iC-twI"/>
-                                        </connections>
-                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                         </sections>
@@ -957,7 +977,6 @@
                         </connections>
                     </tableView>
                     <connections>
-                        <outlet property="multiGraph" destination="tQN-B4-uPC" id="LGz-za-qWU"/>
                         <outlet property="withingsViewDataSelCell" destination="HGf-IF-Gk7" id="qT6-QF-d0D"/>
                         <outlet property="withingsViewGraphSelCell" destination="9D3-KI-YS3" id="RUY-fy-oxJ"/>
                         <outlet property="withingsViewSettingsSelCell" destination="FCS-Iv-WPa" id="ys3-Mk-Aes"/>
@@ -1018,10 +1037,10 @@
             </objects>
             <point key="canvasLocation" x="3" y="-27"/>
         </scene>
-        <!--Weight Graph View Controller-->
+        <!--Weight Graph-->
         <scene sceneID="HAk-1t-jyE">
             <objects>
-                <viewController id="eWs-9g-cqq" customClass="WeightGraphViewController" sceneMemberID="viewController">
+                <viewController title="Weight Graph" id="eWs-9g-cqq" customClass="WeightGraphViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="E5t-QP-0Nh"/>
                         <viewControllerLayoutGuide type="bottom" id="Moq-81-ngT"/>
@@ -1034,7 +1053,7 @@
                         </userGuides>
                         <subviews>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bordered" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="3Q2-1B-vBn">
-                                <rect key="frame" x="20" y="64" width="560" height="29"/>
+                                <rect key="frame" x="20" y="72" width="560" height="29"/>
                                 <segments>
                                     <segment title="Week"/>
                                     <segment title="Month"/>
@@ -1047,9 +1066,9 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="3Q2-1B-vBn" firstAttribute="top" secondItem="E5t-QP-0Nh" secondAttribute="bottom" id="4ZB-Az-vrX"/>
-                            <constraint firstItem="3Q2-1B-vBn" firstAttribute="trailing" secondItem="hcr-WC-XKA" secondAttribute="trailingMargin" id="Pwg-en-Hm9"/>
-                            <constraint firstItem="3Q2-1B-vBn" firstAttribute="leading" secondItem="hcr-WC-XKA" secondAttribute="leadingMargin" id="uBd-bN-b9H"/>
+                            <constraint firstItem="3Q2-1B-vBn" firstAttribute="top" secondItem="E5t-QP-0Nh" secondAttribute="bottom" constant="8" symbolic="YES" id="FT1-pq-AIS"/>
+                            <constraint firstItem="3Q2-1B-vBn" firstAttribute="trailing" secondItem="hcr-WC-XKA" secondAttribute="trailingMargin" id="Ohm-QD-iOU"/>
+                            <constraint firstItem="3Q2-1B-vBn" firstAttribute="leading" secondItem="hcr-WC-XKA" secondAttribute="leadingMargin" id="fEv-6e-9Xj"/>
                         </constraints>
                     </view>
                     <connections>
@@ -1119,7 +1138,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="GJa-iC-twI"/>
         <segue reference="vGm-kq-A4Q"/>
     </inferredMetricsTieBreakers>
 </document>

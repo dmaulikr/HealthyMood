@@ -17,7 +17,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.weight.textLabel.text = @"Weight";
-    self.exercise.textLabel.text = @"Exercise";
+    self.exercise.textLabel.text = @"Steps";
     self.mood.textLabel.text = @"Mood";
     self.multiGraph.textLabel.text = @"Graph Summary";
     

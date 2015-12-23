@@ -27,9 +27,9 @@
     
 
     self.entrySelCell.textLabel.text = @"Enter Weight";
-    self.ViewDataSelCell.textLabel.text = @"View Data";
-    self.viewGraphSelCell.textLabel.text = @"View Graphs";
-    self.viewSettingsSelCell.textLabel.text = @"Choose Unit";
+    self.ViewDataSelCell.textLabel.text = @"Weight History";
+    self.viewGraphSelCell.textLabel.text = @"Weight Graph";
+    self.viewSettingsSelCell.textLabel.text = @"Weight Unit Settings";
     
     
     // Initialize Fetch Request

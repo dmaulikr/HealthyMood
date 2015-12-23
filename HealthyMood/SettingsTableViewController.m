@@ -23,7 +23,7 @@
     [super viewDidLoad];
     self.kgCell.textLabel.text = @"kg";
     self.lbCell.textLabel.text = @"lb";
-    self.stCell.textLabel.text = @"st";
+//    self.stCell.textLabel.text = @"st";
     
     self.lbCell.accessoryType = UITableViewCellAccessoryCheckmark;
 }
@@ -44,7 +44,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
     // Return the number of rows in the section.
-    return 3;
+    return 2;
 }
 
 - (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath
@@ -57,7 +57,6 @@
 
     self.kgCell.accessoryType = UITableViewCellAccessoryNone;
     self.lbCell.accessoryType = UITableViewCellAccessoryNone;
-    self.stCell.accessoryType = UITableViewCellAccessoryNone;
     
     if (cell.accessoryType == UITableViewCellAccessoryNone)
     {
@@ -72,10 +71,7 @@
         [defaults setObject:@"kg" forKey:@"unit"];
     } else if (self.lbCell.accessoryType == UITableViewCellAccessoryCheckmark) {
         [defaults setObject:@"lb" forKey:@"unit"];
-    } else if (self.stCell.accessoryType == UITableViewCellAccessoryCheckmark) {
-        [defaults setObject:@"st" forKey:@"unit"];
     }
-    
 
 }
 
@@ -95,10 +91,7 @@
         [defaults setObject:@"kg" forKey:@"unit"];
     } else if (self.lbCell.accessoryType == UITableViewCellAccessoryCheckmark) {
         [defaults setObject:@"lb" forKey:@"unit"];
-    } else if (self.stCell.accessoryType == UITableViewCellAccessoryCheckmark) {
-        [defaults setObject:@"st" forKey:@"unit"];
     }
-
     [self dismissViewControllerAnimated:YES completion:nil];
     
     [defaults synchronize];
@@ -121,24 +114,19 @@
     
     UITableViewCell *kg = self.kgCell;
     UITableViewCell *lb = self.lbCell;
-    UITableViewCell *st = self.stCell;
+
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     if ([[defaults objectForKey:@"unit"]  isEqual: @"kg"]) {
         kg.accessoryType = UITableViewCellAccessoryCheckmark;
         lb.accessoryType = UITableViewCellAccessoryNone;
-        st.accessoryType = UITableViewCellAccessoryNone;
-    }
-    else if ([[defaults objectForKey:@"unit"]  isEqual: @"st"]) {
-        st.accessoryType = UITableViewCellAccessoryCheckmark;
-        kg.accessoryType = UITableViewCellAccessoryNone;
-        lb.accessoryType = UITableViewCellAccessoryNone;
+
     }
     else if ([[defaults objectForKey:@"unit"]  isEqual: @"lb"])  {
         lb.accessoryType = UITableViewCellAccessoryCheckmark;
         kg.accessoryType = UITableViewCellAccessoryNone;
-        st.accessoryType = UITableViewCellAccessoryNone;
+
     }
 }
 

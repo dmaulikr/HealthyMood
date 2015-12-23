@@ -75,7 +75,7 @@
     NSData *data = [NSURLConnection sendSynchronousRequest:request
                                          returningResponse:&response
                                                      error:&error ];     {
-         if (data.length > 0 && error == nil)
+        if (data.length > 0 && error == nil)
          {
              NSDictionary *greeting = [NSJSONSerialization JSONObjectWithData:data
                                                                       options:0
@@ -87,11 +87,22 @@
              NSLog(@"greeting %@", greeting);
              NSLog(@"measuregroups %@", measureGroups);
              
-             if (!measureGroups)
+             if (!measureGroups || measureGroups == NULL)
              {
-                 NSError *error = [NSError errorWithDomain:@"com.nadine.healthymood"
-                                                      code:-1
-                                                  userInfo:@{NSLocalizedDescriptionKey:@"Unexpected response, no measurement groups"}];
+                 if (!measureGroups || measureGroups == NULL)
+                 {
+                     NSError *error = [NSError errorWithDomain:@"com.nadine.healthymood"
+                                                          code:-1
+                                                      userInfo:@{NSLocalizedDescriptionKey:@"Unexpected response, no measurement groups"}];
+                     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Oops!" message:@"No Measurement Groups" preferredStyle:UIAlertControllerStyleAlert];
+                     
+                     UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+                     [alertController addAction:ok];
+                     
+                     [self presentViewController:alertController animated:YES completion:nil];
+                     
+                 }
+
                  if (error) {
                      [self dismissViewControllerAnimated:YES completion:nil];
                  }
@@ -120,7 +131,7 @@
                              NSDate *epochNSDate = [[NSDate alloc] initWithTimeIntervalSince1970:seconds];
                              
                              NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-                             [dateFormatter setDateFormat:@"yyyy-MM-dd 'at' hh:mm a"];
+                             [dateFormatter setDateFormat:@"MM-dd-yy 'at' hh:mm a"];
                              
                              self.weightDate = [dateFormatter stringFromDate:epochNSDate];
                              
@@ -171,6 +182,17 @@
              
              
          }
+        else 
+        {
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"No Weight History" message:@"Check your internet connection" preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+            [alertController addAction:ok];
+            
+            [self presentViewController:alertController animated:YES completion:nil];
+            
+        }
+        
          
          
              };
@@ -199,6 +221,22 @@
     return [self.vals count];
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    NSString *sectionName;
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([[defaults objectForKey:@"unit"] isEqual:@"kg"])
+    {
+            sectionName =@"kg";
+    }
+
+    else if ([[defaults objectForKey:@"unit"] isEqual:@"lb"])
+    {
+        sectionName =@"lb";
+    }
+
+    return sectionName;
+}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *simpleTableIdentifier = @"Table Cell";

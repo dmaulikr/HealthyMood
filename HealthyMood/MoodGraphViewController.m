@@ -69,7 +69,7 @@
     
     self.refDate            =     [NSDate dateWithTimeIntervalSinceReferenceDate:today.timeIntervalSinceReferenceDate - (6 * 24 * 60 * 60) ];
     
-    self.view.backgroundColor = [UIColor colorWithRed:245.0/255.0 green:0.0/255.0 blue:87.0/255.0 alpha:1.0f];
+    self.view.backgroundColor = [UIColor colorWithRed:255.0/255.0 green:133.0/255.0 blue:1.0/255.0 alpha:1.0f];
     CPTXYGraph *newGraph = [[CPTXYGraph alloc] initWithFrame:CGRectZero];
     
     [[UISegmentedControl appearance] setTintColor:[UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0]];
@@ -82,23 +82,32 @@
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
     NSTimeInterval xLow       = 0.0;
     plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(0.0)
-                                                    length:CPTDecimalFromFloat(7.0)];
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(1.0)
+                                                    length:CPTDecimalFromFloat(4.1)];
     
     
     
     CPTMutableTextStyle *textStyle = [CPTMutableTextStyle textStyle];
     [textStyle setFontSize:8.0f];
-    [textStyle setColor:[CPTColor colorWithComponentRed: 255.0f/255.0f green:250.0f/255.0f blue:250.0f/255.0f alpha:1.0f]];
+    [textStyle setColor:[CPTColor colorWithComponentRed: 255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:1.0f]];
     
     // Axes
     CPTXYAxisSet *axisSet = (CPTXYAxisSet *)newGraph.axisSet;
     CPTXYAxis *x          = axisSet.xAxis;
     
+    CPTMutableTextStyle *titleStyle = [CPTMutableTextStyle textStyle];
+    titleStyle.color = [CPTColor whiteColor];
+    titleStyle.fontName = @"Helvetica-Bold";
+    titleStyle.fontSize = 7.0f;
+    
+    x.titleTextStyle = titleStyle;
+    x.title = @"Date";
+
+    
     x.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
     x.majorIntervalLength         = CPTDecimalFromDouble(oneDay);
     
-    x.orthogonalCoordinateDecimal = CPTDecimalFromDouble(0.0);
+    x.orthogonalCoordinateDecimal = CPTDecimalFromDouble(1.0);
     x.minorTicksPerInterval       = 0;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     
@@ -114,6 +123,10 @@
     
     CPTXYAxis *y = axisSet.yAxis;
     
+/*    y.title = @"Mood";
+    y.titleOffset = 30;
+    y.titleTextStyle = titleStyle; */
+    
     NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
     [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [numberFormatter setMaximumFractionDigits:0];
@@ -123,8 +136,24 @@
     
     y.majorIntervalLength         = CPTDecimalFromDouble(1);
     y.minorTicksPerInterval       = 0;
-    y.orthogonalCoordinateDecimal = CPTDecimalFromDouble(0.0);
-    y.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
+    y.orthogonalCoordinateDecimal = CPTDecimalFromDouble(1.0);
+    //y.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
+    
+    y.labelingPolicy = CPTAxisLabelingPolicyNone;
+    NSArray *customTickLocations = [NSArray arrayWithObjects:[NSDecimalNumber numberWithInt:1], [NSDecimalNumber numberWithInt:2], [NSDecimalNumber numberWithInt:3], [NSDecimalNumber numberWithInt:4],  [NSDecimalNumber numberWithInt:5], nil];
+    NSArray *yAxisLabels = [NSArray arrayWithObjects:@"Very Sad", @"Sad", @"Okay", @"Happy", @"Very Happy", nil];
+    NSUInteger labelLocation = 0;
+    NSMutableArray *customLabels = [NSMutableArray arrayWithCapacity:[yAxisLabels count]];
+    for (NSNumber *tickLocation in customTickLocations) {
+        CPTAxisLabel *newLabel = [[CPTAxisLabel alloc] initWithText: [yAxisLabels objectAtIndex:labelLocation++] textStyle:y.labelTextStyle];
+        newLabel.tickLocation = [tickLocation decimalValue];
+        newLabel.offset = y.labelOffset + y.majorTickLength;
+
+        [customLabels addObject:newLabel];
+
+    }
+    
+    y.axisLabels =  [NSSet setWithArray:customLabels];
     
     [y setLabelTextStyle:textStyle];
     
@@ -133,12 +162,12 @@
     dataSourceLinePlot.identifier = @"Date Plot";
     
     CPTMutableLineStyle *lineStyle = [dataSourceLinePlot.dataLineStyle mutableCopy];
-    lineStyle.lineWidth              = 1.0;
-    lineStyle.lineColor              = [CPTColor whiteColor];
+    lineStyle.lineWidth              = 4.0;
+    lineStyle.lineColor              = [[CPTColor whiteColor] colorWithAlphaComponent:1.0];
     dataSourceLinePlot.dataLineStyle = lineStyle;
     
     CPTMutableLineStyle *axisLineStyle = [CPTMutableLineStyle lineStyle];
-    axisLineStyle.lineWidth = 0.5;
+    axisLineStyle.lineWidth = 5.0;
     axisLineStyle.lineColor = [[CPTColor whiteColor] colorWithAlphaComponent:0.5];
     
     CPTMutableLineStyle *tickLineStyle = [CPTMutableLineStyle lineStyle];
@@ -296,7 +325,7 @@
 {
     CPTPlotSymbol *plotSymbol = [CPTPlotSymbol ellipsePlotSymbol];
     [plotSymbol setSize:CGSizeMake(6, 6)];
-    [plotSymbol setFill:[CPTFill fillWithColor:[CPTColor colorWithComponentRed: 255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.5f]]];
+    [plotSymbol setFill:[CPTFill fillWithColor:[CPTColor colorWithComponentRed: 255.0f/255.0f green:9.0f/255.0f blue:203.0f/255.0f alpha:1.0f]]];
     [plotSymbol setLineStyle:nil];
     [aPlot setPlotSymbol:plotSymbol];
     
@@ -305,27 +334,23 @@
 
 -(void)viewDidLayoutSubviews {
     
-    //CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, 95, self.view.frame.size.width, self.view.frame.size.height) ];
-    
-    float y = self.segmentedControl.frame.origin.y;
-    
-    NSLog (@"%f", y);
-    
-    CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.segmentedControl.frame.size.height + 70, self.view.frame.size.width, self.view.frame.size.height - (self.segmentedControl.frame.size.height + 70) )];
-    
-    [self.view addSubview:hostingView];
-    
-    hostingView.hostedGraph = self.graph;
-    
     if (([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft) ||
         ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)) {
+        
+        CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(self.view.frame.size.width * 0.15, self.view.frame.size.height * .35, self.view.frame.size.width * 0.7, self.view.frame.size.height * 0.6 )];
+        
+        [self.view addSubview:hostingView];
+        
+        hostingView.hostedGraph = self.graph;
+        
+        
         self.graph.paddingLeft = 40.0;
         self.graph.paddingTop = 0.0;
         self.graph.paddingRight = 40.0;
         self.graph.paddingBottom = 25.0;
         
         self.graph.plotAreaFrame.paddingBottom = 50.0;
-        self.graph.plotAreaFrame.paddingLeft = 30.0;
+        self.graph.plotAreaFrame.paddingLeft = 50.0;
         self.graph.plotAreaFrame.paddingTop = 5.0;
         self.graph.plotAreaFrame.paddingRight = 5.0;
         
@@ -333,13 +358,22 @@
     }
     
     else {
-        self.graph.paddingLeft = 35.0;
+        
+        CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height * .25, self.view.frame.size.width, self.view.frame.size.height * 0.6 )];
+        
+        [self.view addSubview:hostingView];
+        
+        hostingView.hostedGraph = self.graph;
+        
+        
+        
+        self.graph.paddingLeft = 30.0;
         self.graph.paddingTop = 35.0;
         self.graph.paddingRight = 35.0;
         self.graph.paddingBottom = 25.0;
         
         self.graph.plotAreaFrame.paddingBottom = 50.0;
-        self.graph.plotAreaFrame.paddingLeft = 30.0;
+        self.graph.plotAreaFrame.paddingLeft = 50.0;
         self.graph.plotAreaFrame.paddingTop = 5.0;
         self.graph.plotAreaFrame.paddingRight = 30.0;
         
@@ -360,15 +394,44 @@
 {
     if ( UIInterfaceOrientationIsPortrait(fromInterfaceOrientation) )
     {
+        CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(self.view.frame.size.width * 0.15, self.view.frame.size.height * .35, self.view.frame.size.width * 0.7, self.view.frame.size.height * 0.6 )];
+        
+        [self.view addSubview:hostingView];
+        
+        hostingView.hostedGraph = self.graph;
+        
+        
         self.graph.paddingLeft = 40.0;
         self.graph.paddingTop = 0.0;
         self.graph.paddingRight = 40.0;
         self.graph.paddingBottom = 25.0;
         
         self.graph.plotAreaFrame.paddingBottom = 50.0;
-        self.graph.plotAreaFrame.paddingLeft = 30.0;
+        self.graph.plotAreaFrame.paddingLeft = 50.0;
         self.graph.plotAreaFrame.paddingTop = 5.0;
         self.graph.plotAreaFrame.paddingRight = 5.0;
+    }
+    
+    else if ( UIInterfaceOrientationIsLandscape(fromInterfaceOrientation) )
+    {
+        CPTGraphHostingView *hostingView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height * .25, self.view.frame.size.width, self.view.frame.size.height * 0.6 )];
+        
+        [self.view addSubview:hostingView];
+        
+        hostingView.hostedGraph = self.graph;
+        
+        
+        
+        self.graph.paddingLeft = 30.0;
+        self.graph.paddingTop = 35.0;
+        self.graph.paddingRight = 35.0;
+        self.graph.paddingBottom = 25.0;
+        
+        self.graph.plotAreaFrame.paddingBottom = 50.0;
+        self.graph.plotAreaFrame.paddingLeft = 50.0;
+        self.graph.plotAreaFrame.paddingTop = 5.0;
+        self.graph.plotAreaFrame.paddingRight = 30.0;
+        
     }
     
     for (CPTPlot *p in self.graph.allPlots)

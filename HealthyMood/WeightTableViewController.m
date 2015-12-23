@@ -136,11 +136,6 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     WeightTableViewCell *cell = (WeightTableViewCell *)[tableView dequeueReusableCellWithIdentifier:@"WeightListPrototypeCell" forIndexPath:indexPath];
     
-    // Configure Table View Cell
-    if (indexPath.row%2 == 0) {
-        UIColor *altCellColor = [UIColor colorWithWhite:0.7 alpha:0.1];
-        cell.backgroundColor = altCellColor;
-    }
     [self configureCell:cell atIndexPath:indexPath];
     
     return cell;
@@ -193,6 +188,23 @@
    // cell.timeLabel.text = [dateTimeFormatter stringFromDate:dateTime];
     
     
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    NSString *sectionName;
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([[defaults objectForKey:@"unit"] isEqual:@"kg"])
+    {
+        sectionName =@"kg";
+    }
+    
+    else if ([[defaults objectForKey:@"unit"] isEqual:@"lb"])
+    {
+        sectionName =@"lb";
+    }
+    
+    return sectionName;
 }
 /*
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -284,6 +296,7 @@
     [self.tableView endUpdates];
 }
 
+/*
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     
@@ -298,7 +311,7 @@
     return headerView;
 }
 
-
+*/
 
 @end
 

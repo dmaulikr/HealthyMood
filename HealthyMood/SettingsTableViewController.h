@@ -14,7 +14,7 @@
 
 @property (weak, nonatomic) IBOutlet UITableViewCell *kgCell;
 @property (weak, nonatomic) IBOutlet UITableViewCell *lbCell;
-@property (weak, nonatomic) IBOutlet UITableViewCell *stCell;
+//@property (weak, nonatomic) IBOutlet UITableViewCell *stCell;
 
 @property (nonatomic, retain) NSIndexPath *selectedIndexPath;
 

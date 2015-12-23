@@ -54,12 +54,16 @@
     
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if ([[defaults objectForKey:@"unit" ] isEqual:nil])
+   /* if ([[defaults objectForKey:@"unit" ] isEqual:nil])
     {
-    [defaults setObject:@"lb" forKey:@"unit"];
-    }
+        [defaults setObject:@"lb" forKey:@"unit"];
+    }*/
+    
+    
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"weightEntryType" : @"manualWeightEntry" }];
+    
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"unit" : @"lb" }];
                                                                
     
     
@@ -68,6 +72,7 @@
     
     
     NSLog(@"weightentrytype,%@", [defaults objectForKey:@"weightEntryType"]);
+    NSLog(@"unittype,%@", [defaults objectForKey:@"unit"]);    
         
     
     [[NSUserDefaults standardUserDefaults] synchronize];

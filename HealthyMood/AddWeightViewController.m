@@ -22,11 +22,21 @@
     
     [super viewDidLoad];
     
+    self.view.backgroundColor =[UIColor colorWithRed:244.0/255.0 green:158.0/255.0 blue:255.0/255.0 alpha:1.0f];
+    
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([[defaults objectForKey:@"unit"] isEqual:@"lb"]) {
+        self.title = @"Enter Weight (lb)";
+    }
+    else if ([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
+        self.title = @"Enter Weight (kg)";
+    }
+
+    
     AppDelegate *delegate = [[UIApplication sharedApplication] delegate];
     self.managedObjectContext = delegate.managedObjectContext;
 
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if([[defaults objectForKey:@"unit"] isEqual:@"lb"]) {
         self.unitLabel.text = @"lb";
     } else if([[defaults objectForKey:@"unit"] isEqual:@"kg"]) {
@@ -96,12 +106,12 @@
             }
             
             //Show Alert View
-            [[[UIAlertView alloc] initWithTitle:@"Warning" message:@"Your to-do could not be saved." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+            [UIAlertController alertControllerWithTitle:@"Warning" message:@"Your weight entry could not be saved." preferredStyle:UIAlertControllerStyleAlert];
         }
         
     } else {
         // Show Alert View
-        [[[UIAlertView alloc] initWithTitle:@"Warning" message:@"Your to-do needs a name." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+        [UIAlertController alertControllerWithTitle:@"Warning" message:@"You didn't enter a weight to save to your records." preferredStyle:UIAlertControllerStyleAlert];
     }
     
 

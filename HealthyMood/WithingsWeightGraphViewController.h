@@ -16,6 +16,7 @@
 @property (weak, nonatomic) IBOutlet UISegmentedControl *withingsSegment;
 
 -(IBAction)segmentedControlIndexChanged;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *timeFrameSegment;
 
 //-(void)loadData;
 

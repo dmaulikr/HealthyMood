@@ -18,7 +18,7 @@
     [super viewDidLoad];
     
     self.chooseWeightSource.textLabel.text =@"Choose Weight Source";
-    self.viewWeightFirst.textLabel.text =@"View Weight Data";
+    self.viewWeightFirst.textLabel.text =@"My Weight Data";
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     

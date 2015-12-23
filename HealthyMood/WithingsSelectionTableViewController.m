@@ -16,10 +16,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.withingsViewDataSelCell.textLabel.text = @"View Data";
-    self.withingsViewGraphSelCell.textLabel.text = @"View Graphs";
-    self.withingsViewSettingsSelCell.textLabel.text = @"Choose Unit";
-    self.multiGraph.textLabel.text = @"View All Graphs";
+    self.withingsViewDataSelCell.textLabel.text = @"Weight History";
+    self.withingsViewGraphSelCell.textLabel.text = @"Weight Graph";
+    self.withingsViewSettingsSelCell.textLabel.text = @"Weight Unit Settings";
+
     
     
     
@@ -40,7 +40,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return 4;
+    return 3;
 }
 
 /*

@@ -21,8 +21,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.viewData.textLabel.text = @"View Data";
-    self.viewGraph.textLabel.text = @"View Graph";
+    self.viewData.textLabel.text = @"Steps History";
+    self.viewGraph.textLabel.text = @"Steps Graph";
         self.healthStore = [[HKHealthStore alloc] init];
     // Set up an HKHealthStore, asking the user for read/write permissions. The profile view controller is the
     // first view controller that's shown to the user, so we'll ask for all of the desired HealthKit permissions now.
