@@ -146,7 +146,7 @@
     dataSourceLinePlot.identifier = @"Date Plot";
     
     CPTMutableLineStyle *lineStyle = [dataSourceLinePlot.dataLineStyle mutableCopy];
-    lineStyle.lineWidth              = 4.0;
+    lineStyle.lineWidth              = 2.0;
     lineStyle.lineColor              = [[CPTColor whiteColor] colorWithAlphaComponent:1.0];
     dataSourceLinePlot.dataLineStyle = lineStyle;
     

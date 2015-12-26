@@ -2099,9 +2099,14 @@ float minWeight;
     
     if (minStepsNumber == nil) {
         //  [self.graph reloadData];
-        return 50.0;
+        self.minSteps = 1000.0;
     }
     
+    
+    else if (minStepsNumber == 0) {
+        //  [self.graph reloadData];
+        self.minSteps =  1000.0;
+    }
     
     NSLog(@"minStpes %f", self.minSteps);
     

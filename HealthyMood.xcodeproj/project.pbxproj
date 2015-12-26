@@ -10,6 +10,13 @@
 		E913D0BB1C001DD700725EDE /* StepsGraphViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E913D0BA1C001DD700725EDE /* StepsGraphViewController.m */; };
 		E913D0BE1C0BF4FB00725EDE /* MultiGraphViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E913D0BD1C0BF4FB00725EDE /* MultiGraphViewController.m */; };
 		E92E4FD11BB5B74F0063D774 /* ChooseViewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E92E4FD01BB5B74F0063D774 /* ChooseViewViewController.m */; };
+		E93D7B5F1C2BB92C0010029D /* PrivacyStatmentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E93D7B5E1C2BB92C0010029D /* PrivacyStatmentViewController.m */; };
+		E93D7B691C2CFB400010029D /* meditationImage.png in Resources */ = {isa = PBXBuildFile; fileRef = E93D7B681C2CFB400010029D /* meditationImage.png */; };
+		E93D7B6B1C2E08110010029D /* scale.png in Resources */ = {isa = PBXBuildFile; fileRef = E93D7B6A1C2E08110010029D /* scale.png */; };
+		E93D7B6D1C2E09070010029D /* footsteps.png in Resources */ = {isa = PBXBuildFile; fileRef = E93D7B6C1C2E09060010029D /* footsteps.png */; };
+		E93D7B6F1C2E0EC00010029D /* mediating.png in Resources */ = {isa = PBXBuildFile; fileRef = E93D7B6E1C2E0EC00010029D /* mediating.png */; };
+		E93D7B711C2E10630010029D /* graph.png in Resources */ = {isa = PBXBuildFile; fileRef = E93D7B701C2E10630010029D /* graph.png */; };
+		E93D7B731C2E49770010029D /* person32.png in Resources */ = {isa = PBXBuildFile; fileRef = E93D7B721C2E49770010029D /* person32.png */; };
 		E941B0C81BF192A500FA91F5 /* WeighEntryTypeTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E941B0C71BF192A500FA91F5 /* WeighEntryTypeTableViewController.m */; };
 		E941B0CD1BF19A1200FA91F5 /* LoginWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E941B0CC1BF19A1200FA91F5 /* LoginWebViewController.m */; };
 		E941B0D01BF19D9600FA91F5 /* WithingsWeightTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E941B0CF1BF19D9600FA91F5 /* WithingsWeightTableViewController.m */; };
@@ -88,6 +95,14 @@
 		E936FA511BA09C8C002D31AE /* Model 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 3.xcdatamodel"; sourceTree = "<group>"; };
 		E93A030F1BA5F5D3004E505E /* Model 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 4.xcdatamodel"; sourceTree = "<group>"; };
 		E93A03161BA5FC46004E505E /* Model 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 5.xcdatamodel"; sourceTree = "<group>"; };
+		E93D7B5D1C2BB92C0010029D /* PrivacyStatmentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivacyStatmentViewController.h; sourceTree = "<group>"; };
+		E93D7B5E1C2BB92C0010029D /* PrivacyStatmentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrivacyStatmentViewController.m; sourceTree = "<group>"; };
+		E93D7B681C2CFB400010029D /* meditationImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = meditationImage.png; path = ../../../meditationImage.png; sourceTree = "<group>"; };
+		E93D7B6A1C2E08110010029D /* scale.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = scale.png; path = ../../../scale.png; sourceTree = "<group>"; };
+		E93D7B6C1C2E09060010029D /* footsteps.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = footsteps.png; path = ../../../footsteps.png; sourceTree = "<group>"; };
+		E93D7B6E1C2E0EC00010029D /* mediating.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = mediating.png; path = ../../../mediating.png; sourceTree = "<group>"; };
+		E93D7B701C2E10630010029D /* graph.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = graph.png; path = ../../../graph.png; sourceTree = "<group>"; };
+		E93D7B721C2E49770010029D /* person32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = person32.png; path = "../../../healthyZen appicons/untitled folder/person32.png"; sourceTree = "<group>"; };
 		E941B0C61BF192A500FA91F5 /* WeighEntryTypeTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeighEntryTypeTableViewController.h; sourceTree = "<group>"; };
 		E941B0C71BF192A500FA91F5 /* WeighEntryTypeTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeighEntryTypeTableViewController.m; sourceTree = "<group>"; };
 		E941B0CB1BF19A1200FA91F5 /* LoginWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginWebViewController.h; sourceTree = "<group>"; };
@@ -251,6 +266,7 @@
 		E97D79001B9BC0D300F6DC79 /* HealthyMood */ = {
 			isa = PBXGroup;
 			children = (
+				E93D7B681C2CFB400010029D /* meditationImage.png */,
 				E9438F3E1C112C4E00C4B330 /* Mood.h */,
 				E9438F3F1C112C4E00C4B330 /* Mood.m */,
 				E9D0A24F1BFACE0000B9A6A1 /* HealthyMood.entitlements */,
@@ -261,10 +277,13 @@
 				E97D79051B9BC0D300F6DC79 /* AppDelegate.h */,
 				E97D79061B9BC0D300F6DC79 /* AppDelegate.m */,
 				E97D790E1B9BC0D300F6DC79 /* Main.storyboard */,
+				E93D7B5D1C2BB92C0010029D /* PrivacyStatmentViewController.h */,
+				E93D7B5E1C2BB92C0010029D /* PrivacyStatmentViewController.m */,
 				E9B75FB91C1C353F007170AA /* SelectWeightSourceOptionTableViewController.h */,
 				E9B75FBA1C1C353F007170AA /* SelectWeightSourceOptionTableViewController.m */,
 				E9438F4B1C151E7E00C4B330 /* MoodGraphViewController.h */,
 				E9438F4C1C151E7E00C4B330 /* MoodGraphViewController.m */,
+				E93D7B6E1C2E0EC00010029D /* mediating.png */,
 				E9438F481C1136D700C4B330 /* ViewMoodsTableViewController.h */,
 				E9438F491C1136D700C4B330 /* ViewMoodsTableViewController.m */,
 				E9438F421C112EDE00C4B330 /* MoodSelectionTableViewController.h */,
@@ -275,6 +294,7 @@
 				E9438F251C1052CF00C4B330 /* MoodTableViewController.m */,
 				E913D0B91C001DD700725EDE /* StepsGraphViewController.h */,
 				E913D0BA1C001DD700725EDE /* StepsGraphViewController.m */,
+				E93D7B6C1C2E09060010029D /* footsteps.png */,
 				E9D0A2591BFE8C5D00B9A6A1 /* StepsTableViewController.h */,
 				E9D0A25A1BFE8C5D00B9A6A1 /* StepsTableViewController.m */,
 				E9D0A2541BFB3E3E00B9A6A1 /* ExerciseTableViewController.h */,
@@ -285,6 +305,8 @@
 				E9D0A2471BF582E400B9A6A1 /* WithingsSelectionTableViewController.m */,
 				E9D0A2491BF5896700B9A6A1 /* WithingsWeightGraphViewController.h */,
 				E9D0A24A1BF5896700B9A6A1 /* WithingsWeightGraphViewController.m */,
+				E93D7B701C2E10630010029D /* graph.png */,
+				E93D7B6A1C2E08110010029D /* scale.png */,
 				E941B1001BF1B92500FA91F5 /* Simple-OAuth1-Prefix.pch */,
 				E941B0CE1BF19D9600FA91F5 /* WithingsWeightTableViewController.h */,
 				E941B0CF1BF19D9600FA91F5 /* WithingsWeightTableViewController.m */,
@@ -310,6 +332,7 @@
 				E9D0A2411BF4387800B9A6A1 /* WithingsWeightTableViewCell.h */,
 				E9D0A2421BF4387800B9A6A1 /* WithingsWeightTableViewCell.m */,
 				E97D79111B9BC0D300F6DC79 /* Images.xcassets */,
+				E93D7B721C2E49770010029D /* person32.png */,
 				E97D79131B9BC0D300F6DC79 /* LaunchScreen.xib */,
 				E971AD971B9CBE350092F9A8 /* Model.xcdatamodeld */,
 				E97D79011B9BC0D300F6DC79 /* Supporting Files */,
@@ -455,8 +478,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				E97D79101B9BC0D300F6DC79 /* Main.storyboard in Resources */,
+				E93D7B6D1C2E09070010029D /* footsteps.png in Resources */,
+				E93D7B731C2E49770010029D /* person32.png in Resources */,
 				E97D79151B9BC0D300F6DC79 /* LaunchScreen.xib in Resources */,
+				E93D7B6B1C2E08110010029D /* scale.png in Resources */,
+				E93D7B6F1C2E0EC00010029D /* mediating.png in Resources */,
 				E97D79121B9BC0D300F6DC79 /* Images.xcassets in Resources */,
+				E93D7B711C2E10630010029D /* graph.png in Resources */,
+				E93D7B691C2CFB400010029D /* meditationImage.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -482,6 +511,7 @@
 				E9438F4D1C151E7E00C4B330 /* MoodGraphViewController.m in Sources */,
 				E97D79071B9BC0D300F6DC79 /* AppDelegate.m in Sources */,
 				E99D7B101BBA2F4100CD5480 /* WeightDataSource.m in Sources */,
+				E93D7B5F1C2BB92C0010029D /* PrivacyStatmentViewController.m in Sources */,
 				E913D0BB1C001DD700725EDE /* StepsGraphViewController.m in Sources */,
 				E9D0A2531BFB361F00B9A6A1 /* MeasurementTypeTableViewController.m in Sources */,
 				E9D0A25B1BFE8C5D00B9A6A1 /* StepsTableViewController.m in Sources */,

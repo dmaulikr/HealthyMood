@@ -19,7 +19,12 @@
     self.weight.textLabel.text = @"Weight";
     self.exercise.textLabel.text = @"Steps";
     self.mood.textLabel.text = @"Mood";
-    self.multiGraph.textLabel.text = @"Graph Summary";
+    self.multiGraph.textLabel.text = @"All Graphs";
+    self.privacy.textLabel.text = @"Privacy";
+    
+    
+    self.mood.imageView.frame = CGRectMake(0,0,32,32);
+    
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -42,7 +47,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return 4;
+    return 5;
 }
 
 /*

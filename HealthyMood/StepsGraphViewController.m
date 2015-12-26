@@ -204,7 +204,7 @@
     x.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
     x.majorIntervalLength         = CPTDecimalFromDouble(oneDay);
     
-    x.orthogonalCoordinateDecimal = CPTDecimalFromDouble(self.minSteps);
+    x.orthogonalCoordinateDecimal = CPTDecimalFromDouble(self.minSteps-1000);
     x.minorTicksPerInterval       = 0;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     
@@ -233,7 +233,7 @@
     
     y.majorIntervalLength         = CPTDecimalFromDouble(5000);
     y.minorTicksPerInterval       = 0;
-    y.orthogonalCoordinateDecimal = CPTDecimalFromDouble(self.minSteps);
+    y.orthogonalCoordinateDecimal = CPTDecimalFromDouble(self.minSteps-1000);
     y.labelingPolicy = CPTAxisLabelingPolicyFixedInterval;
     
     [y setLabelTextStyle:textStyle];
@@ -243,7 +243,7 @@
     dataSourceLinePlot.identifier = @"Date Plot";
     
     CPTMutableLineStyle *lineStyle = [dataSourceLinePlot.dataLineStyle mutableCopy];
-    lineStyle.lineWidth              = 4.0;
+    lineStyle.lineWidth              = 2.0;
     lineStyle.lineColor              = [[CPTColor whiteColor] colorWithAlphaComponent:1.0];
     dataSourceLinePlot.dataLineStyle = lineStyle;
     
@@ -274,7 +274,7 @@
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
     NSTimeInterval xLow       = 0.0;
     plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 6.0 + (oneDay * 0.3))];
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(self.minSteps)
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(self.minSteps - 1000)
                                                     length:CPTDecimalFromFloat((self.maxSteps- self.minSteps) + 5000.0)];
     
     
@@ -614,11 +614,11 @@
     } else {
         minWeight = [minWeightNumber floatValue];
     }
-     
+     */
     
     if (minStepsNumber == nil) {
       //  [self.graph reloadData];
-        return 1000.0;
+        self.minSteps= 1000.0;
     }
     
     else if (minStepsNumber == 0)
@@ -626,7 +626,7 @@
         NSLog (@"no values");
         self.minSteps = 1000.0;
         
-    }*/
+    }
     
 
     
